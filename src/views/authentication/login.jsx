@@ -192,6 +192,13 @@ function Login() {
                               </label>
                             </div>
                             <div className='clearfix' />
+                            <Link to='/signup'
+                              className='capitalize-font txt-primary block mb-10 pull-right font-12'
+                              href='forgot-password.html'
+                              style={{marginTop: '-1.5rem'}}
+                            >
+                              Đăng ký tài khoản mới
+                            </Link>
                           </div>
                           <div className='form-group text-center'>
                             <button
