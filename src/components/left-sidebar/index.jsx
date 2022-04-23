@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { userLogout } from "../../actions/auth";
 import { logOut } from "../../helper/utils";
 
-function LeftSideBar(props) {
+function LeftSideBar() {
   const dispatch = useDispatch();
   function handleLogout() {
     const action = userLogout();
@@ -38,7 +38,33 @@ function LeftSideBar(props) {
           </a>
           <ul id='dashboard_dr' className='collapse collapse-level-1'>
             <li>
-              <a className='active-page' href='index.html'>
+              <a className='active-page' href='/student'>
+                Danh sách
+              </a>
+            </li>
+            <li>
+              <a href='index2.html'>Hướng dẫn</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a
+            href='javascript:void(0);'
+            data-toggle='collapse'
+            data-target='#room'
+          >
+            <div className='pull-left'>
+              <i className='zmdi zmdi-account mr-20' />
+              <span className='right-nav-text'>Phòng Zoom</span>
+            </div>
+            <div className='pull-right'>
+              <i className='zmdi zmdi-caret-down' />
+            </div>
+            <div className='clearfix' />
+          </a>
+          <ul id='room' className='collapse collapse-level-1'>
+            <li>
+              <a className='active-page' href='/room'>
                 Danh sách
               </a>
             </li>

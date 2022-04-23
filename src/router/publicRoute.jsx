@@ -9,7 +9,7 @@ const PublicRoute = ({component: Component, restricted, ...rest}) => {
         {...rest}
         render={(props) =>
           logIn && restricted ? (
-            <Redirect to="/" />
+            <Redirect to="/signin" />
           ) : (
             <Component {...props} />
           )

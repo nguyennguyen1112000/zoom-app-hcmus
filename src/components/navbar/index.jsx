@@ -6,11 +6,11 @@ import { logOut } from '../../helper/utils'
 
 function NavBar() {
   const dispatch = useDispatch()
-  // function handleLogout() {
-  //   const action = userLogout();
-  //   dispatch(action);
-  //   logOut();
-  // }
+  function handleLogout() {
+    const action = userLogout();
+    dispatch(action);
+    logOut();
+  }
   // const user = useSelector((state) => state.auth.currentUser);
 
   return (
@@ -470,7 +470,7 @@ function NavBar() {
               </li>
               <li className='divider' />
               <li>
-                <a href='/'>
+                <a href='/signin' onClick={handleLogout}>
                   <i className='zmdi zmdi-power' />
                   <span>Log Out</span>
                 </a>

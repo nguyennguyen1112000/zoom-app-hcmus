@@ -5,39 +5,34 @@ import { useSelector } from 'react-redux'
 
 import { ToastContainer } from 'react-toastify'
 import PublicRoute from './router/publicRoute.jsx'
-import NavBar from './components/navbar'
-import Footer from './components/footer'
+import PrivateRoute from './router/privateRoute'
+import Header from './components/header/index.jsx'
+import VerticalNav from './components/left-sidebar'
+import Footer from './components/footer/index.jsx'
 import LeftSideBar from './components/left-sidebar'
 import StudentList from './views/student/list'
+import Login from './views/authentication/login'
+import NavBar from './components/navbar'
+import RoomList from './views/room/list'
 function App() {
   //const user = useSelector((state) => state.auth.currentUser);
-  //const logIn = useSelector((state) => state.auth.isLoggedIn)
+  const logIn = useSelector((state) => state.auth.isLoggedIn)
+  // useEffect(() => {
+  // }, [])
   return (
     <Router>
-      <NavBar />
-      <LeftSideBar />
-      <div className='page-wrapper'>
-        <PublicRoute
-          restricted={false}
-          component={StudentList}
-          path='/'
-          exact
-        />
-        {/* {logIn && <Header />}
-        {logIn && <VerticalNav />} */}
-        {/* <PublicRoute
-          restricted={false}
-          component={Login}
-          path="/signin"
-          exact
-        />
-        <PublicRoute
-          restricted={false}
-          component={Register}
-          path="/signup"
-          exact
-        /> */}
-        {/* <PublicRoute
+      {/* <NavBar />
+      <LeftSideBar /> */}
+      <PublicRoute restricted={false} component={Login} path='/signin' exact />
+
+      {logIn && (
+        <div className='page-wrapper'>
+          {logIn && <NavBar />}
+          {logIn && <VerticalNav />}
+          <PrivateRoute component={StudentList} path='/student' exact />
+          <PrivateRoute component={RoomList} path='/room' exact />
+
+          {/* <PublicRoute
           restricted={false}
           component={VerifyAccount}
           path="/verify"
@@ -78,10 +73,11 @@ function App() {
           exact
         />
         <PrivateRoute component={Notifications} path="/notifications" exact /> */}
-        {/* <PublicRoute restricted={false} component={Register} path='/' exact /> */}
-        <Footer />
-        <ToastContainer />
-      </div>
+          {/* <PublicRoute restricted={false} component={Register} path='/' exact /> */}
+          {logIn && <Footer />}
+          <ToastContainer />
+        </div>
+      )}
     </Router>
   )
 }
