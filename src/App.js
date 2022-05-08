@@ -18,6 +18,9 @@ import RoomDetail from './views/room/detail'
 import ExaminationStaffList from './views/examination_staff/list'
 import StudentDetail from './views/student/detail'
 import { WebcamCapture } from './views/webcam/WebcamCapture'
+import VerificationStep1 from './views/verification/step1'
+import VerificationStep2 from './views/verification/step2'
+import VerificationResult from './views/verification/result'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -30,12 +33,24 @@ function App() {
       {/* <NavBar />
       <LeftSideBar /> */}
       <PublicRoute restricted={false} component={Login} path='/signin' exact />
-      {/* <PublicRoute
+      <PublicRoute
         restricted={false}
-        component={VerificationClient}
+        component={VerificationStep1}
         path='/'
         exact
-      /> */}
+      />
+      <PublicRoute
+        restricted={false}
+        component={VerificationStep2}
+        path='/verify/s2'
+        exact
+      />
+      <PublicRoute
+        restricted={false}
+        component={VerificationResult}
+        path='/verify/result/:id'
+        exact
+      />
       {logIn && (
         <div className='page-wrapper'>
           {logIn && <NavBar />}
@@ -44,11 +59,11 @@ function App() {
           <PrivateRoute component={StudentDetail} path='/student/:id' exact />
           <PrivateRoute component={RoomList} path='/room' exact />
           <PrivateRoute component={RoomDetail} path='/room/:id' exact />
-          {/* <PrivateRoute
+          <PrivateRoute
             component={ExaminationStaffList}
             path='/examination_staff'
             exact
-          /> */}
+          />
 
           {/* <PublicRoute
           restricted={false}

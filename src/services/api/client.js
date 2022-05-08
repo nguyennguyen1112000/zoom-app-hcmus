@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { userLogout } from '../../actions/auth'
-import { verifyRoom } from '../../actions/client'
+import { getIdentityResult, verifyRoom } from '../../actions/client'
 import { authHeader, logOut } from '../../helper/utils'
 const API_URL = process.env.REACT_APP_API_URL
 export const verifyZoomRoom = (
@@ -8,7 +8,8 @@ export const verifyZoomRoom = (
   passcode,
   linkZoom,
   studentId,
-  verifyRoom
+  verifyRoom,
+  setErrorVerified
 ) => {
   return (dispatch) => {
     return axios
@@ -19,10 +20,12 @@ export const verifyZoomRoom = (
         console.log(res.data)
         if (res.data) {
           verifyRoom(true)
+          setErrorVerified(false)
         }
       })
       .catch((err) => {
         verifyRoom(false)
+        setErrorVerified(true)
         if (err.response.status === 401) {
           const logoutAction = userLogout()
           logOut()
@@ -33,60 +36,16 @@ export const verifyZoomRoom = (
   }
 }
 
-// export const createClass = (classroom) => {
-//   return (dispatch) => {
-//     return axios
-//       .post(`${API_URL}/classrooms`, classroom, authHeader())
-//       .then((res) => {
-//         const createdClass = res.data
-//         const action = addNewClass(createdClass)
-//         dispatch(action)
-//       })
-//       .catch((err) => {
-//         if (err.response.status === 401) {
-//           const logoutAction = userLogout()
-//           logOut()
-//           dispatch(logoutAction)
-//         }
-//         console.log('Fail to create new class')
-//       })
-//   }
-// }
-
-// export const addUserToClass = (userToClass) => {
-//   return (dispatch) => {
-//     return axios
-//       .post(`${API_URL}/user-to-class`, userToClass, authHeader())
-//       .then((res) => {
-//         console.log('Add user to class successfully')
-//       })
-//       .catch((err) => {
-//         if (err.response.status === 401) {
-//           const logoutAction = userLogout()
-//           logOut()
-//           dispatch(logoutAction)
-//         }
-//         console.log('Fail to add user to class')
-//       })
-//   }
-// }
-
-// export const getAllJoinedClasses = () => {
-//   return (dispatch) => {
-//     return axios
-//       .get(`${API_URL}/user-to-class/user`, authHeader())
-//       .then((res) => {
-//         const classList = res.data
-//         const action = getJoinedClasses(classList)
-//         dispatch(action)
-//       })
-//       .catch((err) => {
-//         if (err.response.status === 401) {
-//           const logoutAction = userLogout()
-//           logOut()
-//           dispatch(logoutAction)
-//         }
-//         console.log('Fail to get data classes')
-//       })
-//   }
-// }
+export const getIdentity = (id) => {
+  return (dispatch) => {
+    return axios
+      .get(`${API_URL}/identity-record/${id}`)
+      .then((res) => {
+        const action = getIdentityResult(res.data)
+        dispatch(action)
+      })
+      .catch((err) => {
+        console.log('Fail to get data identity result')
+      })
+  }
+}

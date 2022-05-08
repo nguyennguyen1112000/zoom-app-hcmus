@@ -17434,6 +17434,9 @@ button.input-group-addon.fc-agendaWeek-button,
 .help-block {
   color: #878787;
 }
+.danger-block{
+  color: red;
+}
 
 .has-success .form-control,
 .has-success
