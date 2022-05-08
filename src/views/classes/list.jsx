@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll, getAllJoinedClasses } from "../../services/api/class";
+import { getAll, getAllJoinedClasses } from "../../services/api/room";
 import ClassItem from "../../components/class-item";
 import Footer from "../../components/footer";
 import PropTypes from "prop-types";

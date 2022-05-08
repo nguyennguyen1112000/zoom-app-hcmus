@@ -7,9 +7,9 @@ import { logOut } from '../../helper/utils'
 function NavBar() {
   const dispatch = useDispatch()
   function handleLogout() {
-    const action = userLogout();
-    dispatch(action);
-    logOut();
+    const action = userLogout()
+    dispatch(action)
+    logOut()
   }
   // const user = useSelector((state) => state.auth.currentUser);
 
@@ -19,7 +19,7 @@ function NavBar() {
         <div className='nav-header pull-left'>
           <div className='logo-wrap'>
             <a href='index.html'>
-              <img className='brand-img' src='img/logo.png' alt='brand' />
+              <img className='brand-img' src='/img/logo.png' alt='brand' />
               <span className='brand-text'>Protoring Zoom</span>
             </a>
           </div>
@@ -72,11 +72,7 @@ function NavBar() {
       </div>
       <div id='mobile_only_nav' className='mobile-only-nav pull-right'>
         <ul className='nav navbar-right top-nav pull-right'>
-          <li>
-            <a id='open_right_sidebar' href='/'>
-              <i className='zmdi zmdi-settings top-nav-icon' />
-            </a>
-          </li>
+         
           <li className='dropdown app-drp'>
             <a href='/' className='dropdown-toggle' data-toggle='dropdown'>
               <i className='zmdi zmdi-apps top-nav-icon' />
@@ -139,124 +135,7 @@ function NavBar() {
               </li>
             </ul>
           </li>
-          <li className='dropdown full-width-drp'>
-            <a href='/' className='dropdown-toggle' data-toggle='dropdown'>
-              <i className='zmdi zmdi-more-vert top-nav-icon' />
-            </a>
-            <ul
-              className='dropdown-menu mega-menu pa-0'
-              data-dropdown-in='fadeIn'
-              data-dropdown-out='fadeOut'
-            >
-              <li className='product-nicescroll-bar row'>
-                <ul className='pa-20'>
-                  <li className='col-md-3 col-xs-6 col-menu-list'>
-                    <a href='/'>
-                      <div className='pull-left'>
-                        <i className='zmdi zmdi-landscape mr-20' />
-                        <span className='right-nav-text'>Dashboard</span>
-                      </div>
-                      <div className='pull-right'>
-                        <i className='zmdi zmdi-caret-down' />
-                      </div>
-                      <div className='clearfix' />
-                    </a>
-                    <hr className='light-grey-hr ma-0' />
-                    <ul>
-                      <li>
-                        <a href='index.html'>Analytical</a>
-                      </li>
-                      <li>
-                        <a href='index2.html'>Demographic</a>
-                      </li>
-                      <li>
-                        <a href='index3.html'>Project</a>
-                      </li>
-                      <li>
-                        <a href='index4.html'>Hospital</a>
-                      </li>
-                      <li>
-                        <a href='index5.html'>HRM</a>
-                      </li>
-                      <li>
-                        <a href='index6.html'>Real Estate</a>
-                      </li>
-                      <li>
-                        <a href='profile.html'>profile</a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className='col-md-3 col-xs-6 col-menu-list'>
-                    <a href='/'>
-                      <div className='pull-left'>
-                        <i className='zmdi zmdi-shopping-basket mr-20' />
-                        <span className='right-nav-text'>E-Commerce</span>
-                      </div>
-                      <div className='pull-right'>
-                        <span className='label label-success'>hot</span>
-                      </div>
-                      <div className='clearfix' />
-                    </a>
-                    <hr className='light-grey-hr ma-0' />
-                    <ul>
-                      <li>
-                        <a href='e-commerce.html'>Dashboard</a>
-                      </li>
-                      <li>
-                        <a href='product.html'>Products</a>
-                      </li>
-                      <li>
-                        <a href='product-detail.html'>Product Detail</a>
-                      </li>
-                      <li>
-                        <a href='add-products.html'>Add Product</a>
-                      </li>
-                      <li>
-                        <a href='product-orders.html'>Orders</a>
-                      </li>
-                      <li>
-                        <a href='product-cart.html'>Cart</a>
-                      </li>
-                      <li>
-                        <a href='product-checkout.html'>Checkout</a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className='col-md-6 col-xs-12 preview-carousel'>
-                    <a href='/'>
-                      <div className='pull-left'>
-                        <span className='right-nav-text'>latest products</span>
-                      </div>
-                      <div className='clearfix' />
-                    </a>
-                    <hr className='light-grey-hr ma-0' />
-                    <div className='product-carousel owl-carousel owl-theme text-center'>
-                      <a href='/'>
-                        <img src='img/chair.jpg' alt='chair' />
-                        <span>Circle chair</span>
-                      </a>
-                      <a href='/'>
-                        <img src='img/chair2.jpg' alt='chair' />
-                        <span>square chair</span>
-                      </a>
-                      <a href='/'>
-                        <img src='img/chair3.jpg' alt='chair' />
-                        <span>semi circle chair</span>
-                      </a>
-                      <a href='/'>
-                        <img src='img/chair4.jpg' alt='chair' />
-                        <span>wooden chair</span>
-                      </a>
-                      <a href='/'>
-                        <img src='img/chair2.jpg' alt='chair' />
-                        <span>square chair</span>
-                      </a>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
+        
           <li className='dropdown alert-drp'>
             <a href='/' className='dropdown-toggle' data-toggle='dropdown'>
               <i className='zmdi zmdi-notifications top-nav-icon' />
@@ -407,7 +286,7 @@ function NavBar() {
           <li className='dropdown auth-drp'>
             <a href='/' className='dropdown-toggle pr-0' data-toggle='dropdown'>
               <img
-                src='img/user1.jpg'
+                src='/img/user1.jpg'
                 alt='user_auth'
                 className='user-auth-img img-circle'
               />

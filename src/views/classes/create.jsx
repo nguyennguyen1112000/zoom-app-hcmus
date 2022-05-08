@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { createClass } from "../../services/api/class";
+//import { createClass } from "../../services/api/room";
 
 function CreateClass() {
   const [input, setInput] = useState({
@@ -68,7 +68,7 @@ function CreateClass() {
   function handleSubmit(event) {
     event.preventDefault();
     if (validate()) {
-      dispatch(createClass(input));
+      //dispatch(createClass(input));
       let newInput = { name: "", description: "", topic: "" };
       setInput(newInput);
       document.getElementById("close-create-modal").click();

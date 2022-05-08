@@ -12,8 +12,8 @@ $(function(){
 			titleTemplate: '#title#',
 			labels: {
 				finish: "place order",
-				next: "Next",
-				previous: "Previous",
+				next: "Kế tiếp",
+				previous: "Trước",
 			}/*,
 			onStepChanging: function (event, currentIndex, newIndex)
 			{

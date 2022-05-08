@@ -1,26 +1,24 @@
-import { LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, UPDATE_PROFILE } from "../actions/type";
+import { LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT } from '../actions/type'
 
-
-const user = JSON.parse(localStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem('user'))
 const authReducerInitialState = user
   ? {
       currentUser: user,
-      isLoggedIn: true,
+      isLoggedIn: true
     }
-  : { currentUser: null, isLoggedIn: false };
+  : { currentUser: null, isLoggedIn: false }
 
 const authReducer = (state = authReducerInitialState, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return { ...state, isLoggedIn: true, currentUser: action.payload };
+      return { ...state, isLoggedIn: true, currentUser: action.payload }
     case LOGIN_FAIL:
-      return { ...state, isLoggedIn: false, currentUser: null };
+      return { ...state, isLoggedIn: false, currentUser: null }
     case LOGOUT:
-      return { ...state, isLoggedIn: false, currentUser: null };
-    case UPDATE_PROFILE:
-      return { ...state, isLoggedIn: true, currentUser: action.payload };
+      return { ...state, isLoggedIn: false, currentUser: null }
+
     default:
-      return state;
+      return state
   }
-};
-export default authReducer;
+}
+export default authReducer

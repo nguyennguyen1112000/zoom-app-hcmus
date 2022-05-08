@@ -14,6 +14,12 @@ import StudentList from './views/student/list'
 import Login from './views/authentication/login'
 import NavBar from './components/navbar'
 import RoomList from './views/room/list'
+import RoomDetail from './views/room/detail'
+import ExaminationStaffList from './views/examination_staff/list'
+import StudentDetail from './views/student/detail'
+import { WebcamCapture } from './views/webcam/WebcamCapture'
+//import VerificationClient from './views/verification'
+
 function App() {
   //const user = useSelector((state) => state.auth.currentUser);
   const logIn = useSelector((state) => state.auth.isLoggedIn)
@@ -24,13 +30,25 @@ function App() {
       {/* <NavBar />
       <LeftSideBar /> */}
       <PublicRoute restricted={false} component={Login} path='/signin' exact />
-
+      {/* <PublicRoute
+        restricted={false}
+        component={VerificationClient}
+        path='/'
+        exact
+      /> */}
       {logIn && (
         <div className='page-wrapper'>
           {logIn && <NavBar />}
           {logIn && <VerticalNav />}
           <PrivateRoute component={StudentList} path='/student' exact />
+          <PrivateRoute component={StudentDetail} path='/student/:id' exact />
           <PrivateRoute component={RoomList} path='/room' exact />
+          <PrivateRoute component={RoomDetail} path='/room/:id' exact />
+          {/* <PrivateRoute
+            component={ExaminationStaffList}
+            path='/examination_staff'
+            exact
+          /> */}
 
           {/* <PublicRoute
           restricted={false}

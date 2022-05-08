@@ -1,23 +1,23 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { userLogout } from "../../actions/auth";
-import { logOut } from "../../helper/utils";
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { userLogout } from '../../actions/auth'
+import { logOut } from '../../helper/utils'
 
 function LeftSideBar() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   function handleLogout() {
-    const action = userLogout();
-    dispatch(action);
-    logOut();
+    const action = userLogout()
+    dispatch(action)
+    logOut()
   }
-  const user = useSelector((state) => state.auth.currentUser);
+  const user = useSelector((state) => state.auth.currentUser)
 
   return (
     <div className='fixed-sidebar-left'>
       <ul className='nav navbar-nav side-nav nicescroll-bar'>
         <li className='navigation-header'>
-          <span>Quản lý</span>
+          <span>Quản lý chung</span>
           <i className='zmdi zmdi-more' />
         </li>
         <li>
@@ -28,7 +28,7 @@ function LeftSideBar() {
             data-target='#dashboard_dr'
           >
             <div className='pull-left'>
-              <i className='zmdi zmdi-account mr-20' />
+              <i className='fa fa-graduation-cap mr-20' />
               <span className='right-nav-text'>Sinh viên</span>
             </div>
             <div className='pull-right'>
@@ -54,7 +54,7 @@ function LeftSideBar() {
             data-target='#room'
           >
             <div className='pull-left'>
-              <i className='zmdi zmdi-account mr-20' />
+              <i className='fa fa-th-large mr-20' />
               <span className='right-nav-text'>Phòng Zoom</span>
             </div>
             <div className='pull-right'>
@@ -65,6 +65,32 @@ function LeftSideBar() {
           <ul id='room' className='collapse collapse-level-1'>
             <li>
               <a className='active-page' href='/room'>
+                Danh sách
+              </a>
+            </li>
+            <li>
+              <a href='index2.html'>Hướng dẫn</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a
+            href='javascript:void(0);'
+            data-toggle='collapse'
+            data-target='#examination_staff'
+          >
+            <div className='pull-left'>
+              <i className='fa fa-users mr-20' />
+              <span className='right-nav-text'>Cán bộ coi thi</span>
+            </div>
+            <div className='pull-right'>
+              <i className='zmdi zmdi-caret-down' />
+            </div>
+            <div className='clearfix' />
+          </a>
+          <ul id='examination_staff' className='collapse collapse-level-1'>
+            <li>
+              <a className='active-page' href='/examination_staff'>
                 Danh sách
               </a>
             </li>
@@ -245,7 +271,7 @@ function LeftSideBar() {
           <hr className='light-grey-hr mb-10' />
         </li>
         <li className='navigation-header'>
-          <span>component</span>
+          <span>Quản lý định danh</span>
           <i className='zmdi zmdi-more' />
         </li>
         <li>
@@ -541,7 +567,7 @@ function LeftSideBar() {
           <hr className='light-grey-hr mb-10' />
         </li>
         <li className='navigation-header'>
-          <span>featured</span>
+          <span>GIÁM SÁT THI</span>
           <i className='zmdi zmdi-more' />
         </li>
         <li>
@@ -702,4 +728,4 @@ function LeftSideBar() {
   )
 }
 
-export default LeftSideBar;
+export default LeftSideBar
