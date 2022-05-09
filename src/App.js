@@ -21,6 +21,7 @@ import { WebcamCapture } from './views/webcam/WebcamCapture'
 import VerificationStep1 from './views/verification/step1'
 import VerificationStep2 from './views/verification/step2'
 import VerificationResult from './views/verification/result'
+import VerificationCollectData from './views/verification/collect_data'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -49,6 +50,12 @@ function App() {
         restricted={false}
         component={VerificationResult}
         path='/verify/result/:id'
+        exact
+      />
+      <PublicRoute
+        restricted={false}
+        component={VerificationCollectData}
+        path='/verify/data'
         exact
       />
       {logIn && (
