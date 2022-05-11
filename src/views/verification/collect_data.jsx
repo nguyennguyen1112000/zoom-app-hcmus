@@ -11,7 +11,7 @@ function VerificationCollectData() {
               src='../img/logo.png'
               alt='brand'
             />
-            <span className='brand-text'>Proctoring Zoom</span>
+            <span className='brand-text'>HCMUSID</span>
           </a>
         </div>
         <div className='clearfix' />

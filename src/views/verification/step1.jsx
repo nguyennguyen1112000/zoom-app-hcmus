@@ -15,6 +15,7 @@ function VerificationStep1() {
   // const verifiedImage = useSelector((state) => state.client.image)
   // const verifiedStudent = useSelector((state) => state.client.verifiedStudent)
   const [verifiedRoom, setVerifiedRoom] = useState(false)
+  const verifyClient = useSelector((state) => state.client.client)
   const dispatch = useDispatch()
   const history = useHistory()
   const client = getClient()
@@ -61,7 +62,7 @@ function VerificationStep1() {
         JSON.stringify({
           ...input,
           studentId: studentId,
-          zoomEmail: client.email,
+          zoomEmail: client.email
         })
       )
       setInput({ zoomId: '', passcode: '', linkZoom: '' })
@@ -137,11 +138,12 @@ function VerificationStep1() {
               const data = res.data
               console.log('Client', data)
               localStorage.setItem('client', JSON.stringify(data))
+              dispatch(addClient(data))
             })
         })
         .catch((error) => console.log(error))
     }
-  }, [code])
+  }, [code, verifyClient])
   return (
     <>
       <header className='sp-header'>
@@ -152,7 +154,7 @@ function VerificationStep1() {
               src='../img/logo.png'
               alt='brand'
             />
-            <span className='brand-text'>Proctoring Zoom</span>
+            <span className='brand-text'>HCMUSID</span>
           </a>
         </div>
         <div className='clearfix' />
@@ -175,9 +177,6 @@ function VerificationStep1() {
                       <h3 className='text-center txt-dark mb-10'>
                         Định danh thi online
                       </h3>
-                      <h6 className='text-center nonecase-font txt-grey'>
-                        Enter your details below
-                      </h6>
                     </div>
                     <div className='form-wrap'>
                       <form action='#'>

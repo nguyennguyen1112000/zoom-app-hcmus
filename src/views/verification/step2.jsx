@@ -1,5 +1,4 @@
 import React from 'react'
-import { ToastContainer } from 'react-toastify'
 
 import { WebcamCapture } from '../webcam/WebcamCapture'
 function VerificationStep2() {
@@ -13,7 +12,7 @@ function VerificationStep2() {
               src='../img/logo.png'
               alt='brand'
             />
-            <span className='brand-text'>Proctoring Zoom</span>
+            <span className='brand-text'>HCMUSID</span>
           </a>
         </div>
         <div className='clearfix' />

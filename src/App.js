@@ -22,6 +22,7 @@ import VerificationStep1 from './views/verification/step1'
 import VerificationStep2 from './views/verification/step2'
 import VerificationResult from './views/verification/result'
 import VerificationCollectData from './views/verification/collect_data'
+import RealtimeVerify from './views/verification/realtime_verify'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
             path='/examination_staff'
             exact
           />
+          <PrivateRoute component={RealtimeVerify} path='/verify/room/:id' exact />
 
           {/* <PublicRoute
           restricted={false}

@@ -22,7 +22,7 @@ function VerificationResult() {
         <div className='sp-logo-wrap pull-left'>
           <a href='index.html'>
             <img className='brand-img mr-10' src='/img/logo.png' alt='brand' />
-            <span className='brand-text'>Proctoring Zoom</span>
+            <span className='brand-text'>HCMUSID</span>
           </a>
         </div>
         <div className='clearfix' />
@@ -158,7 +158,6 @@ function VerificationResult() {
                                           )}
                                         </td>
                                       </tr>
-                                  
                                     </tbody>
                                   )}
                                 </table>

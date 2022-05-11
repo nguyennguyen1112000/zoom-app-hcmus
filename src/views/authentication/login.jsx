@@ -63,7 +63,7 @@ function Login() {
   }
 
   function handleSubmit(event) {
-    event.preventDefault()    
+    event.preventDefault()
     console.log(input)
     if (input.email === '' && input.password === '') {
       setError('Vui lòng nhập email và password')
@@ -102,18 +102,10 @@ function Login() {
                 src='../img/logo.png'
                 alt='brand'
               />
-              <span className='brand-text'>Protoring Zoom</span>
+              <span className='brand-text'>HCMUSID</span>
             </a>
           </div>
-          <div className='form-group mb-0 pull-right'>
-            <span className='inline-block pr-10'>Chưa có tài khoản?</span>
-            <a
-              className='inline-block btn btn-info btn-success btn-rounded btn-outline'
-              href='signup.html'
-            >
-              Đăng ký
-            </a>
-          </div>
+          
           <div className='clearfix' />
         </header>
         {/* Main Content */}
@@ -127,7 +119,7 @@ function Login() {
                     <div className='col-sm-12 col-xs-12'>
                       <div className='mb-30'>
                         <h3 className='text-center txt-dark mb-10'>
-                          Đăng nhập Protoring Zoom
+                          Đăng nhập HCMUSID
                         </h3>
                         <h6 className='text-center nonecase-font txt-grey'>
                           Nhập thông tin chi tiết bên dưới
@@ -141,7 +133,7 @@ function Login() {
                                 <label className='control-label mb-5 error-text'>
                                   {error}
                                 </label>
-                                <br/>
+                                <br />
                               </>
                             )}
 
@@ -168,12 +160,12 @@ function Login() {
                             >
                               Mật khẩu
                             </label>
-                            <a
+                            {/* <a
                               className='capitalize-font txt-primary block mb-10 pull-right font-12'
                               href='forgot-password.html'
                             >
                               quên mật khẩu ?
-                            </a>
+                            </a> */}
                             <div className='clearfix' />
                             <input
                               type='password'

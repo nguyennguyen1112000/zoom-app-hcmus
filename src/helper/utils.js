@@ -58,3 +58,13 @@ export const findDaysDifferent = (fromDate) => {
 
   return requiredDiffrentDays
 }
+
+export const getShortName = (name) => {
+  const arrNames = name.split(' ')
+  if (arrNames.length >= 2) {
+    return (
+      arrNames[arrNames.length - 2][0].toUpperCase() +
+      arrNames[arrNames.length - 1][0].toUpperCase()
+    )
+  }
+}

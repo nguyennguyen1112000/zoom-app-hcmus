@@ -20,7 +20,7 @@ function NavBar() {
           <div className='logo-wrap'>
             <a href='index.html'>
               <img className='brand-img' src='/img/logo.png' alt='brand' />
-              <span className='brand-text'>Protoring Zoom</span>
+              <span className='brand-text'>HCMUSID</span>
             </a>
           </div>
         </div>
@@ -72,7 +72,6 @@ function NavBar() {
       </div>
       <div id='mobile_only_nav' className='mobile-only-nav pull-right'>
         <ul className='nav navbar-right top-nav pull-right'>
-         
           <li className='dropdown app-drp'>
             <a href='/' className='dropdown-toggle' data-toggle='dropdown'>
               <i className='zmdi zmdi-apps top-nav-icon' />
@@ -135,7 +134,7 @@ function NavBar() {
               </li>
             </ul>
           </li>
-        
+
           <li className='dropdown alert-drp'>
             <a href='/' className='dropdown-toggle' data-toggle='dropdown'>
               <i className='zmdi zmdi-notifications top-nav-icon' />

@@ -1,6 +1,8 @@
+import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { formatDate } from '../../../helper/utils'
+import { toast } from 'react-toastify'
+import { authHeader, formatDate } from '../../../helper/utils'
 import { getStudents } from '../../../services/api/student'
 
 function StudentList() {
@@ -9,7 +11,36 @@ function StudentList() {
     dispatch(getStudents())
   }, [dispatch])
   const studentList = useSelector((state) => state.student.studentList)
-  console.log('student', studentList)
+  const API_URL = process.env.REACT_APP_API_URL
+  const downloadTemplate = (e) => {
+    e.preventDefault()
+    const downloadLink = `${API_URL}/students/template`
+    const a = document.createElement('a')
+    a.href = downloadLink
+    a.click()
+  }
+
+  const uploadFile = (e) => {
+    const formData = new FormData()
+    formData.append('file', e.target.value)
+    axios
+      .post(`${API_URL}/students/upload`, formData, authHeader())
+      .then((res) => {
+        e.target.value = null
+        toast.success('Đã tải lên file', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   return (
     <div className='container-fluid'>
@@ -30,7 +61,7 @@ function StudentList() {
               </a>
             </li>
             <li className='active'>
-              <span>DSSV</span>
+              <span>Danh sách sinh viên</span>
             </li>
           </ol>
         </div>
@@ -47,13 +78,23 @@ function StudentList() {
                   <span class='btn-label'>
                     <i class='fa fa-download'></i>
                   </span>
-                  <span class='btn-text'>Tải về template</span>
+                  <span class='btn-text' onClick={downloadTemplate}>
+                    Tải về template
+                  </span>
                 </button>
-                <button class='btn btn-danger btn-lable-wrap left-label'>
+                <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
                   <span class='btn-label'>
                     <i class='fa fa-upload'></i>
                   </span>
-                  <span class='btn-text'>Tải lên file</span>
+                  <span class='btn-text' for='file_upload'>
+                    Tải lên file
+                  </span>
+                  <input
+                    id='file_upload'
+                    type='file'
+                    className='upload'
+                    onChange={uploadFile}
+                  />
                 </button>
                 <button class='btn btn-primary btn-lable-wrap left-label'>
                   <span class='btn-label'>

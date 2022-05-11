@@ -25347,3 +25347,11 @@ ul.inbox-nav li a:focus {
 .bold-title {
   font-weight: bold !important;
 }
+
+.img-background{
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 500;
+
+  color: white !important;
+}
