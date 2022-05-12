@@ -123,27 +123,27 @@ function VerificationStep1() {
   }
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
-  useEffect(() => {
-    if (code) {
-      axios
-        .get(`${API_URL}/token/${code}`)
-        .then((res) => {
-          const { access_token } = res.data
-          localStorage.setItem('accessToken', JSON.stringify(access_token))
-          axios
-            .post(`${API_URL}/profile`, {
-              accessToken: access_token
-            })
-            .then((res) => {
-              const data = res.data
-              console.log('Client', data)
-              localStorage.setItem('client', JSON.stringify(data))
-              dispatch(addClient(data))
-            })
-        })
-        .catch((error) => console.log(error))
-    }
-  }, [code, verifyClient])
+  // useEffect(() => {
+  //   if (code) {
+  //     axios
+  //       .get(`${API_URL}/token/${code}`)
+  //       .then((res) => {
+  //         const { access_token} = res.data
+  //         localStorage.setItem('clientData', JSON.stringify(res.data))
+  //         axios
+  //           .post(`${API_URL}/profile`, {
+  //             accessToken: access_token
+  //           })
+  //           .then((res) => {
+  //             const data = res.data
+  //             console.log('Client', data)
+  //             localStorage.setItem('client', JSON.stringify(data))
+  //             dispatch(addClient(data))
+  //           })
+  //       })
+  //       .catch((error) => console.log(error))
+  //   }
+  // }, [code, verifyClient])
   return (
     <>
       <header className='sp-header'>
