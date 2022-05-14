@@ -194,7 +194,7 @@ function FaceData(props) {
         <footer className='footer container-fluid pl-30 pr-30'>
           <div className='row'>
             <div className='col-sm-12'>
-              <p>2017 © Nguyễn Bình Nguyên</p>
+              <p>2017 © Nguyễn Bình Nguyên. Triệu Mai Ngọc Thức</p>
             </div>
           </div>
         </footer>
