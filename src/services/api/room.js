@@ -23,8 +23,9 @@ export const getRooms = () => {
   }
 }
 
-export const getRoom = (roomId) => {
+export const getRoom = (roomId, role) => {
   return (dispatch) => {
+    if(role !== "student")
     return axios
       .get(`${API_URL}/rooms/${roomId}`, authHeader())
       .then((res) => {

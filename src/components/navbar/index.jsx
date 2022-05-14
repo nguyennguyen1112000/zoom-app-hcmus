@@ -8,8 +8,8 @@ function NavBar() {
   const dispatch = useDispatch()
   function handleLogout() {
     const action = userLogout()
-    dispatch(action)
     logOut()
+    dispatch(action)
   }
   // const user = useSelector((state) => state.auth.currentUser);
 
@@ -299,58 +299,14 @@ function NavBar() {
               <li>
                 <a href='profile.html'>
                   <i className='zmdi zmdi-account' />
-                  <span>Profile</span>
+                  <span>Hồ sơ</span>
                 </a>
-              </li>
-              <li>
-                <a href='/'>
-                  <i className='zmdi zmdi-card' />
-                  <span>my balance</span>
-                </a>
-              </li>
-              <li>
-                <a href='inbox.html'>
-                  <i className='zmdi zmdi-email' />
-                  <span>Inbox</span>
-                </a>
-              </li>
-              <li>
-                <a href='/'>
-                  <i className='zmdi zmdi-settings' />
-                  <span>Settings</span>
-                </a>
-              </li>
-              <li className='divider' />
-              <li className='sub-menu show-on-hover'>
-                <a href='/' className='dropdown-toggle pr-0 level-2-drp'>
-                  <i className='zmdi zmdi-check text-success' /> available
-                </a>
-                <ul className='dropdown-menu open-left-side'>
-                  <li>
-                    <a href='/'>
-                      <i className='zmdi zmdi-check text-success' />
-                      <span>available</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href='/'>
-                      <i className='zmdi zmdi-circle-o text-warning' />
-                      <span>busy</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href='/'>
-                      <i className='zmdi zmdi-minus-circle-outline text-danger' />
-                      <span>offline</span>
-                    </a>
-                  </li>
-                </ul>
               </li>
               <li className='divider' />
               <li>
                 <a href='/signin' onClick={handleLogout}>
                   <i className='zmdi zmdi-power' />
-                  <span>Log Out</span>
+                  <span>Đăng xuất</span>
                 </a>
               </li>
             </ul>

@@ -23,6 +23,11 @@ import VerificationStep2 from './views/verification/step2'
 import VerificationResult from './views/verification/result'
 import VerificationCollectData from './views/verification/collect_data'
 import RealtimeVerify from './views/verification/realtime_verify'
+import { Route } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import PageNotFound from './views/errorPage/pageNotFound'
+import { Switch } from 'react-router-dom'
+import FaceData from './views/data/FaceData'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -32,49 +37,63 @@ function App() {
   // }, [])
   return (
     <Router>
-      {/* <NavBar />
+      <Switch>
+        {/* <NavBar />
       <LeftSideBar /> */}
-      <PublicRoute restricted={false} component={Login} path='/signin' exact />
-      <PublicRoute
+        <PublicRoute restricted={true} component={Login} path='/' exact />
+        <PublicRoute restricted={true} component={Login} path='/signin' exact />
+        {/* <PublicRoute
         restricted={false}
         component={VerificationStep1}
         path='/'
         exact
-      />
-      <PublicRoute
-        restricted={false}
-        component={VerificationStep2}
-        path='/verify/s2'
-        exact
-      />
-      <PublicRoute
-        restricted={false}
-        component={VerificationResult}
-        path='/verify/result/:id'
-        exact
-      />
-      <PublicRoute
-        restricted={false}
-        component={VerificationCollectData}
-        path='/verify/data'
-        exact
-      />
-      {logIn && (
-        <div className='page-wrapper'>
-          {logIn && <NavBar />}
-          {logIn && <VerticalNav />}
-          <PrivateRoute component={StudentList} path='/student' exact />
-          <PrivateRoute component={StudentDetail} path='/student/:id' exact />
-          <PrivateRoute component={RoomList} path='/room' exact />
-          <PrivateRoute component={RoomDetail} path='/room/:id' exact />
-          <PrivateRoute
-            component={ExaminationStaffList}
-            path='/examination_staff'
-            exact
-          />
-          <PrivateRoute component={RealtimeVerify} path='/verify/room/:id' exact />
+      /> */}
+        <PublicRoute
+          restricted={false}
+          component={FaceData}
+          path='/data/collect'
+          exact
+        />
+        <PublicRoute
+          restricted={false}
+          component={VerificationStep2}
+          path='/verify/s2'
+          exact
+        />
+        <PublicRoute
+          restricted={false}
+          component={VerificationResult}
+          path='/verify/result/:id'
+          exact
+        />
+        <PublicRoute
+          restricted={false}
+          component={VerificationCollectData}
+          path='/verify/data'
+          exact
+        />
+        {logIn && (
+          <div className='page-wrapper'>
+            {logIn && <NavBar />}
+            {logIn && <VerticalNav />}
+            <PrivateRoute component={StudentList} path='/' exact />
+            <PrivateRoute component={StudentList} path='/student' exact />
 
-          {/* <PublicRoute
+            <PrivateRoute component={StudentDetail} path='/student/:id' exact />
+            <PrivateRoute component={RoomList} path='/room' exact />
+            <PrivateRoute component={RoomDetail} path='/room/:id' exact />
+            <PrivateRoute
+              component={ExaminationStaffList}
+              path='/examination_staff'
+              exact
+            />
+            <PrivateRoute
+              component={RealtimeVerify}
+              path='/verify/room/:id'
+              exact
+            />
+
+            {/* <PublicRoute
           restricted={false}
           component={VerifyAccount}
           path="/verify"
@@ -115,11 +134,14 @@ function App() {
           exact
         />
         <PrivateRoute component={Notifications} path="/notifications" exact /> */}
-          {/* <PublicRoute restricted={false} component={Register} path='/' exact /> */}
-          {logIn && <Footer />}
-          <ToastContainer />
-        </div>
-      )}
+            {/* <PublicRoute restricted={false} component={Register} path='/' exact /> */}
+            {logIn && <Footer />}
+            <ToastContainer />
+          </div>
+        )}
+        {/* <PublicRoute path='/404' restricted={false} component={PageNotFound} />
+        <Redirect to='/404' /> */}
+      </Switch>
     </Router>
   )
 }

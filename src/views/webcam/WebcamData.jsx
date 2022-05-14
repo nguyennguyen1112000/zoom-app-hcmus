@@ -1,31 +1,26 @@
 import axios from 'axios'
 import React, { useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-//import "./cameraStyles.css";
-//import "../style/home.css";
 import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
-import { getVerifiedInfo } from '../../helper/utils'
 const videoConstraints = {
-  width: 680,
+  width: 640,
   height: 480,
   facingMode: 'user'
 }
-export const WebcamData = () => {
+
+export const WebcamData = (props) => {
+  const { input, validate } = props
+
   const [image, setImage] = useState('')
   const dispatch = useDispatch()
-  const history = useHistory()
   const webcamRef = useRef(null)
   const canvasRef = React.useRef()
-  const [studentId, setStudentId] = useState('')
-  const [err, setErr] = useState(false)
 
-  const videoHeight = 480
-  const videoWidth = 640
+  const videoHeight = 600
+  const videoWidth = 800
   const API_URL = process.env.REACT_APP_API_URL
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
@@ -33,24 +28,27 @@ export const WebcamData = () => {
     const action = addCaptureImage(imageSrc)
     dispatch(action)
   }, [webcamRef])
-  const handleChange = (e) => {
-    setStudentId(e.target.value)
-  }
+
   const verifyImage = (e) => {
     e.preventDefault()
-    if (studentId === '') {
-      setErr(true)
-      return
-    }
+    const err = !validate()
+    console.log('sfsdfd', err)
+
+    if (err) return
 
     fetch(image)
       .then((res) => res.blob())
       .then((blob) => {
-        const file = new File([blob], 'face.jpg', { type: 'image/jpg' })
+        const file = new File(
+          [blob],
+          "face.jpg",
+          { type: 'image/jpg' }
+        )
         let formData = new FormData()
-        const data = getVerifiedInfo()
         formData.append('file', file)
-        formData.append('studentId', data.studentId)
+        formData.append('studentId', input.studentId)
+        formData.append('type', input.type)
+        formData.append('name', input.name)
 
         axios
           .post(`${API_URL}/images/collect/data`, formData)
@@ -81,25 +79,8 @@ export const WebcamData = () => {
       })
   }
   return (
-    <div>
+    <>
       <div>
-        <div className='form-wrap'>
-          <form>
-            <div className='form-group'>
-              <label className='control-label mb-10 text-left'>MSSV</label>
-              <input
-                type='text'
-                className='form-control'
-                placeholder='Nhập MSSV'
-                name='MSSV'
-                onChange={handleChange}
-              />
-              {err && (
-                <div className='danger-block'>Không được dể trống</div>
-              )}
-            </div>
-          </form>
-        </div>
         <div
           style={{
             display: 'flex',
@@ -158,6 +139,6 @@ export const WebcamData = () => {
         )}
       </div>
       <ToastContainer />
-    </div>
+    </>
   )
 }

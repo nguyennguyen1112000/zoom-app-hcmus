@@ -76,7 +76,7 @@ function StudentList() {
               <div className='pull-right button-list'>
                 <button class='btn btn-success btn-lable-wrap left-label'>
                   <span class='btn-label'>
-                    <i class='fa fa-download'></i>
+                    <i class='fa fa-moodle'></i>
                   </span>
                   <span class='btn-text' onClick={downloadTemplate}>
                     Tải về template

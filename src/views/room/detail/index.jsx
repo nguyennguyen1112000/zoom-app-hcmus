@@ -197,7 +197,7 @@ function RoomDetail() {
               <div className='panel-body'>
                 <form className='form-horizontal' role='form'>
                   <div className='form-body'>
-                    <div className='row'>
+                    {/* <div className='row'>
                       <div className='col-md-8'>
                         <div className='form-group'>
                           <label className='control-label col-md-4 bold-title'>
@@ -208,12 +208,9 @@ function RoomDetail() {
                           </div>
                         </div>
                       </div>
-                      {/*/span*/}
-
-                      {/*/span*/}
-                    </div>
-                    {/* /Row */}
-                    <div className='row'>
+            
+                    </div> */}
+                    {/* <div className='row'>
                       <div className='col-md-8'>
                         <div className='form-group'>
                           <label className='control-label col-md-4 bold-title'>
@@ -224,9 +221,9 @@ function RoomDetail() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     {/* /Row */}
-                    <div className='row'>
+                    {/* <div className='row'>
                       <div className='col-md-8'>
                         <div className='form-group'>
                           <label className='control-label col-md-4 bold-title'>
@@ -237,7 +234,7 @@ function RoomDetail() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     {/* /Row */}
                     <div className='row'>
                       <div className='col-md-6'>
@@ -269,10 +266,7 @@ function RoomDetail() {
                               className='input-group date'
                               id='datetimepicker2'
                             >
-                              <input type='text' className='form-control' />
-                              <span className='input-group-addon'>
-                                <span className='fa fa-clock-o' />
-                              </span>
+                              07:40 AM
                             </div>
                           </div>
                         </div>
@@ -282,10 +276,10 @@ function RoomDetail() {
                       <div className='col-md-6'>
                         <div className='form-group'>
                           <label className='control-label col-md-3'>
-                            Thời gian kết thúc
+                            Dừng
                           </label>
                           <div className='col-md-9'>
-                            <div
+                            {/* <div
                               className='input-group date'
                               id='datetimepicker2'
                             >
@@ -293,7 +287,8 @@ function RoomDetail() {
                               <span className='input-group-addon'>
                                 <span className='fa fa-clock-o' />
                               </span>
-                            </div>
+                            </div> */}
+                            <button className='btn btn-square btn-danger'> <i className='fa fa-pause'></i></button>
                           </div>
                         </div>
                       </div>

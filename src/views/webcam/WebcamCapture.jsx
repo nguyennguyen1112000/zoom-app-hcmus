@@ -32,7 +32,7 @@ export const WebcamCapture = () => {
   }, [webcamRef])
   const verifyImage = (e) => {
     e.preventDefault()
-
+    
     fetch(image)
       .then((res) => res.blob())
       .then((blob) => {
