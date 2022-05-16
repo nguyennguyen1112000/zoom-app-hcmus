@@ -1,28 +1,27 @@
 import axios from 'axios'
 import React, { useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-//import "./cameraStyles.css";
-//import "../style/home.css";
 import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
+import { authHeader } from '../../helper/utils'
 const videoConstraints = {
-  width: 680,
+  width: 640,
   height: 480,
   facingMode: 'user'
 }
-export const WebcamCapture = (props) => {
-  const { roomId, studentId } = props
+
+export const WebcamDataPrivate = (props) => {
+  const { studentId} = props
+
   const [image, setImage] = useState('')
   const dispatch = useDispatch()
-  const history = useHistory()
   const webcamRef = useRef(null)
   const canvasRef = React.useRef()
-  const videoHeight = 480
-  const videoWidth = 640
+
+  const videoHeight = 600
+  const videoWidth = 800
   const API_URL = process.env.REACT_APP_API_URL
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
@@ -30,42 +29,50 @@ export const WebcamCapture = (props) => {
     const action = addCaptureImage(imageSrc)
     dispatch(action)
   }, [webcamRef])
-  const verifyImage = (e) => {
-    e.preventDefault()
 
+  const verifyImage = (e) => {
     fetch(image)
       .then((res) => res.blob())
       .then((blob) => {
-        const file = new File([blob], 'face.jpg', { type: 'image/jpg' })
+        const file = new File(
+          [blob],
+          "face.jpg",
+          { type: 'image/jpg' }
+        )
         let formData = new FormData()
         formData.append('file', file)
         formData.append('studentId', studentId)
-        formData.append('roomId', roomId)
+
         axios
-          .post(`${API_URL}/identity`, formData)
+          .post(`${API_URL}/images/collect/data/v1`, formData, authHeader())
           .then((res) => {
-            const identifiedRes = res.data
-            console.log(identifiedRes)
-            if (identifiedRes.status)
-              history.push(`/room/${roomId}/verify/result/${identifiedRes.id}`)
-            else
-              toast.error('Xác thực thất bại, vui lòng thử lại', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined
-              })
+            toast.success('Tải lên ảnh thành công', {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+            setImage('')
           })
+
           .catch((err) => {
-            console.log('err', err)
+            toast.error(err.response.data, {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
           })
       })
   }
   return (
-    <div>
+    <>
       <div>
         <div
           style={{
@@ -107,7 +114,7 @@ export const WebcamCapture = (props) => {
               onClick={verifyImage}
               className='btn btn-success  btn-icon right-icon'
             >
-              <span>Xác thực</span> <i className='fa fa-arrow-right' />{' '}
+              <span>Tải ảnh lên</span> <i className='fa fa-upload' />{' '}
             </button>
           </div>
         ) : (
@@ -125,6 +132,6 @@ export const WebcamCapture = (props) => {
         )}
       </div>
       <ToastContainer />
-    </div>
+    </>
   )
 }

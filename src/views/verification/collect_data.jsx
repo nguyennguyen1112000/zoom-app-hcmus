@@ -1,53 +1,46 @@
 import React from 'react'
-import { WebcamData } from '../webcam/WebcamData'
+import { useSelector } from 'react-redux'
+import { WebcamDataPrivate } from '../webcam/WebcamDataPrivate'
+
 function VerificationCollectData() {
+  const user = useSelector((state) => state.auth.currentUser)
   return (
-    <>
-      <header className='sp-header'>
-        <div className='sp-logo-wrap pull-left'>
-          <a href='index.html'>
-            <img
-              className='brand-img mr-10'
-              src='../img/logo.png'
-              alt='brand'
-            />
-            <span className='brand-text'>HCMUSID</span>
-          </a>
+    <div className='container-fluid'>
+      {/* Title */}
+      <div className='row heading-bg'>
+        <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
+          <h5 className='txt-dark'>Dữ liệu khuôn mặt</h5>
         </div>
-        <div className='clearfix' />
-      </header>
-      <div
-        className='page-wrapper pa-0 ma-0 auth-page'
-        style={{ minHeight: '420px' }}
-      >
-        <div className='container-fluid'>
-          {/* Row */}
-          <div
-            className='table-struct full-width full-height'
-            style={{ height: '420px' }}
-          >
-            <div className='table-cell vertical-align-middle auth-form-wrap'>
-              <div className='auth-form  ml-auto mr-auto no-float'>
-                <div className='row'>
-                  <div className='col-sm-12 col-xs-12'>
-                    <div className='mb-30'>
-                      <h3 className='text-center txt-dark mb-10'>
-                        Thu thập dữ liệu định danh
-                      </h3>
-                      <h6 className='text-center nonecase-font txt-grey'></h6>
-                    </div>
-                    <div className='form-wrap'>
-                      <WebcamData />
-                    </div>
-                  </div>
-                </div>
+        {/* Breadcrumb */}
+        <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
+          <ol className='breadcrumb'>
+            <li>
+              <a href='index.html'>{user?.studentId}</a>
+            </li>
+
+            <li className='active'>
+              <span>Thu thập dữ liệu định danh</span>
+            </li>
+          </ol>
+        </div>
+        {/* /Breadcrumb */}
+      </div>
+      {/* /Title */}
+      {/* Row */}
+      <div className='row'>
+        <div className='col-lg-12'>
+          <div className='panel panel-default card-view'>
+            <div className='panel-heading'></div>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body'>
+                <WebcamDataPrivate studentId={user?.studentId} />
               </div>
             </div>
           </div>
-          {/* /Row */}
         </div>
       </div>
-    </>
+      {/* /Row */}
+    </div>
   )
 }
 

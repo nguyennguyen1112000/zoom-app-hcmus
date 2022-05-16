@@ -22,7 +22,25 @@ export const getRooms = () => {
       })
   }
 }
-
+export const getMyRooms = () => {
+  return (dispatch) => {
+    return axios
+      .get(`${API_URL}/rooms/me`, authHeader())
+      .then((res) => {
+        const roomList = res.data
+        const action = getAllRooms(roomList)
+        dispatch(action)
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          const logoutAction = userLogout()
+          logOut()
+          dispatch(logoutAction)
+        }
+        console.log('Fail to get data of zoom rooms')
+      })
+  }
+}
 export const getRoom = (roomId, role) => {
   return (dispatch) => {
     if(role !== "student")

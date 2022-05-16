@@ -17,10 +17,7 @@ import RoomList from './views/room/list'
 import RoomDetail from './views/room/detail'
 import ExaminationStaffList from './views/examination_staff/list'
 import StudentDetail from './views/student/detail'
-import { WebcamCapture } from './views/webcam/WebcamCapture'
-import VerificationStep1 from './views/verification/step1'
-import VerificationStep2 from './views/verification/step2'
-import VerificationResult from './views/verification/result'
+
 import VerificationCollectData from './views/verification/collect_data'
 import RealtimeVerify from './views/verification/realtime_verify'
 import { Route } from 'react-router-dom'
@@ -28,6 +25,9 @@ import { Redirect } from 'react-router-dom'
 import PageNotFound from './views/errorPage/pageNotFound'
 import { Switch } from 'react-router-dom'
 import FaceData from './views/data/FaceData'
+import StudentVerificationS1 from './views/verification/step2'
+import StudentVerificationResult from './views/verification/result'
+import Profile from './views/profile/index'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -54,24 +54,19 @@ function App() {
           path='/data/collect'
           exact
         />
-        <PublicRoute
+        {/* <PublicRoute
           restricted={false}
           component={VerificationStep2}
           path='/verify/s2'
           exact
-        />
-        <PublicRoute
+        /> */}
+        {/* <PublicRoute
           restricted={false}
           component={VerificationResult}
           path='/verify/result/:id'
           exact
-        />
-        <PublicRoute
-          restricted={false}
-          component={VerificationCollectData}
-          path='/verify/data'
-          exact
-        />
+        /> */}
+
         {logIn && (
           <div className='page-wrapper'>
             {logIn && <NavBar />}
@@ -81,7 +76,18 @@ function App() {
 
             <PrivateRoute component={StudentDetail} path='/student/:id' exact />
             <PrivateRoute component={RoomList} path='/room' exact />
+            <PrivateRoute
+              component={StudentVerificationS1}
+              path='/room/:id/verify/s1'
+              exact
+            />
             <PrivateRoute component={RoomDetail} path='/room/:id' exact />
+
+            <PrivateRoute
+              component={StudentVerificationResult}
+              path='/room/:id/verify/result/:resultId'
+              exact
+            />
             <PrivateRoute
               component={ExaminationStaffList}
               path='/examination_staff'
@@ -92,6 +98,12 @@ function App() {
               path='/verify/room/:id'
               exact
             />
+            <PrivateRoute
+              component={VerificationCollectData}
+              path='/verify/data'
+              exact
+            />
+            <PrivateRoute component={Profile} path='/profile' exact />
 
             {/* <PublicRoute
           restricted={false}

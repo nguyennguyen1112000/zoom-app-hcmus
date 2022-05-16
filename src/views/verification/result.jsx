@@ -9,173 +9,112 @@ import { getIdentity } from '../../services/api/client'
 import { WebcamCapture } from '../webcam/WebcamCapture'
 
 function VerificationResult() {
-  let { id } = useParams()
+  let { resultId , id} = useParams()
   const dispatch = useDispatch()
   useEffect(() => {
-    if (id) dispatch(getIdentity(id))
-  }, [dispatch, id])
+    if (resultId) dispatch(getIdentity(resultId))
+  }, [dispatch, resultId])
   const identity = useSelector((state) => state.client.identityResult)
-  console.log(identity)
+  const user = useSelector((state) => state.auth.currentUser)
   return (
-    <>
-      <header className='sp-header'>
-        <div className='sp-logo-wrap pull-left'>
-          <a href='index.html'>
-            <img className='brand-img mr-10' src='/img/logo.png' alt='brand' />
-            <span className='brand-text'>HCMUSID</span>
-          </a>
+    <div className='container-fluid'>
+      {/* Title */}
+      <div className='row heading-bg'>
+        <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
+          <h5 className='txt-dark'>Kết quả điểm danh</h5>
         </div>
-        <div className='clearfix' />
-      </header>
-      <div
-        className='page-wrapper pa-0 ma-0 auth-page'
-        style={{ minHeight: '420px' }}
-      >
-        <div className='container-fluid'>
-          {/* Row */}
-          <div
-            className='table-struct full-width full-height'
-            style={{ height: '420px' }}
-          >
-            <div className='table-cell vertical-align-middle auth-form-wrap'>
-              <div className='auth-form  ml-auto mr-auto no-float'>
-                <div className='row'>
-                  <div className='col-sm-12 col-xs-12'>
-                    <div className='mb-30'>
-                      <h3 className='text-center txt-dark mb-10'>
-                        Kết quả định danh
-                      </h3>
-                      <h6 className='text-center nonecase-font txt-grey'></h6>
-                    </div>
-                    <div className='form-wrap'>
-                      <div className='panel panel-default card-view'>
-                        <div className='panel-wrapper collapse in'>
-                          <div className='panel-body row pa-0'>
-                            <div className='table-wrap'>
-                              <div className='table-responsive'>
-                                <table className='table table-hover mb-0'>
-                                  {identity && (
-                                    <tbody>
-                                      <tr>
-                                        <td>MSSV</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-danger'
-                                              style={{ width: '35%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>{identity.studentId}</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Email</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-warning'
-                                              style={{ width: '50%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>{identity.zoomEmail}</td>
-                                      </tr>
-                                      <tr>
-                                        <td>ZoomId</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-success'
-                                              style={{ width: '100%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>{identity.room.zoomId}</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Link zoom</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-primary'
-                                              style={{ width: '70%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>{identity.room.url}</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Mã môn thi</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-primary'
-                                              style={{ width: '85%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          {identity.room.subject.subjectCode}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>Môn thi</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-warning'
-                                              style={{ width: '50%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>{identity.room.subject.name}</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Phòng thi</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-warning'
-                                              style={{ width: '50%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>{identity.room.roomCode}</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Thời gian định danh</td>
-                                        <td>
-                                          <div className='progress progress-xs mb-0 '>
-                                            <div
-                                              className='progress-bar progress-bar-danger'
-                                              style={{ width: '70%' }}
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          {formatTime(
-                                            new Date(identity.created_at)
-                                          )}
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  )}
-                                </table>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        {/* Breadcrumb */}
+        <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
+          <ol className='breadcrumb'>
+            <li>
+              <a href='index.html'>{user?.studentId}</a>
+            </li>
+            <li>
+              <a href={`/room/${id}`}>
+                <span>Kết quả điểm danh</span>
+              </a>
+            </li>
+            <li className='active'>
+              <span>{identity?.id}</span>
+            </li>
+          </ol>
+        </div>
+        {/* /Breadcrumb */}
+      </div>
+      {/* /Title */}
+      {/* Row */}
+      <div className='row'>
+        <div className='col-md-6'>
+          <div className='panel panel-default card-view'>
+            <div className='panel-heading'>
+              <div className='pull-left'>
+                <h6 className='panel-title txt-dark'>Thông tin chi tiết</h6>
+              </div>
+              <div className='clearfix' />
+            </div>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body'>
+                <p className='muted'>
+                  MSSV <code>{identity?.studentId}</code>
+                </p>
+                <p className='muted'>
+                  Email <code>{identity?.email}</code>
+                </p>
+                <p className='muted'>
+                  Phòng thi{' '}
+                  <a href={`/room/${identity?.room.id}`}>
+                    {' '}
+                    <code>{identity?.room?.name}</code>
+                  </a>
+                </p>
+                <p className='muted'>
+                  Mã phòng thi <code>{identity?.room?.roomCode}</code>
+                </p>
+                <p className='muted'>
+                  Zoom ID <code>{identity?.room?.zoomId}</code>
+                </p>
+                <p className='muted'>
+                  Môn thi <code>{identity?.room?.name}</code>
+                </p>
+                <p className='muted'>
+                  Thời gian điểm danh{' '}
+                  <code>
+                    {formatTime(new Date(identity?.created_at))}
+                  </code>
+                  .
+                </p>
               </div>
             </div>
           </div>
-          {/* /Row */}
+        </div>
+        <div className='col-md-6'>
+          <div className='panel panel-default card-view'>
+            <div className='panel-heading'>
+              <div className='pull-left'>
+                <h6 className='panel-title txt-dark'>Hình ảnh điểm danh</h6>
+              </div>
+              <div className='clearfix' />
+            </div>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body'>
+                <div
+                  id='carousel-example-captions-1'
+                  data-ride='carousel'
+                  className='carousel slide'
+                >
+                  <img
+                    src={identity?.faceImage.fetchUrl}
+                    alt='Ảnh khuôn mặt điểm danh'
+                    style={{ width: '580px' }}
+                  />
+                </div>
+                {/* END carousel*/}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

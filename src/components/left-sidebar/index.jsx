@@ -12,7 +12,6 @@ function LeftSideBar() {
     logOut()
   }
   const user = useSelector((state) => state.auth.currentUser)
-console.log('usser',user);
 
   return (
     <div className='fixed-sidebar-left'>
@@ -197,31 +196,7 @@ console.log('usser',user);
           </li>
           <li>
             <a
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#icon_dr1'
-            >
-              <div className='pull-left'>
-                <i className='zmdi zmdi-iridescent mr-20' />
-                <span className='right-nav-text'>Hôm nay</span>
-              </div>
-              <div className='pull-right'>
-                <i className='zmdi zmdi-caret-down' />
-              </div>
-              <div className='clearfix' />
-            </a>
-            <ul id='icon_dr1' className='collapse collapse-level-1'>
-              <li>
-                <a href='fontawesome.html'>Thi CK Lập trình hướng đối tượng</a>
-              </li>
-              <li>
-                <a href='themify.html'>Thi CK Lập trình Web</a>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a
-              href='javascript:void(0);'
+              href='/verify/data'
               data-toggle='collapse'
               data-target='#table_dr'
             >

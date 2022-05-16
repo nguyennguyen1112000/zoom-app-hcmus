@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getRooms } from '../../../services/api/room'
+import { getMyRooms, getRooms } from '../../../services/api/room'
 function RoomList() {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.currentUser)
   useEffect(() => {
-    dispatch(getRooms())
-  }, [dispatch])
-  
+    if (user.role === 'student') {
+      dispatch(getMyRooms())
+    } else dispatch(getRooms())
+  }, [dispatch, user])
+
   const roomList = useSelector((state) => state.room.roomList)
-  const renderStudentRoom = () => {
+  const renderRooms = () => {
     return (
       <div className='container-fluid'>
         {/* Title */}
@@ -333,113 +335,99 @@ function RoomList() {
       </div>
     )
   }
-  
-  if (user.role != 'student') return renderStudentRoom()
-  else return (
-    <div className='container-fluid'>
-      {/* Title */}
-      <div className='row heading-bg'>
-        <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-          <h5 className='txt-dark'>Phòng thi của tôi</h5>
-        </div>
-        {/* Breadcrumb */}
-        <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
-          <ol className='breadcrumb'>
-            <li>
-              <a href='index.html'>HCMUSID</a>
-            </li>
 
-            <li className='active'>
-              <span>Danh sách phòng thi</span>
-            </li>
-          </ol>
-        </div>
-        {/* /Breadcrumb */}
-      </div>
-      {/* /Title */}
-      {/* Row */}
-      <div className='row'>
-        <div className='col-lg-12'>
-          <div className='panel panel-default card-view'>
-            <div className='panel-wrapper collapse in'>
-              <div className='panel-body'>
-                <div className='table-wrap mb-0'>
-                  <div className='table-responsive'>
-                    <table className='table  display table-hover mb-0'>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Tên phòng </th>
-                          <th>Phòng thi</th>
-                          <th>ZoomId </th>
-                          <th>Passcode</th>
-                          <th>Link</th>
-                          <th>Mã môn học</th>
-                          <th>Mã lớp</th>
-                          <th>Ngày thi</th>
-                          <th>Giờ thi</th>
-                          <th>Trạng thái</th>
-                        </tr>
-                      </thead>
+  if (user.role != 'student') return renderRooms()
+  else
+    return (
+      <div className='container-fluid'>
+        {/* Title */}
+        <div className='row heading-bg'>
+          <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
+            <h5 className='txt-dark'>Phòng thi của tôi</h5>
+          </div>
+          {/* Breadcrumb */}
+          <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
+            <ol className='breadcrumb'>
+              <li>
+                <a href='index.html'>HCMUSID</a>
+              </li>
 
-                      <tbody>
-                        <tr className='text-primary font-weight-bold'>
-                          <td>1</td>
-                          <td>Thi Phương Pháp tính cuối kì</td>
-                          <td>P01</td>
-                          <td>7447311234</td>
-                          <td>
-                            123456 <i className='fa fa-eye'></i>
-                          </td>
-                          <td>
-                            <a href='/'>Vào phòng</a>
-                          </td>
-                          <td>BAA00101</td>
-                          <td>21CLC01</td>
-                          <td>Hôm nay</td>
-                          <td>07:45 AM</td>
-                          <td>
-                            {' '}
-                            <span className='label label-danger'>
-                              {' '}
-                              Chưa định danh{' '}
-                            </span>
-                          </td>
-                        </tr>
-                        <tr >
-                          <td>2</td>
-                          <td>Thi Hệ điều hành cuối kì</td>
-                          <td>P03</td>
-                          <td>7447311234</td>
-                          <td>
-                            6hg0d <i className='fa fa-eye'></i>
-                          </td>
-                          <td>
-                            <a href='/'>Vào phòng</a>
-                          </td>
-                          <td>BAA00101</td>
-                          <td>21CLC01</td>
-                          <td>13/05/2022</td>
-                          <td>09:45 AM</td>
-                          <td>
-                            {' '}
-                            <span className='label label-warning'>
-                              Chưa bắt đầu
-                            </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+              <li className='active'>
+                <span>Danh sách phòng thi</span>
+              </li>
+            </ol>
+          </div>
+          {/* /Breadcrumb */}
+        </div>
+        {/* /Title */}
+        {/* Row */}
+        <div className='row'>
+          <div className='col-lg-12'>
+            <div className='panel panel-default card-view'>
+              <div className='panel-wrapper collapse in'>
+                <div className='panel-body'>
+                  <div className='table-wrap mb-0'>
+                    <div className='table-responsive'>
+                      <table className='table  display table-hover mb-0'>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Tên phòng </th>
+                            <th>Phòng thi</th>
+                            <th>ZoomId </th>
+                            <th>Passcode</th>
+                            <th>Link</th>
+                            <th>Mã môn học</th>
+                            <th>Mã lớp</th>
+                            <th>Ngày thi</th>
+                            <th>Giờ thi</th>
+                            <th>Trạng thái</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {roomList &&
+                            roomList.map((room, index) => (
+                              <tr className='text-primary font-weight-bold'>
+                                <td>{index + 1}</td>
+                                <td>
+                                  <a href={`/room/${room.id}`}>
+                                    {room.subject.name}
+                                  </a>
+                                </td>
+                                <td>{room.roomCode}</td>
+                                <td>{room.zoomId}</td>
+                                <td>
+                                  {room.passcode} <i className='fa fa-eye'></i>
+                                </td>
+                                <td>
+                                  <a href={room.url}>Vào phòng</a>
+                                </td>
+                                <td>{room.subject.subjectCode}</td>
+                                <td>{room.subject.classCode}</td>
+                                <td>{room.subject.examDate}</td>
+                                <td>{room.subject.startTime}</td>
+                                <td>
+                                  {' '}
+                                  <span className='label label-danger'>
+                                    {' '}
+                                    Chưa định danh{' '}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {/* /Row */}
       </div>
-      {/* /Row */}
-    </div>
-  )
+    )
 }
 
 export default RoomList

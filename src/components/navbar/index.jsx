@@ -297,7 +297,7 @@ function NavBar() {
               data-dropdown-out='flipOutX'
             >
               <li>
-                <a href='profile.html'>
+                <a href='/profile'>
                   <i className='zmdi zmdi-account' />
                   <span>Hồ sơ</span>
                 </a>
