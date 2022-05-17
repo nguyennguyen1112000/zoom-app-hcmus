@@ -24,6 +24,7 @@ export const WebcamCapture = (props) => {
   const videoHeight = 480
   const videoWidth = 640
   const API_URL = process.env.REACT_APP_API_URL
+  const [isLoading, setIsLoading] = useState(false)
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
     setImage(imageSrc)
@@ -32,7 +33,6 @@ export const WebcamCapture = (props) => {
   }, [webcamRef])
   const verifyImage = (e) => {
     e.preventDefault()
-
     fetch(image)
       .then((res) => res.blob())
       .then((blob) => {
@@ -41,9 +41,11 @@ export const WebcamCapture = (props) => {
         formData.append('file', file)
         formData.append('studentId', studentId)
         formData.append('roomId', roomId)
+        setIsLoading(true)
         axios
           .post(`${API_URL}/identity`, formData)
           .then((res) => {
+            setIsLoading(false)
             const identifiedRes = res.data
             console.log(identifiedRes)
             if (identifiedRes.status)
