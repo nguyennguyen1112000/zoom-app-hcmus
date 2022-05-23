@@ -62,7 +62,7 @@ function SubjectList() {
   const uploadFile = (e) => {
     const formData = new FormData()
     //console.log('e.target.value', e.target.file)
-    
+
     formData.append('file', e.target.files[0])
     axios
       .post(`${API_URL}/subjects/upload`, formData, authHeader())
@@ -79,6 +79,14 @@ function SubjectList() {
         })
         setReload(!reload)
       })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  const handleSync = (e) => {
+    axios
+      .post(`${API_URL}/moodles/sync`, null, authHeader())
+      .then((res) => {})
       .catch((err) => {
         console.log(err)
       })
@@ -113,7 +121,7 @@ function SubjectList() {
             <div className='panel-heading'>
               <div className='pull-right button-list'>
                 <button class='btn btn-default '>
-                  <span class='btn-text'>
+                  <span class='btn-text' onClick={handleSync}>
                     Đồng bộ Moodle
                   </span>
                 </button>
