@@ -13,7 +13,7 @@ export const getRooms = () => {
         dispatch(action)
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)

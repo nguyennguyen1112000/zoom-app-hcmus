@@ -56,7 +56,7 @@ function LeftSideBar() {
             >
               <div className='pull-left'>
                 <i className='fa fa-th-large mr-20' />
-                <span className='right-nav-text'>Phòng Zoom</span>
+                <span className='right-nav-text'>Phòng thi</span>
               </div>
               <div className='pull-right'>
                 <i className='zmdi zmdi-caret-down' />
@@ -69,9 +69,7 @@ function LeftSideBar() {
                   Danh sách
                 </a>
               </li>
-              <li>
-                <a href='index2.html'>Hướng dẫn</a>
-              </li>
+             
             </ul>
           </li>
           <li>
@@ -218,7 +216,7 @@ function LeftSideBar() {
           </li>
           <li>
             <a
-              href='javascript:void(0);'
+              href='/profile'
               data-toggle='collapse'
               data-target='#table_profile'
             >

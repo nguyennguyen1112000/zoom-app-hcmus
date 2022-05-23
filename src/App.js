@@ -28,6 +28,9 @@ import FaceData from './views/data/FaceData'
 import StudentVerificationS1 from './views/verification/step2'
 import StudentVerificationResult from './views/verification/result'
 import Profile from './views/profile/index'
+import SubjectList from './views/subject/list'
+import CreateSubject from './views/subject/create'
+import EditSubject from './views/subject/edit'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -73,16 +76,30 @@ function App() {
             {logIn && <VerticalNav />}
             <PrivateRoute component={StudentList} path='/' exact />
             <PrivateRoute component={StudentList} path='/student' exact />
-
             <PrivateRoute component={StudentDetail} path='/student/:id' exact />
             <PrivateRoute component={RoomList} path='/room' exact />
+            <PrivateRoute component={SubjectList} path='/subject' exact />
+            <PrivateRoute
+              component={CreateSubject}
+              path='/subject/create'
+              exact
+            />
+            <PrivateRoute
+              component={EditSubject}
+              path='/subject/update/:id'
+              exact
+            />
             <PrivateRoute
               component={StudentVerificationS1}
               path='/room/:id/verify/s1'
               exact
             />
+            <PrivateRoute
+              component={RealtimeVerify}
+              path='/room/:id/verify/now'
+              exact
+            />
             <PrivateRoute component={RoomDetail} path='/room/:id' exact />
-
             <PrivateRoute
               component={StudentVerificationResult}
               path='/room/:id/verify/result/:resultId'
@@ -104,7 +121,6 @@ function App() {
               exact
             />
             <PrivateRoute component={Profile} path='/profile' exact />
-
             {/* <PublicRoute
           restricted={false}
           component={VerifyAccount}

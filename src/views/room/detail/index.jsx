@@ -3,17 +3,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { formatDate, formatTime } from '../../../helper/utils'
 import { getRoom } from '../../../services/api/room'
-
+import { getIdentityResults } from '../../../services/api/student'
 function RoomDetail() {
   const dispatch = useDispatch()
   const [mode, setMode] = useState({ checkInConfig: false })
   let { id } = useParams()
   const user = useSelector((state) => state.auth.currentUser)
   useEffect(() => {
-    if (id) dispatch(getRoom(id))
+    if (id) {
+      dispatch(getRoom(id))
+      dispatch(getIdentityResults(id))
+    }
   }, [dispatch, id])
   const currentRoom = useSelector((state) => state.room.currentRoom)
-  console.log('student', currentRoom)
+  const records = useSelector((state) => state.student.identityResults)
+
   const handleChangeMode = (e) => {
     const buttonType = e.currentTarget.getAttribute('data-button')
     switch (buttonType) {
@@ -91,6 +95,12 @@ function RoomDetail() {
                             <td className='table-title-cell'>Phòng thi</td>
                             <td colSpan={7}>{currentRoom.roomCode}</td>
                           </tr>
+                          <tr>
+                            <td className='table-title-cell'>Giờ thi</td>
+                            <td colSpan={7}>
+                              {currentRoom.subject?.startTime} - {formatDate(new Date(currentRoom.subject.examDate))}
+                            </td>
+                          </tr>
 
                           <tr>
                             <th className='table-title-cell'>Ghi chú</th>
@@ -160,7 +170,12 @@ function RoomDetail() {
                           <div class='col-md-6'>
                             <div class='row'>
                               <div class='col-md-offset-3 col-md-9'>
-                                <a class='btn btn-success  mr-10' href={`/room/${currentRoom?.id}/verify/s1`}>Điểm danh</a>
+                                <a
+                                  class='btn btn-success  mr-10'
+                                  href={`/room/${currentRoom?.id}/verify/s1`}
+                                >
+                                  Điểm danh
+                                </a>
                               </div>
                             </div>
                           </div>
@@ -182,27 +197,6 @@ function RoomDetail() {
                 <div className='pull-left'>
                   <h6 className='panel-title txt-dark'>Kết quả điểm danh</h6>
                 </div>
-                <div className='pull-right button-list'>
-                  <button class='btn btn-success btn-lable-wrap left-label'>
-                    <span class='btn-label'>
-                      <i class='fa fa-download'></i>
-                    </span>
-                    <span class='btn-text'>Tải về template</span>
-                  </button>
-                  <button class='btn btn-danger btn-lable-wrap left-label'>
-                    <span class='btn-label'>
-                      <i class='fa fa-upload'></i>
-                    </span>
-                    <span class='btn-text'>Tải lên file sinh viên</span>
-                  </button>
-                  <button class='btn btn-primary btn-lable-wrap left-label'>
-                    <span class='btn-label'>
-                      <i class='fa fa-plus'></i>{' '}
-                    </span>
-                    <span class='btn-text'>Thêm sinh viên</span>
-                  </button>
-                </div>
-                <div className='clearfix' />
               </div>
               <div className='panel-wrapper collapse in'>
                 <div className='panel-body'>
@@ -211,71 +205,40 @@ function RoomDetail() {
                       <table className='table  display table-hover mb-30'>
                         <thead>
                           <tr>
-                            <th>#</th>
-                            <th>Họ và tên</th>
-                            <th>MSSV</th>
-                            <th>Ngày sinh</th>
-                            <th>Giới tính</th>
-                            <th>Dữ liệu khuôn mặt</th>
+                            <th> Lần</th>
+                            <th>Mã định danh</th>
+                            <th>Thời gian điểm danh</th>
+                            <th>Trạng thái</th>
+                            <th>Ảnh khuôn mặt</th>
                             <th>Thẻ định danh</th>
-                            <th>Tác vụ</th>
                           </tr>
                         </thead>
 
                         <tbody>
-                          {currentRoom &&
-                            currentRoom.students &&
-                            currentRoom.students.map((student, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>
-                                  {student.firstName + ' ' + student.lastName}
-                                </td>
-                                <td>{student.studentId}</td>
-                                <td>
-                                  {formatDate(new Date(student.birthday))}
-                                </td>
-                                <td>{student.gender ? 'Nam' : 'Nữ'}</td>
-                                <td>
-                                  {student.images &&
-                                  student.images.length > 0 &&
-                                  student.images.some(
-                                    (img) => img.type === 'face_data'
-                                  ) ? (
-                                    <span className='label label-success'>
-                                      Đã upload
-                                    </span>
-                                  ) : (
-                                    <span className='label label-danger'>
-                                      Chưa có
-                                    </span>
-                                  )}
-                                </td>
-                                <td>
-                                  {student.images &&
-                                  student.images.length > 0 &&
-                                  student.images.some(
-                                    (img) => img.type === 'id_card'
-                                  ) ? (
-                                    <span className='label label-success'>
-                                      Đã upload
-                                    </span>
-                                  ) : (
-                                    <span className='label label-danger'>
-                                      Chưa có
-                                    </span>
-                                  )}
-                                </td>
-                                <td>
-                                  <a
-                                    href='javascript:void(0)'
-                                    data-toggle='tooltip'
-                                  >
-                                    <i className='zmdi zmdi-delete txt-danger' />
-                                  </a>
-                                </td>
-                              </tr>
-                            ))}
+                          {records?.map((record, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{record.id}</td>
+                              <td>{formatTime(new Date(record.created_at))}</td>
+                              <td>
+                                {record.status ? (
+                                  <span class='label label-success'>
+                                    Thành công
+                                  </span>
+                                ) : (
+                                  <span class='label label-danger'>
+                                    Thất bại
+                                  </span>
+                                )}
+                              </td>
+                              <td>
+                                <a href={record.faceImage?.imageUrl}>Xem</a>
+                              </td>
+                              <td>
+                                <a href={record.faceImage?.imageUrl}>Xem</a>
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>

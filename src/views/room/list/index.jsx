@@ -1,16 +1,115 @@
-import React, { useEffect } from 'react'
+/* eslint-disable no-undef */
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getMyRooms, getRooms } from '../../../services/api/room'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import axios from 'axios'
+import { authHeader, tConv24 } from '../../../helper/utils'
+const API_URL = process.env.REACT_APP_API_URL
 function RoomList() {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.currentUser)
-  useEffect(() => {
-    if (user.role === 'student') {
-      dispatch(getMyRooms())
-    } else dispatch(getRooms())
-  }, [dispatch, user])
 
   const roomList = useSelector((state) => state.room.roomList)
+  const [reload, setReload] = useState(false)
+  const [select, setSelect] = useState([])
+  useEffect(() => {
+    setTimeout(() => {
+      $('#datable_1').DataTable().destroy()
+      if (user.role === 'student') {
+        dispatch(getMyRooms())
+      } else dispatch(getRooms())
+    }, 2000)
+  }, [reload])
+  useEffect(() => {
+    $('#datable_1').DataTable()
+  }, [roomList, reload])
+  const downloadTemplate = (e) => {
+    e.preventDefault()
+    const downloadLink = `${API_URL}/rooms/template`
+    const a = document.createElement('a')
+    a.href = downloadLink
+    a.click()
+  }
+  const handleSelect = (e) => {
+    const index = e.currentTarget.getAttribute('index')
+    const checked = e.target.checked
+    if (checked) setSelect([...select, parseInt(index)])
+    else setSelect(select.filter((x) => x != parseInt(index)))
+  }
+  const handleSelectAll = (e) => {
+    const checked = e.target.checked
+    if (checked) setSelect(roomList.map((room) => room.id))
+    else setSelect([])
+  }
+  const isChecked = (index) => {
+    return select.includes(index)
+  }
+  const handleDelete = (e) => {
+    e.preventDefault()
+    console.log('selects', select)
+
+    axios
+      .delete(
+        `${API_URL}/rooms`,
+        {
+          data: select,
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+          }
+        },
+      )
+      .then((res) => {
+        toast.success('Xóa thành công', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+        setReload(!reload)
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+        console.log(err.response.data.message)
+      })
+  }
+
+  const uploadFile = (e) => {
+    const formData = new FormData()
+    //console.log('e.target.value', e.target.file)
+
+    formData.append('file', e.target.files[0])
+    axios
+      .post(`${API_URL}/rooms/upload`, formData, authHeader())
+      .then((res) => {
+        e.target.value = null
+        toast.success('Đăng tải thành công', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+        setReload(!reload)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
   const renderRooms = () => {
     return (
       <div className='container-fluid'>
@@ -39,24 +138,46 @@ function RoomList() {
           <div className='col-lg-12'>
             <div className='panel panel-default card-view'>
               <div className='panel-heading'>
+                {select.length > 0 && (
+                  <div className='pull-left button-list'>
+                    <button class='btn btn-danger btn-lable-wrap left-label'>
+                      <span class='btn-label'>
+                        <i class='fa fa-trash'></i>
+                      </span>
+                      <span class='btn-text' onClick={handleDelete}>
+                        Xóa đã chọn
+                      </span>
+                    </button>
+                  </div>
+                )}
                 <div className='pull-right button-list'>
                   <button class='btn btn-success btn-lable-wrap left-label'>
                     <span class='btn-label'>
                       <i class='fa fa-download'></i>
                     </span>
-                    <span class='btn-text'>Tải về template</span>
+                    <span class='btn-text' onClick={downloadTemplate}>
+                      template
+                    </span>
                   </button>
-                  <button class='btn btn-danger btn-lable-wrap left-label'>
+                  <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
                     <span class='btn-label'>
                       <i class='fa fa-upload'></i>
                     </span>
-                    <span class='btn-text'>Tải lên file</span>
+                    <span class='btn-text' for='file_upload'>
+                      Tải lên file
+                    </span>
+                    <input
+                      id='file_upload'
+                      type='file'
+                      className='upload'
+                      onChange={uploadFile}
+                    />
                   </button>
                   <button class='btn btn-primary btn-lable-wrap left-label'>
                     <span class='btn-label'>
                       <i class='fa fa-plus'></i>{' '}
                     </span>
-                    <span class='btn-text'>Thêm thông tin phòng thi</span>
+                    <span class='btn-text'>Thêm phòng thi</span>
                   </button>
                   <button class='btn btn-primary btn-lable-wrap left-label'>
                     <span class='btn-label'>
@@ -71,10 +192,24 @@ function RoomList() {
                 <div className='panel-body'>
                   <div className='table-wrap mb-0'>
                     <div className='table-responsive'>
-                      <table className='table  display table-hover'>
+                      <table
+                        id='datable_1'
+                        className='table table-hover display  pb-30'
+                      >
                         <thead>
                           <tr>
+                            <th>
+                              {roomList && (
+                                <input
+                                  type='checkbox'
+                                  name='checkbox'
+                                  index='all'
+                                  onChange={handleSelectAll}
+                                />
+                              )}
+                            </th>
                             <th>#</th>
+
                             <th>Tên phòng </th>
                             <th>Phòng thi</th>
                             <th>ZoomId </th>
@@ -91,237 +226,58 @@ function RoomList() {
                         </thead>
 
                         <tbody>
-                          {/* {roomList &&
-                            roomList.map((room, index) => (
-                              <tr>
-                                <td>{index + 1}</td>
-                                <td>{room.name}</td>
-                                <td>{room.roomCode}</td>
-                                <td>{room.zoomId}</td>
-                                <td>{room.passcode}</td>
-                                <td>
-                                  <a href={room.url}>Mở</a>
-                                </td>
-                                <td>{room.subject.subjectCode}</td>
-                                <td>{room.subject.classCode}</td>
-                                <td> 13/05/2022</td>
-                                <td>07:45 AM</td>
-                                <td>20</td>
-                                <td>
-                                  <span className='label label-danger'>
-                                    Đã kết thúc
-                                  </span>
-                                </td>
-                                <td>
-                                  <a
-                                    href='javascript:void(0)'
-                                    className='text-inverse pr-10'
-                                    title='Edit'
-                                    data-toggle='tooltip'
-                                  >
-                                    <i className='zmdi zmdi-edit txt-warning' />
-                                  </a>
-                                  <a
-                                    href='javascript:void(0)'
-                                    className='text-inverse'
-                                    title='Delete'
-                                    data-toggle='tooltip'
-                                  >
-                                    <i className='zmdi zmdi-delete txt-danger' />
-                                  </a>
-                                </td>
-                              </tr>
-                            ))} */}
-                          <tr>
-                            <td>1</td>
-                            <td>Thi cuối kì Di truyền</td>
-                            <td>BIO10011</td>
-                            <td>7447311234</td>
-                            <td>035172</td>
-                            <td>
-                              <a href='/'>Mở</a>
-                            </td>
-                            <td>BIO10011</td>
-                            <td>20SHH1</td>
-                            <td>13/05/2022</td>
-                            <td>07:45 AM</td>
-                            <td>20</td>
-                            <td>
-                              <span className='label label-success'>
-                                Đang điểm danh
-                              </span>
-                            </td>
-                            <td>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse pr-10'
-                                title='Edit'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-edit txt-warning' />
-                              </a>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse'
-                                title='Delete'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-delete txt-danger' />
-                              </a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>1</td>
-                            <td>Thi cuối kì Di truyền</td>
-                            <td>BIO10011</td>
-                            <td>7447311234</td>
-                            <td>035172</td>
-                            <td>
-                              <a href='/'>Mở</a>
-                            </td>
-                            <td>BIO10011</td>
-                            <td>20SHH1</td>
-                            <td>13/05/2022</td>
-                            <td>07:45 AM</td>
-                            <td>20</td>
-                            <td>
-                              <span className='label label-primary'>
-                                Đang thi
-                              </span>
-                            </td>
-                            <td>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse pr-10'
-                                title='Edit'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-edit txt-warning' />
-                              </a>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse'
-                                title='Delete'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-delete txt-danger' />
-                              </a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>1</td>
-                            <td>Thi cuối kì Di truyền</td>
-                            <td>BIO10011</td>
-                            <td>7447311234</td>
-                            <td>035172</td>
-                            <td>
-                              <a href='/'>Mở</a>
-                            </td>
-                            <td>BIO10011</td>
-                            <td>20SHH1</td>
-                            <td>13/05/2022</td>
-                            <td>07:45 AM</td>
-                            <td>20</td>
-                            <td>
-                              <span className='label label-success'>
-                                Đang điểm danh
-                              </span>
-                            </td>
-                            <td>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse pr-10'
-                                title='Edit'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-edit txt-warning' />
-                              </a>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse'
-                                title='Delete'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-delete txt-danger' />
-                              </a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>1</td>
-                            <td>Thi cuối kì Di truyền</td>
-                            <td>BIO10011</td>
-                            <td>7447311234</td>
-                            <td>035172</td>
-                            <td>
-                              <a href='/'>Mở</a>
-                            </td>
-                            <td>BIO10011</td>
-                            <td>20SHH1</td>
-                            <td>13/05/2022</td>
-                            <td>07:45 AM</td>
-                            <td>20</td>
-                            <td>
-                              <span className='label label-default'>
-                                Chưa bắt đầu
-                              </span>
-                            </td>
-                            <td>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse pr-10'
-                                title='Edit'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-edit txt-warning' />
-                              </a>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse'
-                                title='Delete'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-delete txt-danger' />
-                              </a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>1</td>
-                            <td>Thi cuối kì Di truyền</td>
-                            <td>BIO10011</td>
-                            <td>7447311234</td>
-                            <td>035172</td>
-                            <td>
-                              <a href='/'>Mở</a>
-                            </td>
-                            <td>BIO10011</td>
-                            <td>20SHH1</td>
-                            <td>13/05/2022</td>
-                            <td>07:45 AM</td>
-                            <td>20</td>
-                            <td>
-                              <span className='label label-danger'>
-                                Đã kết thúc
-                              </span>
-                            </td>
-                            <td>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse pr-10'
-                                title='Edit'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-edit txt-warning' />
-                              </a>
-                              <a
-                                href='javascript:void(0)'
-                                className='text-inverse'
-                                title='Delete'
-                                data-toggle='tooltip'
-                              >
-                                <i className='zmdi zmdi-delete txt-danger' />
-                              </a>
-                            </td>
-                          </tr>
+                          {roomList?.map((room, index) => (
+                            <tr>
+                              <td>
+                                <input
+                                  type='checkbox'
+                                  name='checkbox'
+                                  index={room.id}
+                                  onChange={handleSelect}
+                                  checked={isChecked(room.id)}
+                                />
+                              </td>
+                              <td>{index + 1}</td>
+                              <td>
+                                <a href={`/room/${room.roomId}`}></a>
+                                {room.name}
+                              </td>
+                              <td>{room.roomCode}</td>
+                              <td>{room.zoomId}</td>
+                              <td>{room.passcode}</td>
+                              <td>
+                                <a href={room.url}>Mở</a>
+                              </td>
+                              <td>{room.subject.subjectCode}</td>
+                              <td>{room.subject.classCode}</td>
+                              <td> 13/05/2022</td>
+                              <td>{tConv24(room.subject?.startTime)}</td>
+                              <td></td>
+                              <td>
+                                <span className='label label-danger'>
+                                  Đã kết thúc
+                                </span>
+                              </td>
+                              <td>
+                                <a
+                                  href={`/room/edit/${room.id}`}
+                                  className='text-inverse pr-10'
+                                  title='Edit'
+                                  data-toggle='tooltip'
+                                >
+                                  <i className='zmdi zmdi-edit txt-warning' />
+                                </a>
+                                <a
+                                  href='javascript:void(0)'
+                                  className='text-inverse'
+                                  title='Delete'
+                                  data-toggle='tooltip'
+                                >
+                                  <i className='zmdi zmdi-delete txt-danger' />
+                                </a>
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>
@@ -425,7 +381,7 @@ function RoomList() {
             </div>
           </div>
         </div>
-        {/* /Row */}
+        <ToastContainer />
       </div>
     )
 }

@@ -23,9 +23,10 @@ export function formatDate(date) {
 export function formatTime(date) {
   return `${('0' + date.getHours()).slice(-2)}:${(
     '0' + date.getMinutes()
-  ).slice(-2)}:${('0' + date.getSeconds()).slice(-2)} ${date.getDate()}/${
-    date.getMonth() + 1
-  }/${date.getFullYear()} `
+  ).slice(-2)} ${('0' + date.getDate()).slice(-2)}/${(
+    '0' +
+    (date.getMonth() + 1)
+  ).slice(-2)}/${date.getFullYear()} `
 }
 
 export const findDaysDifferent = (fromDate) => {
@@ -68,3 +69,14 @@ export const getShortName = (name) => {
     )
   }
 }
+
+
+export function tConv24(time24) {
+  var ts = time24;
+  var H = +ts.substr(0, 2);
+  var h = (H % 12) || 12;
+  h = (h < 10)?("0"+h):h; 
+  var ampm = H < 12 ? " AM" : " PM";
+  ts = h + ts.substr(2, 3) + ampm;
+  return ts;
+};

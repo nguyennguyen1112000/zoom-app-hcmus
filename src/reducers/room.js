@@ -2,7 +2,8 @@ import { GET_ALL_ROOMS, GET_ONE_ROOM } from '../actions/type'
 
 const roomReducerInitialState = {
   roomList: [],
-  currentRoom: null
+  currentRoom: null,
+  identityRecord: []
 }
 const roomReducer = (state = roomReducerInitialState, action) => {
   switch (action.type) {

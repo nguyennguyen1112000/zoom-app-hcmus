@@ -1,13 +1,15 @@
 import {
   ADD_IMAGE,
   GET_ALL_STUDENTS,
+  GET_IDENTITY_RESULTs,
   GET_ONE_STUDENT,
   REMOVE_IMAGE
 } from '../actions/type'
 
 const studentReducerInitialState = {
   studentList: [],
-  currentStudent: null
+  currentStudent: null,
+  identityResults: []
 }
 const studentReducer = (state = studentReducerInitialState, action) => {
   switch (action.type) {
@@ -36,6 +38,8 @@ const studentReducer = (state = studentReducerInitialState, action) => {
           images: currentImages
         }
       }
+    case GET_IDENTITY_RESULTs:
+      return { ...state, identityResults: action.payload }
     default:
       return state
   }

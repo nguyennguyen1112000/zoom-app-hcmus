@@ -1,20 +1,41 @@
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { getShortName } from '../../helper/utils'
 //import { useHistory } from 'react-router-dom'
 //import './css/style.css'
+import { getIdentityResults } from '../../services/api/student'
 import { getRoom } from '../../services/api/room'
+import socketIOClient from 'socket.io-client'
+const API_URL = process.env.REACT_APP_API_URL
 function RealtimeVerify() {
   const dispatch = useDispatch()
-  //const history = useHistory()
+  const socketRef = useRef()
+  const [reload, setReload] = useState(false)
   let { id } = useParams()
+
   useEffect(() => {
-    if (id) dispatch(getRoom(id))
-  }, [dispatch, id])
+    if (id) {
+      dispatch(getRoom(id))
+      dispatch(getIdentityResults(id))
+      
+    }
+     socketRef.current = socketIOClient.connect(API_URL)
+
+     socketRef.current.on('msgToClient', (data) => {
+       if (data == currentRoom?.id) setReload(!reload)
+       console.log(reload)
+     }) // mỗi khi có tin nhắn thì mess sẽ được render thêm
+
+     return () => {
+       socketRef.current.disconnect()
+     }
+  }, [dispatch, id, reload])
   const currentRoom = useSelector((state) => state.room.currentRoom)
-  useEffect(() => {}, [])
+  const records = useSelector((state) => state.student.identityResults)
+
+
   return (
     <div className='container-fluid'>
       {/* Title */}
@@ -143,52 +164,44 @@ function RealtimeVerify() {
                           <div className='clearfix' />
                         </div>
                       </div>
-                      <div className='panel-wrapper collapse in'>
+                      <div
+                        className='panel-wrapper collapse in'
+                        style={{
+                          height: '543px',
+                          'overflow-y': 'scroll'
+                        }}
+                      >
                         <div className='panel-body pa-0'>
                           <div className='chat-content'>
                             <ul className='chatapp-chat-nicescroll-bar pt-20'>
-                              <li className='friend'>
-                                <div className='friend-msg-wrap'>
-                                  <img
-                                    className='user-img img-circle block pull-left'
-                                    src='/img/robot.png'
-                                    alt='user'
-                                  />
-                                  <div className='msg pull-left'>
-                                    <p>
-                                      <i>18120486</i> Nguyễn Bình Nguyên đã định
-                                      danh <b>thành công</b>
-                                    </p>
-                                    <div className='msg-per-detail text-right'>
-                                      <span className='msg-time txt-grey'>
-                                        07:30
-                                      </span>
+                              {records?.map((record, index) => (
+                                <li key={index} className='friend'>
+                                  <div className='friend-msg-wrap'>
+                                    <img
+                                      className='user-img img-circle block pull-left'
+                                      src='/img/robot.png'
+                                      alt='user'
+                                    />
+                                    <div className='msg pull-left'>
+                                      <p>
+                                        <i>{record.studentId}</i> Nguyễn Bình
+                                        Nguyên đã định danh{' '}
+                                        <b>
+                                          {record.status ? (
+                                            'Thành công'
+                                          ) : (
+                                            <code>Thất bại</code>
+                                          )}
+                                        </b>
+                                      </p>
+                                      <div className='msg-per-detail text-right'>
+                                        <span className='msg-time txt-grey'></span>
+                                      </div>
                                     </div>
+                                    <div className='clearfix' />
                                   </div>
-                                  <div className='clearfix' />
-                                </div>
-                              </li>
-                              <li className='friend'>
-                                <div className='friend-msg-wrap'>
-                                  <img
-                                    className='user-img img-circle block pull-left'
-                                    src='/img/robot.png'
-                                    alt='user'
-                                  />
-                                  <div className='msg pull-left'>
-                                    <p>
-                                      <i>18120585</i> Triệu Mai Ngọc Thức đã
-                                      định danh <b>thành công</b>
-                                    </p>
-                                    <div className='msg-per-detail text-right'>
-                                      <span className='msg-time txt-grey'>
-                                        07:35
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className='clearfix' />
-                                </div>
-                              </li>
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         </div>

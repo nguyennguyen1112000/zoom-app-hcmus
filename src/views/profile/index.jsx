@@ -2,26 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import Footer from '../../components/footer'
-import { authHeader } from '../../helper/utils'
+import { authHeader, getShortName } from '../../helper/utils'
 import { updateProfile } from '../../actions/auth'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getMyImages } from '../../services/api/image'
+const API_URL = process.env.REACT_APP_API_URL
 
 function Profile() {
   const user = useSelector((state) => state.auth.currentUser)
   const dispatch = useDispatch()
   const [input, setInput] = useState({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    birthday: formatDate(user.birthday),
-    sex: user.sex,
-    studentId: user.studentId
+    moodleUsername: '',
+    moodlePassword: ''
   })
   console.log(user)
   const [errors, setErrors] = useState({
-    firstName: null,
-    lastName: null
+    moodleUsername: null,
+    moodlePassword: null
   })
   function formatDate(date) {
     const newDate = new Date(date)
@@ -35,41 +33,25 @@ function Profile() {
       dispatch(getMyImages())
     }
   }, [dispatch, user])
-
+  console.log('user', user)
+  const [modeView, setMode] = useState('default')
   const imagesList = useSelector((state) => state.image.imageList)
   function handleChange(event) {
     switch (event.target.name) {
-      case 'firstName':
+      case 'moodleUsername':
         setInput({
           ...input,
-          firstName: event.target.value
+          moodleUsername: event.target.value
         })
         break
-      case 'lastName':
+      case 'moodlePassword':
         setInput({
           ...input,
-          lastName: event.target.value
-        })
-        break
-      case 'birthday':
-        setInput({
-          ...input,
-          birthday: event.target.value
-        })
-        break
-      case 'studentId':
-        setInput({
-          ...input,
-          studentId: event.target.value
+          moodlePassword: event.target.value
         })
         break
 
       default:
-        setInput({
-          ...input,
-          sex: event.target.value === 'true'
-        })
-
         break
     }
   }
@@ -100,6 +82,60 @@ function Profile() {
 
     return isValid
   }
+  function validateConnectForm() {
+    let isValid = true
+    var errs = {}
+    if (!input.moodleUsername) {
+      isValid = false
+      errs.moodleUsername = 'Không được để trống'
+    }
+
+    if (!input.moodlePassword) {
+      isValid = false
+      errs.moodlePassword = 'Không được để trống'
+    }
+    setErrors(errs)
+
+    return isValid
+  }
+  const handleConnectMoodle = (e) => {
+    e.preventDefault()
+    if (validateConnectForm())
+      axios
+        .post(
+          `${API_URL}/moodles/connect`,
+          {
+            moodleUsername: input.moodleUsername,
+            moodlePassword: input.moodlePassword
+          },
+          authHeader()
+        )
+        .then((res) => {
+          toast.success('Kết nối thành công', {
+            position: 'top-right',
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
+          })
+          setErrors({ moodleUsername: null, moodlePassword: null })
+          setMode('default')
+        })
+        .catch((err) => {
+          toast.error(err.response?.data?.message, {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
+          })
+        })
+  }
+
   function handleSubmit(event) {
     event.preventDefault()
 
@@ -162,7 +198,7 @@ function Profile() {
                           color: 'white'
                         }}
                       >
-                        BN{' '}
+                        {getShortName(user?.firstName + ' ' + user?.lastName)}
                       </div>
                       <div className='fileupload btn btn-default'>
                         <span className='btn-text'>Chỉnh sửa</span>
@@ -177,217 +213,23 @@ function Profile() {
                     </h6>
                   </div>
                   <div className='social-info'>
+                    <button className='btn btn-primary btn-block mt-30'>
+                      <i className='fa fa-connect' />
+                      <span
+                        className='btn-text'
+                        onClick={() => setMode('connectMoodle')}
+                      >
+                        Liên kết với Moodle
+                      </span>
+                    </button>
                     <button
-                      className='btn btn-default btn-block btn-outline btn-anim mt-30'
+                      className='btn btn-default btn-block btn-outline btn-anim'
                       data-toggle='modal'
                       data-target='#myModal'
                     >
                       <i className='fa fa-pencil' />
                       <span className='btn-text'>Chỉnh sửa profile</span>
                     </button>
-                    <div
-                      id='myModal'
-                      className='modal fade in'
-                      tabIndex={-1}
-                      role='dialog'
-                      aria-labelledby='myModalLabel'
-                      aria-hidden='true'
-                    >
-                      <div className='modal-dialog'>
-                        <div className='modal-content'>
-                          <div className='modal-header'>
-                            <button
-                              type='button'
-                              className='close'
-                              data-dismiss='modal'
-                              aria-hidden='true'
-                            >
-                              ×
-                            </button>
-                            <h5 className='modal-title' id='myModalLabel'>
-                              Edit Profile
-                            </h5>
-                          </div>
-                          <div className='modal-body'>
-                            {/* Row */}
-                            <div className='row'>
-                              <div className='col-lg-12'>
-                                <div className>
-                                  <div className='panel-wrapper collapse in'>
-                                    <div className='panel-body pa-0'>
-                                      <div className='col-sm-12 col-xs-12'>
-                                        <div className='form-wrap'>
-                                          <form action='#'>
-                                            <div className='form-body overflow-hide'>
-                                              <div className='form-group'>
-                                                <label
-                                                  className='control-label mb-10'
-                                                  htmlFor='exampleInputuname_1'
-                                                >
-                                                  Name
-                                                </label>
-                                                <div className='input-group'>
-                                                  <div className='input-group-addon'>
-                                                    <i className='icon-user' />
-                                                  </div>
-                                                  <input
-                                                    type='text'
-                                                    className='form-control'
-                                                    id='exampleInputuname_1'
-                                                    placeholder='willard bryant'
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className='form-group'>
-                                                <label
-                                                  className='control-label mb-10'
-                                                  htmlFor='exampleInputEmail_1'
-                                                >
-                                                  Email address
-                                                </label>
-                                                <div className='input-group'>
-                                                  <div className='input-group-addon'>
-                                                    <i className='icon-envelope-open' />
-                                                  </div>
-                                                  <input
-                                                    type='email'
-                                                    className='form-control'
-                                                    id='exampleInputEmail_1'
-                                                    placeholder='xyz@gmail.com'
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className='form-group'>
-                                                <label
-                                                  className='control-label mb-10'
-                                                  htmlFor='exampleInputContact_1'
-                                                >
-                                                  Contact number
-                                                </label>
-                                                <div className='input-group'>
-                                                  <div className='input-group-addon'>
-                                                    <i className='icon-phone' />
-                                                  </div>
-                                                  <input
-                                                    type='email'
-                                                    className='form-control'
-                                                    id='exampleInputContact_1'
-                                                    placeholder='+102 9388333'
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className='form-group'>
-                                                <label
-                                                  className='control-label mb-10'
-                                                  htmlFor='exampleInputpwd_1'
-                                                >
-                                                  Password
-                                                </label>
-                                                <div className='input-group'>
-                                                  <div className='input-group-addon'>
-                                                    <i className='icon-lock' />
-                                                  </div>
-                                                  <input
-                                                    type='password'
-                                                    className='form-control'
-                                                    id='exampleInputpwd_1'
-                                                    placeholder='Enter pwd'
-                                                    defaultValue='password'
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className='form-group'>
-                                                <label className='control-label mb-10'>
-                                                  Gender
-                                                </label>
-                                                <div>
-                                                  <div className='radio'>
-                                                    <input
-                                                      type='radio'
-                                                      name='radio1'
-                                                      id='radio_1'
-                                                      defaultValue='option1'
-                                                      defaultChecked
-                                                    />
-                                                    <label htmlFor='radio_1'>
-                                                      M
-                                                    </label>
-                                                  </div>
-                                                  <div className='radio'>
-                                                    <input
-                                                      type='radio'
-                                                      name='radio1'
-                                                      id='radio_2'
-                                                      defaultValue='option2'
-                                                    />
-                                                    <label htmlFor='radio_2'>
-                                                      F
-                                                    </label>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              <div className='form-group'>
-                                                <label className='control-label mb-10'>
-                                                  Country
-                                                </label>
-                                                <select
-                                                  className='form-control'
-                                                  data-placeholder='Choose a Category'
-                                                  tabIndex={1}
-                                                >
-                                                  <option value='Category 1'>
-                                                    USA
-                                                  </option>
-                                                  <option value='Category 2'>
-                                                    Austrailia
-                                                  </option>
-                                                  <option value='Category 3'>
-                                                    India
-                                                  </option>
-                                                  <option value='Category 4'>
-                                                    UK
-                                                  </option>
-                                                </select>
-                                              </div>
-                                            </div>
-                                            <div className='form-actions mt-10'>
-                                              <button
-                                                type='submit'
-                                                className='btn btn-success mr-10 mb-30'
-                                              >
-                                                Update profile
-                                              </button>
-                                            </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className='modal-footer'>
-                            <button
-                              type='button'
-                              className='btn btn-success waves-effect'
-                              data-dismiss='modal'
-                            >
-                              Save
-                            </button>
-                            <button
-                              type='button'
-                              className='btn btn-default waves-effect'
-                              data-dismiss='modal'
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                        {/* /.modal-content */}
-                      </div>
-                      {/* /.modal-dialog */}
-                    </div>
                   </div>
                 </div>
               </div>
@@ -398,58 +240,306 @@ function Profile() {
           <div className='panel panel-default card-view pa-0'>
             <div className='panel-wrapper collapse in'>
               <div className='panel-body pb-0'>
-                <div className='tab-struct custom-tab-1'>
-                  <div className='tab-content' id='myTabContent_8'>
-                    <div
-                      id='photos_8'
-                      className='tab-pane fade active in'
-                      role='tabpanel'
-                    >
-                      <div className='col-md-12 pb-20'>
-                        <div className='gallery-wrap'>
-                          <div
-                            className='portfolio-wrap project-gallery'
-                            style={{ width: '891px' }}
+                <div className='tab-pane fade active in' role='tabpanel'>
+                  <div className='col-md-12 pb-20'>
+                    <div className='gallery-wrap'>
+                      <div
+                        className='portfolio-wrap project-gallery'
+                        style={{ width: '891px' }}
+                      >
+                        {modeView === 'default' && (
+                          <ul
+                            id='portfolio_1'
+                            className='portf auto-construct  project-gallery'
+                            data-col={4}
+                            style={{
+                              position: 'relative',
+                              height: '479.124px'
+                            }}
                           >
-                            <ul
-                              id='portfolio_1'
-                              className='portf auto-construct  project-gallery'
-                              data-col={4}
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock1.jpg'
+                              data-sub-html='<h6>Bagwati</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
                               style={{
-                                position: 'relative',
-                                height: '479.124px'
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '0px',
+                                top: '0px'
                               }}
                             >
-                              {imagesList?.map((image, index) => (
-                                <li
-                                  key={index}
-                                  className='item'
-                                  data-src={image.fetchUrl}
-                                  data-sub-html='<h6>Bagwati</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                                  style={{
-                                    width: '202px',
-                                    height: 'auto',
-                                    margin: '10px',
-                                    position: 'absolute',
-                                    left: '0px',
-                                    top: '0px'
-                                  }}
-                                >
-                                  <a href={image.imageUrl}>
-                                    <img
-                                      className='img-responsive'
-                                      src={image.fetchUrl}
-                                      referrerpolicy='no-referrer'
-                                    />
-                                    <span className='hover-cap'>
-                                      {image.originFileName}
-                                    </span>
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock1.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>Bagwati</span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock2.jpg'
+                              data-sub-html='<h6>Not a Keyboard</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '222px',
+                                top: '0px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock2.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>
+                                  Not a Keyboard
+                                </span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock3.jpg'
+                              data-sub-html='<h6>Into the Woods</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '444px',
+                                top: '0px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock3.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>
+                                  Into the Woods
+                                </span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock4.jpg'
+                              data-sub-html='<h6>Ultra Saffire</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '666px',
+                                top: '0px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock4.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>
+                                  {' '}
+                                  Ultra Saffire
+                                </span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock5.jpg'
+                              data-sub-html='<h6>Happy Puppy</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '0px',
+                                top: '239px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock5.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>Happy Puppy</span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock6.jpg'
+                              data-sub-html='<h6>Wooden Closet</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '222px',
+                                top: '239px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock6.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>Wooden Closet</span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock7.jpg'
+                              data-sub-html='<h6>Happy Puppy</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '444px',
+                                top: '239px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock7.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>Happy Puppy</span>
+                              </a>
+                            </li>
+                            <li
+                              className='item'
+                              data-src='../img/gallery/equal-size/mock8.jpg'
+                              data-sub-html='<h6>Wooden Closet</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
+                              style={{
+                                width: '202px',
+                                height: 'auto',
+                                margin: '10px',
+                                position: 'absolute',
+                                left: '666px',
+                                top: '239px'
+                              }}
+                            >
+                              <a href='#'>
+                                <img
+                                  className='img-responsive'
+                                  src='../img/gallery/equal-size/mock8.jpg'
+                                  alt='Image description'
+                                />
+                                <span className='hover-cap'>Wooden Closet</span>
+                              </a>
+                            </li>
+                          </ul>
+                        )}
+                        {modeView === 'connectMoodle' && (
+                          <div className='panel panel-default card-view'>
+                            <div className='panel-heading'>
+                              <div className='pull-left'>
+                                <h6 className='panel-title txt-dark'>
+                                  Kết nối tài khoản HCMUS Moodle
+                                </h6>
+                              </div>
+                              <div className='clearfix' />
+                            </div>
+                            <div className='panel-wrapper collapse in'>
+                              <div className='panel-body'>
+                                <div className='row'>
+                                  <div className='col-sm-12 col-xs-12'>
+                                    <div className='form-wrap'>
+                                      <form>
+                                        <div
+                                          className={`form-group ${
+                                            errors.moodleUsername && 'has-error'
+                                          }`}
+                                        >
+                                          <label
+                                            className='control-label mb-10'
+                                            htmlFor='exampleInputuname_1'
+                                          >
+                                            Tên đăng nhập
+                                          </label>
+                                          <div className='input-group'>
+                                            <div className='input-group-addon'>
+                                              <i className='icon-user' />
+                                            </div>
+                                            <input
+                                              type='text'
+                                              className='form-control'
+                                              id='exampleInputuname_1'
+                                              placeholder='Nhập tên đăng nhập'
+                                              name='moodleUsername'
+                                              onChange={handleChange}
+                                            />
+                                          </div>
+                                          {errors.moodleUsername && (
+                                            <div className='help-block with-errors'>
+                                              {errors.moodleUsername}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        <div
+                                          className={`form-group ${
+                                            errors.moodlePassword && 'has-error'
+                                          }`}
+                                        >
+                                          <label
+                                            className='control-label mb-10'
+                                            htmlFor='exampleInputpwd_1'
+                                          >
+                                            Mật khẩu
+                                          </label>
+                                          <div className='input-group'>
+                                            <div className='input-group-addon'>
+                                              <i className='icon-lock' />
+                                            </div>
+                                            <input
+                                              type='password'
+                                              className='form-control'
+                                              id='exampleInputpwd_1'
+                                              placeholder='Nhập mật khẩu'
+                                              name='moodlePassword'
+                                              onChange={handleChange}
+                                            />
+                                          </div>
+                                          {errors.moodlePassword && (
+                                            <div className='help-block with-errors'>
+                                              {errors.moodlePassword}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        <button
+                                          className='btn btn-success mr-10'
+                                          onClick={handleConnectMoodle}
+                                        >
+                                          Kiểm tra kết nối
+                                        </button>
+                                        <button
+                                          type='submit'
+                                          className='btn btn-default'
+                                        >
+                                          Thoát
+                                        </button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>

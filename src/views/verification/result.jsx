@@ -3,10 +3,9 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { formatDate, formatTime } from '../../helper/utils'
+import {  formatTime } from '../../helper/utils'
 import { getIdentity } from '../../services/api/client'
 
-import { WebcamCapture } from '../webcam/WebcamCapture'
 
 function VerificationResult() {
   let { resultId , id} = useParams()
@@ -78,10 +77,7 @@ function VerificationResult() {
                 </p>
                 <p className='muted'>
                   Thời gian điểm danh{' '}
-                  <code>
-                    {formatTime(new Date(identity?.created_at))}
-                  </code>
-                  .
+                  <code>{formatTime(new Date(identity?.created_at))}</code>.
                 </p>
               </div>
             </div>
@@ -106,6 +102,7 @@ function VerificationResult() {
                     src={identity?.faceImage.fetchUrl}
                     alt='Ảnh khuôn mặt điểm danh'
                     style={{ width: '580px' }}
+                    referrerpolicy='no-referrer'
                   />
                 </div>
                 {/* END carousel*/}

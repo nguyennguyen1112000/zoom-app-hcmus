@@ -1,6 +1,5 @@
 import axios from 'axios'
-import React, { useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
@@ -9,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css'
 //import "../style/home.css";
 import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
+import LoadingSpinner from '../../components/loading/loading-spinner'
+import socketIOClient from 'socket.io-client'
 const videoConstraints = {
   width: 680,
   height: 480,
@@ -25,12 +26,22 @@ export const WebcamCapture = (props) => {
   const videoWidth = 640
   const API_URL = process.env.REACT_APP_API_URL
   const [isLoading, setIsLoading] = useState(false)
+  const socketRef = useRef()
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
     setImage(imageSrc)
     const action = addCaptureImage(imageSrc)
     dispatch(action)
   }, [webcamRef])
+  useEffect(() => {
+    socketRef.current = socketIOClient.connect(API_URL)
+    return () => {
+      socketRef.current.disconnect()
+    }
+  }, [])
+  const sendNotification = (data) => {    
+    socketRef.current.emit('msgToServer', data)
+  }
   const verifyImage = (e) => {
     e.preventDefault()
     fetch(image)
@@ -47,7 +58,7 @@ export const WebcamCapture = (props) => {
           .then((res) => {
             setIsLoading(false)
             const identifiedRes = res.data
-            console.log(identifiedRes)
+            sendNotification(identifiedRes.roomId)
             if (identifiedRes.status)
               history.push(`/room/${roomId}/verify/result/${identifiedRes.id}`)
             else
@@ -62,12 +73,14 @@ export const WebcamCapture = (props) => {
               })
           })
           .catch((err) => {
+            setIsLoading(false)
             console.log('err', err)
           })
       })
   }
   return (
     <div>
+      {isLoading ? <LoadingSpinner /> : <></>}
       <div>
         <div
           style={{
