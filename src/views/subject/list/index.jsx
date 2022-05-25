@@ -6,10 +6,13 @@ import { toast, ToastContainer } from 'react-toastify'
 import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
 import { getAllSubjects } from '../../../services/api/subject'
 import 'react-toastify/dist/ReactToastify.css'
+import { SpinnerCircularFixed } from 'spinners-react'
+
 function SubjectList() {
   const dispatch = useDispatch()
   const subjects = useSelector((state) => state.subject.subjects)
   const [reload, setReload] = useState(false)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -28,11 +31,31 @@ function SubjectList() {
     a.href = downloadLink
     a.click()
   }
+  const [select, setSelect] = useState([])
+  const handleSelect = (e) => {
+    const index = e.currentTarget.getAttribute('index')
+    const checked = e.target.checked
+    if (checked) setSelect([...select, parseInt(index)])
+    else setSelect(select.filter((x) => x != parseInt(index)))
+  }
+  const handleSelectAll = (e) => {
+    const checked = e.target.checked
+    if (checked) setSelect(subjects.map((subject) => subject.id))
+    else setSelect([])
+  }
+  const isChecked = (index) => {
+    return select.includes(index)
+  }
   const handleDelete = (e) => {
     e.preventDefault()
-    const index = e.currentTarget.getAttribute('index')
+
     axios
-      .delete(`${API_URL}/subjects/${index}`, authHeader())
+      .delete(`${API_URL}/subjects`, {
+        data: select,
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+        }
+      })
       .then((res) => {
         toast.success('Xóa thành công', {
           position: 'top-right',
@@ -84,10 +107,15 @@ function SubjectList() {
       })
   }
   const handleSync = (e) => {
+    setLoading(true)
     axios
       .post(`${API_URL}/moodles/sync`, null, authHeader())
-      .then((res) => {})
+      .then((res) => {
+        setReload(!reload)
+        setLoading(false)
+      })
       .catch((err) => {
+        setLoading(false)
         console.log(err)
       })
   }
@@ -119,6 +147,18 @@ function SubjectList() {
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
             <div className='panel-heading'>
+              {select.length > 0 && (
+                <div className='pull-left button-list'>
+                  <button class='btn btn-danger btn-lable-wrap left-label'>
+                    <span class='btn-label'>
+                      <i class='fa fa-trash'></i>
+                    </span>
+                    <span class='btn-text' onClick={handleDelete}>
+                      Xóa đã chọn
+                    </span>
+                  </button>
+                </div>
+              )}
               <div className='pull-right button-list'>
                 <button class='btn btn-default '>
                   <span class='btn-text' onClick={handleSync}>
@@ -169,11 +209,23 @@ function SubjectList() {
                       >
                         <thead>
                           <tr>
+                            <th>
+                              <th>
+                                {subjects && (
+                                  <input
+                                    type='checkbox'
+                                    name='checkbox'
+                                    index='all'
+                                    onChange={handleSelectAll}
+                                  />
+                                )}
+                              </th>
+                            </th>
                             <th>#</th>
-                            <th>Mã môn học</th>
+                            <th>Mã môn học/ Moodle ID</th>
                             <th>Tên môn học </th>
                             <th>HK/NH</th>
-                            <th>Mã kì thi</th>
+                            <th>Import</th>
                             <th>Ngày thi</th>
                             <th>Giờ thi</th>
                             <th>Thời gian thi</th>
@@ -185,19 +237,50 @@ function SubjectList() {
                         <tbody>
                           {subjects?.map((subject, index) => (
                             <tr key={index}>
+                              <td>
+                                <input
+                                  type='checkbox'
+                                  name='checkbox'
+                                  index={subject.id}
+                                  onChange={handleSelect}
+                                  checked={isChecked(subject.id)}
+                                />
+                              </td>
                               <td>{index + 1}</td>
                               <td>
                                 <a href={`/subject/${subject.id}`}>
-                                  {subject.subjectCode}
+                                  {subject.subjectCode
+                                    ? subject.subjectCode
+                                    : subject.moodleId}
                                 </a>
                               </td>
                               <td>{subject.name}</td>
                               <td>
-                                {subject.term}/{subject.schoolYear}
+                                {' '}
+                                {subject.term &&
+                                  subject.schoolYear &&
+                                  `${subject.term}/${subject.schoolYear}`}
                               </td>
-                              <td>{subject.examCode}</td>
-                              <td>{formatDate(new Date(subject.examDate))}</td>
-                              <td>{tConv24(subject.startTime)}</td>
+                              <td>
+                                {subject.moodleId ? (
+                                  <span className='label label-primary'>
+                                    moodle
+                                  </span>
+                                ) : (
+                                  <span className='label label-success'>
+                                    file
+                                  </span>
+                                )}
+                              </td>
+                              <td>
+                                {subject.examDate &&
+                                  formatDate(new Date(subject.examDate))}
+                              </td>
+                              <td>
+                                {subject.startTime
+                                  ? tConv24(subject.startTime)
+                                  : ''}
+                              </td>
                               <td>{subject.examTime}</td>
                               <td>{subject.studentYear}</td>
 
@@ -232,6 +315,14 @@ function SubjectList() {
             </div>
           </div>
         </div>
+      </div>
+      <div className='spinner-loading'>
+        <SpinnerCircularFixed
+          size={100}
+          thickness={200}
+          color='#2986CC'
+          enabled={loading}
+        />
       </div>
       <ToastContainer />
     </div>

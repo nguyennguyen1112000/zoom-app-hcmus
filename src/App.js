@@ -31,6 +31,7 @@ import Profile from './views/profile/index'
 import SubjectList from './views/subject/list'
 import CreateSubject from './views/subject/create'
 import EditSubject from './views/subject/edit'
+import SubjectDetail from './views/subject/detail'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
             <PrivateRoute component={StudentList} path='/student' exact />
             <PrivateRoute component={StudentDetail} path='/student/:id' exact />
             <PrivateRoute component={RoomList} path='/room' exact />
+            <PrivateRoute component={SubjectDetail} path='/subject/:id' exact />
             <PrivateRoute component={SubjectList} path='/subject' exact />
             <PrivateRoute
               component={CreateSubject}

@@ -101,7 +101,7 @@ function LeftSideBar() {
 
           <li>
             <a
-              href='javascript:void(0);'
+              href='/subject'
               data-toggle='collapse'
               data-target='#ecom_dr'
             >
