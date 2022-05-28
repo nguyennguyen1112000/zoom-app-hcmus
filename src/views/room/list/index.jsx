@@ -5,7 +5,9 @@ import { getMyRooms, getRooms } from '../../../services/api/room'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import axios from 'axios'
-import { authHeader, tConv24 } from '../../../helper/utils'
+import swal from 'sweetalert'
+import { authHeader, handleExpiredToken, tConv24 } from '../../../helper/utils'
+
 const API_URL = process.env.REACT_APP_API_URL
 function RoomList() {
   const dispatch = useDispatch()
@@ -32,6 +34,17 @@ function RoomList() {
     a.href = downloadLink
     a.click()
   }
+  /************* Import from zoom *********** */
+  const handleImportZoom = () => {
+    axios
+      .post(`${API_URL}/rooms/import/zoom`, null, authHeader())
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err.response)
+        handleExpiredToken(err, swal)
+      })
+  }
+  /************* Xóa *********** */
   const handleSelect = (e) => {
     const index = e.currentTarget.getAttribute('index')
     const checked = e.target.checked
@@ -51,15 +64,12 @@ function RoomList() {
     console.log('selects', select)
 
     axios
-      .delete(
-        `${API_URL}/rooms`,
-        {
-          data: select,
-          headers: {
-            Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
-          }
-        },
-      )
+      .delete(`${API_URL}/rooms`, {
+        data: select,
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+        }
+      })
       .then((res) => {
         toast.success('Xóa thành công', {
           position: 'top-right',
@@ -85,6 +95,7 @@ function RoomList() {
         console.log(err.response.data.message)
       })
   }
+  /************* Upload file *********** */
 
   const uploadFile = (e) => {
     const formData = new FormData()
@@ -151,20 +162,17 @@ function RoomList() {
                   </div>
                 )}
                 <div className='pull-right button-list'>
-                  <button class='btn btn-success btn-lable-wrap left-label'>
+                  <button class='btn btn-default' onClick={handleImportZoom}>
+                    Import Zoom
+                  </button>
+                  <button class='btn btn-success btn-square btn-outline'>
                     <span class='btn-label'>
                       <i class='fa fa-download'></i>
                     </span>
-                    <span class='btn-text' onClick={downloadTemplate}>
-                      template
-                    </span>
                   </button>
-                  <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
+                  <button class='btn btn-danger btn-outline btn-square fileupload'>
                     <span class='btn-label'>
                       <i class='fa fa-upload'></i>
-                    </span>
-                    <span class='btn-text' for='file_upload'>
-                      Tải lên file
                     </span>
                     <input
                       id='file_upload'
@@ -173,17 +181,10 @@ function RoomList() {
                       onChange={uploadFile}
                     />
                   </button>
-                  <button class='btn btn-primary btn-lable-wrap left-label'>
+                  <button class='btn btn-primary btn-square'>
                     <span class='btn-label'>
-                      <i class='fa fa-plus'></i>{' '}
+                      <i class='fa fa-plus'></i>
                     </span>
-                    <span class='btn-text'>Thêm phòng thi</span>
-                  </button>
-                  <button class='btn btn-primary btn-lable-wrap left-label'>
-                    <span class='btn-label'>
-                      <i class='fa fa-plus'></i>{' '}
-                    </span>
-                    <span class='btn-text'>Tạo phòng Zoom</span>
                   </button>
                 </div>
                 <div className='clearfix' />

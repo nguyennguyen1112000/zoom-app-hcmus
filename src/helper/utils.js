@@ -1,3 +1,5 @@
+import axios from 'axios'
+const API_URL = process.env.REACT_APP_API_URL
 export function authHeader() {
   const token = JSON.parse(localStorage.getItem('token'))
   return {
@@ -16,6 +18,36 @@ export function getVerifiedInfo() {
 export function logOut() {
   localStorage.setItem('user', null)
   localStorage.setItem('token', null)
+}
+
+export function handleExpiredToken(error, swal) {
+  if (
+    error.response?.data?.message === 'Invalid access token' &&
+    error.response?.data?.statusCode === 401
+  ) {
+    swal({
+      title: 'Phiên đăng nhập Zoom hết hạn',
+      text: 'Vui lòng đăng nhập lại để thực hiện chức năng!',
+      icon: 'warning',
+      //buttons: true,
+      dangerMode: true,
+      button: 'Đăng nhập lại'
+    }).then((willLoginAgain) => {
+      if (willLoginAgain) {
+        axios
+          .post(`${API_URL}/zooms/refresh_token`, null, authHeader())
+          .then((res) => {
+            console.log(res.data)
+            swal('Đăng nhập thành công', {
+              icon: 'success'
+            })
+          })
+          .catch((err) => {
+            console.log(err.response)
+          })
+      }
+    })
+  }
 }
 export function formatDate(date) {
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
@@ -70,13 +102,12 @@ export const getShortName = (name) => {
   }
 }
 
-
 export function tConv24(time24) {
-  var ts = time24;
-  var H = +ts.substr(0, 2);
-  var h = (H % 12) || 12;
-  h = (h < 10)?("0"+h):h; 
-  var ampm = H < 12 ? " AM" : " PM";
-  ts = h + ts.substr(2, 3) + ampm;
-  return ts;
-};
+  var ts = time24
+  var H = +ts.substr(0, 2)
+  var h = H % 12 || 12
+  h = h < 10 ? '0' + h : h
+  var ampm = H < 12 ? ' AM' : ' PM'
+  ts = h + ts.substr(2, 3) + ampm
+  return ts
+}
