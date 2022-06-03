@@ -1,8 +1,5 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import TimePicker from 'react-time-picker'
-import DatePicker from 'react-date-picker'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { authHeader } from '../../../helper/utils'
@@ -21,19 +18,15 @@ function CreateSubject() {
     schoolYear: '',
     examDate: new Date()
   })
-  const [startTime, onChangeTime] = useState('10:00')
-  const [examDate, setExamDate] = useState(new Date())
 
   const [errors, setErrors] = useState({
     subjectCode: null,
     term: null,
     teacher: null,
     classCode: null,
-    examTime: null,
     name: null,
     schoolYear: null,
-    examDate: null,
-    startTime: null
+
   })
   function handleChange(event) {
     switch (event.target.name) {
@@ -79,12 +72,6 @@ function CreateSubject() {
           examCode: event.target.value
         })
         break
-      case 'startTime':
-        setInput({
-          ...input,
-          startTime: event.target.value
-        })
-        break
       case 'examTime':
         setInput({
           ...input,
@@ -101,12 +88,6 @@ function CreateSubject() {
         setInput({
           ...input,
           schoolYear: event.target.value
-        })
-        break
-      case 'examDate':
-        setInput({
-          ...input,
-          examDate: event.target.value
         })
         break
       default:
@@ -146,10 +127,7 @@ function CreateSubject() {
         errs.classCode = 'Phải ít hơn 20 kí tự'
       }
     }
-    // if (input.examDate < new Date()) {
-    //   isValid = false
-    //   errs.examDate = 'Ngày thi không được nhỏ hơn ngày hiện tại'
-    // }
+
     if (!input.name) {
       isValid = false
       errs.name = 'Không được để trống'
@@ -170,14 +148,8 @@ function CreateSubject() {
         errs.schooYear = 'Phải ít hơn 50 kí tự'
       }
     }
-    if (!startTime) {
-      isValid = false
-      errs.startTime = 'Thời gian không hợp lệ'
-    }
-    if (!examDate) {
-      isValid = false
-      errs.examDate = 'Ngày thi không hợp lệ'
-    }
+
+
     setErrors(errs)
 
     return isValid
@@ -187,7 +159,7 @@ function CreateSubject() {
 
     if (validate()) {
         axios
-          .post(`${API_URL}/subjects`, {...input, startTime, examDate}, authHeader())
+          .post(`${API_URL}/subjects`, input, authHeader())
           .then((res) => {           
             setInput({
               subjectCode: '',
@@ -380,55 +352,7 @@ function CreateSubject() {
                         placeholder='Nhập mã kì thi'
                       />
                     </div>
-                    <div
-                      className={`form-group ${errors.examDate && 'has-error'}`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Ngày thi
-                      </label>
-                      <DatePicker
-                        className='form-control'
-                        onChange={setExamDate}
-                        value={examDate}
-                      />
-                      {errors.examDate && (
-                        <div className='help-block with-errors'>
-                          {errors.examDate}
-                        </div>
-                      )}
-                    </div>
-                    <div
-                      className={`form-group ${
-                        errors.startTime && 'has-error'
-                      }`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Giờ bắt đầu
-                      </label>
-                      <TimePicker
-                        className='form-control'
-                        onChange={onChangeTime}
-                        value={startTime}
-                      />
-                      {errors.startTime && (
-                        <div className='help-block with-errors'>
-                          {errors.startTime}
-                        </div>
-                      )}
-                    </div>
-                    <div className='form-group'>
-                      <label className='control-label mb-10 text-left'>
-                        Thời gian thi
-                      </label>
-                      <input
-                        type='number'
-                        className='form-control'
-                        name='examTime'
-                        onChange={handleChange}
-                        value={input.examTime}
-                        placeholder='Nhập thời gian thi'
-                      />
-                    </div>
+                  
                     <div
                       className={`form-group ${errors.teacher && 'has-error'}`}
                     >

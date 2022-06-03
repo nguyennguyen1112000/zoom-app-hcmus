@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { SpinnerCircularFixed } from 'spinners-react'
@@ -16,7 +16,7 @@ const videoConstraints = {
   height: 480,
   facingMode: 'user'
 }
-export const WebcamCapture = (props) => {
+export const WebcamID = (props) => {
   const { roomId, studentId } = props
   const [image, setImage] = useState('')
   const dispatch = useDispatch()
@@ -28,6 +28,8 @@ export const WebcamCapture = (props) => {
   const API_URL = process.env.REACT_APP_API_URL
   const socketRef = useRef()
   const [loading, setLoading] = useState(false)
+  const { search } = useLocation()
+  const recordId = new URLSearchParams(search).get('record_id')
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
     setImage(imageSrc)
@@ -43,7 +45,7 @@ export const WebcamCapture = (props) => {
   const sendNotification = (data) => {
     socketRef.current.emit('msgToServer', data)
   }
-  const verifyImage = (e) => {
+  const verifyID = (e) => {
     e.preventDefault()
     fetch(image)
       .then((res) => res.blob())
@@ -55,25 +57,20 @@ export const WebcamCapture = (props) => {
         )
         let formData = new FormData()
         formData.append('file', file)
-        formData.append('studentId', studentId)
-        formData.append('roomId', roomId)
+        formData.append('recordId', recordId)
         setLoading(true)
         axios
-          .post(`${API_URL}/identity`, formData, authHeader())
+          .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
             console.log(res)
 
             setLoading(false)
             const identifiedRes = res.data
             sendNotification(identifiedRes.roomId)
-            console.log('identifiedRes', identifiedRes)
-
-            if (identifiedRes.status)
-              history.push(
-                `/room/${roomId}/verify/s2?record_id=${identifiedRes.id}`
-              )
+            if (identifiedRes.idStatus)
+              history.push(`/room/${roomId}/verify/result/${identifiedRes.id}`)
             else
-              toast.error('Face recognition fail, please try again', {
+              toast.error('Student Id verification fail, please try again', {
                 position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -148,7 +145,7 @@ export const WebcamCapture = (props) => {
                 <span>Retake picture</span>
               </button>
               <button
-                onClick={verifyImage}
+                onClick={verifyID}
                 className='btn btn-success  btn-icon right-icon'
               >
                 <span>Submit image</span> <i className='fa fa-arrow-right' />{' '}

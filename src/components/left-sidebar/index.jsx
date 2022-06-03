@@ -1,16 +1,7 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { userLogout } from '../../actions/auth'
-import { logOut } from '../../helper/utils'
-
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { NavLink } from 'react-router-dom'
 function LeftSideBar() {
-  const dispatch = useDispatch()
-  function handleLogout() {
-    const action = userLogout()
-    dispatch(action)
-    logOut()
-  }
   const user = useSelector((state) => state.auth.currentUser)
 
   return (
@@ -18,100 +9,45 @@ function LeftSideBar() {
       {user.role !== 'student' && (
         <ul className='nav navbar-nav side-nav nicescroll-bar'>
           <li className='navigation-header'>
-            <span>Quản lý chung</span>
+            <span>General</span>
             <i className='zmdi zmdi-more' />
           </li>
           <li>
-            <a
-              className='active'
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#dashboard_dr'
-            >
+            <NavLink to='/student' activeClassName='active'>
               <div className='pull-left'>
                 <i className='fa fa-graduation-cap mr-20' />
-                <span className='right-nav-text'>Sinh viên</span>
-              </div>
-              <div className='pull-right'>
-                <i className='zmdi zmdi-caret-down' />
+                <span className='right-nav-text'>Students</span>
               </div>
               <div className='clearfix' />
-            </a>
-            <ul id='dashboard_dr' className='collapse collapse-level-1'>
-              <li>
-                <a className='active-page' href='/student'>
-                  Danh sách
-                </a>
-              </li>
-              <li>
-                <a href='index2.html'>Hướng dẫn</a>
-              </li>
-            </ul>
+            </NavLink>
           </li>
           <li>
-            <a
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#room'
-            >
+            <NavLink to='/room' activeClassName='active'>
               <div className='pull-left'>
                 <i className='fa fa-th-large mr-20' />
-                <span className='right-nav-text'>Phòng thi</span>
-              </div>
-              <div className='pull-right'>
-                <i className='zmdi zmdi-caret-down' />
+                <span className='right-nav-text'>Rooms</span>
               </div>
               <div className='clearfix' />
-            </a>
-            <ul id='room' className='collapse collapse-level-1'>
-              <li>
-                <a className='active-page' href='/room'>
-                  Danh sách
-                </a>
-              </li>
-             
-            </ul>
+            </NavLink>
           </li>
           <li>
-            <a
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#examination_staff'
-            >
+            <NavLink to='/proctor' activeClassName='active'>
               <div className='pull-left'>
                 <i className='fa fa-users mr-20' />
-                <span className='right-nav-text'>Cán bộ coi thi</span>
-              </div>
-              <div className='pull-right'>
-                <i className='zmdi zmdi-caret-down' />
+                <span className='right-nav-text'>Proctors</span>
               </div>
               <div className='clearfix' />
-            </a>
-            <ul id='examination_staff' className='collapse collapse-level-1'>
-              <li>
-                <a className='active-page' href='/examination_staff'>
-                  Danh sách
-                </a>
-              </li>
-              <li>
-                <a href='index2.html'>Hướng dẫn</a>
-              </li>
-            </ul>
+            </NavLink>
           </li>
 
           <li>
-            <a
-              href='/subject'
-              data-toggle='collapse'
-              data-target='#ecom_dr'
-            >
+            <NavLink to='/subject' activeClassName='active'>
               <div className='pull-left'>
-                <i className='zmdi zmdi-book mr-20' />
-                <span className='right-nav-text'>Môn học</span>
+                <i className='fa fa-book mr-20' />
+                <span className='right-nav-text'>Subjects</span>
               </div>
-              
               <div className='clearfix' />
-            </a>
+            </NavLink>
           </li>
 
           <li>
@@ -173,60 +109,44 @@ function LeftSideBar() {
       {user.role == 'student' && (
         <ul className='nav navbar-nav side-nav nicescroll-bar'>
           <li className='navigation-header'>
-            <span>Định danh</span>
+            <span>Identity</span>
             <i className='zmdi zmdi-more' />
           </li>
 
           <li>
-            <a
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#table_dr'
-              className='active'
-            >
+            <NavLink to='/room' activeClassName='active'>
               <div className='pull-left'>
-                <i className='zmdi zmdi-search mr-20' />
-                <span className='right-nav-text'>Phòng thi</span>
+                <i className='fa fa-th-large mr-20' />
+                <span className='right-nav-text'>Rooms</span>
               </div>
-
               <div className='clearfix' />
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a
-              href='/verify/data'
-              data-toggle='collapse'
-              data-target='#table_dr'
-            >
+            <NavLink to='/verify/data' activeClassName='active'>
               <div className='pull-left'>
                 <i className='zmdi zmdi-face mr-20' />
-                <span className='right-nav-text'>Dữ liệu định danh</span>
+                <span className='right-nav-text'>Recognition data</span>
               </div>
-
               <div className='clearfix' />
-            </a>
+            </NavLink>
           </li>
 
           <li>
             <hr className='light-grey-hr mb-10' />
           </li>
           <li className='navigation-header'>
-            <span>THÔNG TIN CHUNG</span>
+            <span>General</span>
             <i className='zmdi zmdi-more' />
           </li>
           <li>
-            <a
-              href='/profile'
-              data-toggle='collapse'
-              data-target='#table_profile'
-            >
+            <NavLink to='/profile' activeClassName='active'>
               <div className='pull-left'>
                 <i className='zmdi zmdi-account mr-20' />
-                <span className='right-nav-text'>Thông tin sinh viên</span>
+                <span className='right-nav-text'>Profile</span>
               </div>
-
               <div className='clearfix' />
-            </a>
+            </NavLink>
           </li>
         </ul>
       )}

@@ -14,8 +14,6 @@ import StudentList from './views/student/list'
 import Login from './views/authentication/login'
 import NavBar from './components/navbar'
 import RoomList from './views/room/list'
-import RoomDetail from './views/room/detail'
-import ExaminationStaffList from './views/examination_staff/list'
 import StudentDetail from './views/student/detail'
 
 import VerificationCollectData from './views/verification/collect_data'
@@ -32,6 +30,10 @@ import SubjectList from './views/subject/list'
 import CreateSubject from './views/subject/create'
 import EditSubject from './views/subject/edit'
 import SubjectDetail from './views/subject/detail'
+import CreateMeeting from './views/room/create'
+import ProctorList from './views/proctor/list'
+import RoomDetail from './views/room/detail'
+import StudentVerificationS2 from './views/verification/id_verify'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -72,23 +74,35 @@ function App() {
         /> */}
 
         {logIn && (
-          <div className='page-wrapper'>
+          <div className='page-wrapper' style={{ 'min-height': '722px' }}>
             {logIn && <NavBar />}
             {logIn && <VerticalNav />}
             <PrivateRoute component={StudentList} path='/' exact />
             <PrivateRoute component={StudentList} path='/student' exact />
             <PrivateRoute component={StudentDetail} path='/student/:id' exact />
             <PrivateRoute component={RoomList} path='/room' exact />
-            <PrivateRoute component={SubjectDetail} path='/subject/:id' exact />
+            <PrivateRoute
+              component={CreateMeeting}
+              path='/room/0/create_meeting'
+              exact
+            />
+            <PrivateRoute component={RoomDetail} path='/room/:id' exact />
             <PrivateRoute component={SubjectList} path='/subject' exact />
             <PrivateRoute
               component={CreateSubject}
-              path='/subject/create'
+              path='/subject/0/create'
               exact
             />
+            <PrivateRoute component={SubjectDetail} path='/subject/:id' exact />
+
             <PrivateRoute
               component={EditSubject}
               path='/subject/update/:id'
+              exact
+            />
+            <PrivateRoute
+              component={StudentVerificationS2}
+              path='/room/:id/verify/s2'
               exact
             />
             <PrivateRoute
@@ -96,22 +110,19 @@ function App() {
               path='/room/:id/verify/s1'
               exact
             />
+
             <PrivateRoute
               component={RealtimeVerify}
               path='/room/:id/verify/now'
               exact
             />
-            <PrivateRoute component={RoomDetail} path='/room/:id' exact />
+            {/* <PrivateRoute component={RoomDetail} path='/room/:id' exact /> */}
             <PrivateRoute
               component={StudentVerificationResult}
               path='/room/:id/verify/result/:resultId'
               exact
             />
-            <PrivateRoute
-              component={ExaminationStaffList}
-              path='/examination_staff'
-              exact
-            />
+            <PrivateRoute component={ProctorList} path='/proctor' exact />
             <PrivateRoute
               component={RealtimeVerify}
               path='/verify/room/:id'

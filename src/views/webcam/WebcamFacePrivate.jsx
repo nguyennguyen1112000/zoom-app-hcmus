@@ -6,14 +6,15 @@ import 'react-toastify/dist/ReactToastify.css'
 import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
 import { authHeader } from '../../helper/utils'
+import { SpinnerCircularFixed } from 'spinners-react'
 const videoConstraints = {
   width: 640,
   height: 480,
   facingMode: 'user'
 }
 
-export const WebcamDataPrivate = (props) => {
-  const { studentId} = props
+export const WebcamFacePrivate = (props) => {
+  const { studentId } = props
 
   const [image, setImage] = useState('')
   const dispatch = useDispatch()
@@ -23,6 +24,7 @@ export const WebcamDataPrivate = (props) => {
   const videoHeight = 600
   const videoWidth = 800
   const API_URL = process.env.REACT_APP_API_URL
+  const [loading, setLoading] = useState(false)
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
     setImage(imageSrc)
@@ -31,22 +33,20 @@ export const WebcamDataPrivate = (props) => {
   }, [webcamRef])
 
   const verifyImage = (e) => {
+    const imageName = `${studentId}_${Math.random() * 1000}.jpg`
     fetch(image)
       .then((res) => res.blob())
       .then((blob) => {
-        const file = new File(
-          [blob],
-          "face.jpg",
-          { type: 'image/jpg' }
-        )
+        const file = new File([blob], imageName, { type: 'image/jpg' })
         let formData = new FormData()
         formData.append('file', file)
         formData.append('studentId', studentId)
-
+        setLoading(true)
         axios
           .post(`${API_URL}/images/collect/data/v1`, formData, authHeader())
           .then((res) => {
-            toast.success('Tải lên ảnh thành công', {
+            setLoading(false)
+            toast.success('Upload successfully', {
               position: 'top-right',
               autoClose: 3000,
               hideProgressBar: false,
@@ -59,7 +59,8 @@ export const WebcamDataPrivate = (props) => {
           })
 
           .catch((err) => {
-            toast.error(err.response.data, {
+            setLoading(false)
+            toast.error(err?.response?.data?.message, {
               position: 'top-right',
               autoClose: 3000,
               hideProgressBar: false,
@@ -100,22 +101,26 @@ export const WebcamDataPrivate = (props) => {
       <div>
         {image != '' ? (
           <div className='form-group text-center'>
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                setImage('')
-                dispatch(addCaptureImage(null))
-              }}
-              className='btn btn-danger  btn-icon right-icon mr-2'
-            >
-              <span>Chụp lại</span> <i className='fa fa-camera' />{' '}
-            </button>
-            <button
-              onClick={verifyImage}
-              className='btn btn-success  btn-icon right-icon'
-            >
-              <span>Tải ảnh lên</span> <i className='fa fa-upload' />{' '}
-            </button>
+            <div className='button-list'>
+              {' '}
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  setImage('')
+                  dispatch(addCaptureImage(null))
+                }}
+                className='btn btn-danger  btn-icon right-icon mr-2'
+              >
+                <i className='fa fa-refresh' />
+                <span>Retake picture</span>
+              </button>
+              <button
+                onClick={verifyImage}
+                className='btn btn-success  btn-icon right-icon'
+              >
+                <span>Submit image</span> <i className='fa fa-arrow-right' />{' '}
+              </button>
+            </div>
           </div>
         ) : (
           <div className='form-group text-center'>
@@ -126,10 +131,19 @@ export const WebcamDataPrivate = (props) => {
                 capture()
               }}
             >
-              <span>Chụp</span> <i className='fa fa-camera' />{' '}
+              <i className='fa fa-camera' />
+              <span>Take picture</span>
             </button>
           </div>
         )}
+      </div>
+      <div className='spinner-loading'>
+        <SpinnerCircularFixed
+          size={100}
+          thickness={200}
+          color='#2986CC'
+          enabled={loading}
+        />
       </div>
       <ToastContainer />
     </>

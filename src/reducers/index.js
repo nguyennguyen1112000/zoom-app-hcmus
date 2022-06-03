@@ -5,6 +5,7 @@ import imageReducer from './image'
 import roomReducer from './room'
 import studentReducer from './student'
 import subjectReducer from './subject'
+import userReducer from './user'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   image: imageReducer,
   student: studentReducer,
   client: clientReducer,
-  subject: subjectReducer
+  subject: subjectReducer,
+  user: userReducer
 })
 
 export default rootReducer

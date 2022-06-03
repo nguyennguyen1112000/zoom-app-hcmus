@@ -50,7 +50,7 @@ export const getStudent = (studentId) => {
 export const getIdentityResults = (roomId) => {
   return (dispatch) => {
     return axios
-      .get(`${API_URL}/identity-record/room/${roomId}`, authHeader())
+      .get(`${API_URL}/identity-record/room/${roomId}/me`, authHeader())
       .then((res) => {
         const records = res.data
         console.log("!!!",records);

@@ -16,6 +16,7 @@ function Login() {
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
   const [redirect, setRedirect] = useState(false)
+  
   useEffect(() => {
     console.log('code', code, logIn, user)
     // localStorage.setItem(
@@ -66,19 +67,19 @@ function Login() {
       const input = {
         code: code
       }
-    //   axios
-    //     .post(`${API_URL}/auth/login`, input)
-    //     .then((res) => {
-    //       setRedirect(true)
-    //       const { access_token, user } = res.data
-    //       localStorage.setItem('user', JSON.stringify(user))
-    //       localStorage.setItem('token', JSON.stringify(access_token))
-    //       const action = userLoginSuccess(user)
-    //       dispatch(action)
-    //     })
-    //     .catch((err) => {
-    //       console.log('Error', err)
-    //     })
+      axios
+        .post(`${API_URL}/auth/login`, input)
+        .then((res) => {
+          setRedirect(true)
+          const { access_token, user } = res.data
+          localStorage.setItem('user', JSON.stringify(user))
+          localStorage.setItem('token', JSON.stringify(access_token))
+          const action = userLoginSuccess(user)
+          dispatch(action)
+        })
+        .catch((err) => {
+          console.log('Error', err)
+        })
     }
   }, [code, logIn, redirect])
   console.log('redirect', redirect)

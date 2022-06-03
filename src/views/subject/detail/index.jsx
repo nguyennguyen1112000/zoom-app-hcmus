@@ -18,7 +18,6 @@ function SubjectDetail() {
   const currentSubject = useSelector((state) => state.subject.currentSubject)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchStudent, setSearchStudent] = useState(null)
-  console.log('search', searchStudent)
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm)
@@ -269,7 +268,7 @@ function SubjectDetail() {
                         <td className='table-title-cell'>Mã kì thi</td>
                         <td colSpan={7}> {currentSubject?.examCode}</td>
                       </tr>
-                      <tr>
+                      {/* <tr>
                         <td className='table-title-cell'>Giờ thi</td>
                         <td colSpan={7}>
                           {currentSubject?.startTime
@@ -284,7 +283,7 @@ function SubjectDetail() {
                             ? formatDate(new Date(currentSubject.examDate))
                             : ''}
                         </td>
-                      </tr>
+                      </tr> */}
                     </tbody>
                   </table>
                 </div>

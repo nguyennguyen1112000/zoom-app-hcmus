@@ -25,16 +25,14 @@ function StudentVerificationS1() {
             </li>
             <li>
               <a href='/room'>
-                <span>Phòng thi</span>
+                <span>Room</span>
               </a>
             </li>
             <li>
-              <a href={`/room/${currentRoom?.id}`}>
-                {currentRoom?.name}
-              </a>
+              <a href={`/room/${currentRoom?.id}`}>{currentRoom?.name}</a>
             </li>
             <li className='active'>
-              <span>Điểm danh</span>
+              <span>Face recognition</span>
             </li>
           </ol>
         </div>
@@ -43,15 +41,46 @@ function StudentVerificationS1() {
       <div className='row'>
         <div className='col-md-12'>
           <div className='panel panel-default card-view'>
-            <div className='panel-heading'>
-              <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>Xác thực khuôn mặt</h6>
-              </div>
-              <div className='clearfix' />
-            </div>
+
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
-                <WebcamCapture roomId={currentRoom?.id} studentId = {user?.studentId} />
+                <div className='col-sm-12'>
+                  <div className='row'>
+                    <div className='col-md-3'>
+                      <div className='panel panel-default card-view'>
+                        <div className='panel-heading'>
+                          <div className='pull-left'>
+                            <h6 className='panel-title txt-primary'>
+                              Center your face in the webcam
+                            </h6>
+                            <img
+                              src='/img/face_recognition_example.png'
+                              alt='face_recognition_example'
+                              width={270}
+                            />
+                            <h6 className='panel-title txt-primary mt-10'>
+                              Please follow the instructions below
+                            </h6>
+                            <img
+                              src='/img/face_recognition_instruction.png'
+                              alt='face_recognition_instruction'
+                              width={270}
+                            />
+                          </div>
+                          <div className='clearfix' />
+                        </div>
+                       
+                      </div>
+                  
+                    </div>
+                    <div className='col-md-9'>
+                      <WebcamCapture
+                        roomId={currentRoom?.id}
+                        studentId={user?.studentId}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

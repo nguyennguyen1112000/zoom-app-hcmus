@@ -21,6 +21,6 @@ export const userLogout = () => {
 export const refreshToken = (payload) => {
   return {
     type: REFRESH_ZOOM_TOKEN,
-    payload
+    payload: payload
   }
 }

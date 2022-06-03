@@ -191,7 +191,7 @@ function SubjectList() {
                   <span class='btn-label'>
                     <i class='fa fa-plus'></i>{' '}
                   </span>
-                  <a href='/subject/create' className='btn-text text-white'>
+                  <a href='/subject/0/create' className='btn-text text-white'>
                     Thêm môn học
                   </a>
                 </button>
@@ -226,9 +226,7 @@ function SubjectList() {
                             <th>Tên môn học </th>
                             <th>HK/NH</th>
                             <th>Import</th>
-                            <th>Ngày thi</th>
-                            <th>Giờ thi</th>
-                            <th>Thời gian thi</th>
+
                             <th>Khóa</th>
                             <th>Tác vụ</th>
                           </tr>
@@ -272,7 +270,7 @@ function SubjectList() {
                                   </span>
                                 )}
                               </td>
-                              <td>
+                              {/* <td>
                                 {subject.examDate &&
                                   formatDate(new Date(subject.examDate))}
                               </td>
@@ -281,7 +279,7 @@ function SubjectList() {
                                   ? tConv24(subject.startTime)
                                   : ''}
                               </td>
-                              <td>{subject.examTime}</td>
+                              <td>{subject.examTime}</td> */}
                               <td>{subject.studentYear}</td>
 
                               <td>

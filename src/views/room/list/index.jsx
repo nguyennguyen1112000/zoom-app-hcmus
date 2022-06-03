@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import axios from 'axios'
 import swal from 'sweetalert'
 import { authHeader, handleExpiredToken, tConv24 } from '../../../helper/utils'
+import { Link } from 'react-router-dom'
 
 const API_URL = process.env.REACT_APP_API_URL
 function RoomList() {
@@ -37,7 +38,11 @@ function RoomList() {
   /************* Import from zoom *********** */
   const handleImportZoom = () => {
     axios
-      .post(`${API_URL}/rooms/import/zoom`, null, authHeader())
+      .post(
+        `${API_URL}/rooms/import/zoom`,
+        { access_token: user.zoom_access_token },
+        authHeader()
+      )
       .then((res) => {})
       .catch((err) => {
         console.log(err.response)
@@ -83,7 +88,7 @@ function RoomList() {
         setReload(!reload)
       })
       .catch((err) => {
-        toast.error(err.response.data.message, {
+        toast.error(err?.response?.data?.message, {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
@@ -92,21 +97,18 @@ function RoomList() {
           draggable: true,
           progress: undefined
         })
-        console.log(err.response.data.message)
       })
   }
   /************* Upload file *********** */
 
   const uploadFile = (e) => {
     const formData = new FormData()
-    //console.log('e.target.value', e.target.file)
-
     formData.append('file', e.target.files[0])
     axios
       .post(`${API_URL}/rooms/upload`, formData, authHeader())
       .then((res) => {
         e.target.value = null
-        toast.success('Đăng tải thành công', {
+        toast.success('Upload successfully', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
@@ -118,7 +120,15 @@ function RoomList() {
         setReload(!reload)
       })
       .catch((err) => {
-        console.log(err)
+        toast.error(err?.response?.data?.message, {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
       })
   }
   const renderRooms = () => {
@@ -156,7 +166,7 @@ function RoomList() {
                         <i class='fa fa-trash'></i>
                       </span>
                       <span class='btn-text' onClick={handleDelete}>
-                        Xóa đã chọn
+                        Delete
                       </span>
                     </button>
                   </div>
@@ -165,7 +175,10 @@ function RoomList() {
                   <button class='btn btn-default' onClick={handleImportZoom}>
                     Import Zoom
                   </button>
-                  <button class='btn btn-success btn-square btn-outline'>
+                  <button
+                    class='btn btn-success btn-square btn-outline'
+                    onClick={downloadTemplate}
+                  >
                     <span class='btn-label'>
                       <i class='fa fa-download'></i>
                     </span>
@@ -181,11 +194,13 @@ function RoomList() {
                       onChange={uploadFile}
                     />
                   </button>
-                  <button class='btn btn-primary btn-square'>
-                    <span class='btn-label'>
-                      <i class='fa fa-plus'></i>
-                    </span>
-                  </button>
+                  <Link to='/room/0/create_meeting'>
+                    <button class='btn btn-primary btn-square'>
+                      <span class='btn-label'>
+                        <i class='fa fa-plus'></i>
+                      </span>
+                    </button>
+                  </Link>
                 </div>
                 <div className='clearfix' />
               </div>
@@ -211,18 +226,17 @@ function RoomList() {
                             </th>
                             <th>#</th>
 
-                            <th>Tên phòng </th>
-                            <th>Phòng thi</th>
+                            <th>Room name</th>
+                            <th>Room Code</th>
                             <th>ZoomId </th>
                             <th>Passcode</th>
                             <th>Link</th>
-                            <th>Mã môn học</th>
-                            <th>Mã lớp</th>
-                            <th>Ngày thi</th>
-                            <th>Giờ thi</th>
-                            <th>Số SV</th>
-                            <th>Trạng thái</th>
-                            <th>Tác vụ</th>
+                            <th>Subject Code</th>
+                            <th>Class Code</th>
+                            <th>Exam date</th>
+                            <th>No. Students</th>
+                            <th>Status</th>
+                            <th>ACTION</th>
                           </tr>
                         </thead>
 
@@ -240,10 +254,9 @@ function RoomList() {
                               </td>
                               <td>{index + 1}</td>
                               <td>
-                                <a href={`/room/${room.roomId}`}></a>
-                                {room.name}
+                                <a href={`/room/${room.id}`}>{room.name}</a>
                               </td>
-                              <td>{room.roomCode}</td>
+                              <td> {room.roomCode}</td>
                               <td>{room.zoomId}</td>
                               <td>{room.passcode}</td>
                               <td>
@@ -251,9 +264,8 @@ function RoomList() {
                               </td>
                               <td>{room.subject.subjectCode}</td>
                               <td>{room.subject.classCode}</td>
-                              <td> 13/05/2022</td>
-                              <td>{tConv24(room.subject?.startTime)}</td>
-                              <td></td>
+                              <td> {room.examDate && formatDate(room.examDate)}</td>
+                              <td>{room.students.length}</td>
                               <td>
                                 <span className='label label-danger'>
                                   Đã kết thúc
@@ -299,9 +311,7 @@ function RoomList() {
       <div className='container-fluid'>
         {/* Title */}
         <div className='row heading-bg'>
-          <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-            <h5 className='txt-dark'>Phòng thi của tôi</h5>
-          </div>
+          <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'></div>
           {/* Breadcrumb */}
           <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
             <ol className='breadcrumb'>
@@ -310,7 +320,7 @@ function RoomList() {
               </li>
 
               <li className='active'>
-                <span>Danh sách phòng thi</span>
+                <span>Rooms</span>
               </li>
             </ol>
           </div>
@@ -325,32 +335,29 @@ function RoomList() {
                 <div className='panel-body'>
                   <div className='table-wrap mb-0'>
                     <div className='table-responsive'>
-                      <table className='table  display table-hover mb-0'>
+                      <table
+                        id='datable_1'
+                        className='table table-hover display  pb-30'
+                      >
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>Tên phòng </th>
-                            <th>Phòng thi</th>
+                            <th>Room name</th>
+                            <th>Room code</th>
                             <th>ZoomId </th>
                             <th>Passcode</th>
                             <th>Link</th>
-                            <th>Mã môn học</th>
-                            <th>Mã lớp</th>
-                            <th>Ngày thi</th>
-                            <th>Giờ thi</th>
-                            <th>Trạng thái</th>
+                            <th>Subject</th>
                           </tr>
                         </thead>
 
                         <tbody>
                           {roomList &&
                             roomList.map((room, index) => (
-                              <tr className='text-primary font-weight-bold'>
+                              <tr >
                                 <td>{index + 1}</td>
                                 <td>
-                                  <a href={`/room/${room.id}`}>
-                                    {room.subject.name}
-                                  </a>
+                                  <a href={`/room/${room.id}`}>{room.name}</a>
                                 </td>
                                 <td>{room.roomCode}</td>
                                 <td>{room.zoomId}</td>
@@ -358,19 +365,12 @@ function RoomList() {
                                   {room.passcode} <i className='fa fa-eye'></i>
                                 </td>
                                 <td>
-                                  <a href={room.url}>Vào phòng</a>
+                                  <a href={room.url}>
+                                    Enter room{' '}
+                                    <i className='fa fa-arrow-right'></i>
+                                  </a>
                                 </td>
-                                <td>{room.subject.subjectCode}</td>
-                                <td>{room.subject.classCode}</td>
-                                <td>{room.subject.examDate}</td>
-                                <td>{room.subject.startTime}</td>
-                                <td>
-                                  {' '}
-                                  <span className='label label-danger'>
-                                    {' '}
-                                    Chưa định danh{' '}
-                                  </span>
-                                </td>
+                                <td>{room.subject.name}</td>
                               </tr>
                             ))}
                         </tbody>

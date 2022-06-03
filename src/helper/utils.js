@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { refreshToken } from '../actions/auth'
+
 const API_URL = process.env.REACT_APP_API_URL
 export function authHeader() {
   const token = JSON.parse(localStorage.getItem('token'))
@@ -37,7 +39,7 @@ export function handleExpiredToken(error, swal) {
         axios
           .post(`${API_URL}/zooms/refresh_token`, null, authHeader())
           .then((res) => {
-            console.log(res.data)
+            localStorage.setItem('token', res.data)
             swal('Đăng nhập thành công', {
               icon: 'success'
             })
@@ -110,4 +112,23 @@ export function tConv24(time24) {
   var ampm = H < 12 ? ' AM' : ' PM'
   ts = h + ts.substr(2, 3) + ampm
   return ts
+}
+
+export function generatePassword() {
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  var passwordLength = 6
+  var password = ''
+  for (var i = 0; i <= passwordLength; i++) {
+    var randomNumber = Math.floor(Math.random() * chars.length)
+    password += chars.substring(randomNumber, randomNumber + 1)
+  }
+  return password
+}
+
+export function roundToNearestHour(date) {
+  date.setMinutes(date.getMinutes() + 30)
+  date.setMinutes(0, 0, 0)
+  if (date < new Date()) date.setMinutes(date.getMinutes() + 30)
+
+  return date
 }

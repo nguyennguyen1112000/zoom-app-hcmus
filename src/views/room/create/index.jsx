@@ -1,31 +1,45 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import TimePicker from 'react-time-picker'
 import DatePicker from 'react-date-picker'
+import swal from 'sweetalert'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { authHeader } from '../../../helper/utils'
-function CreateSubject() {
+import {
+  authHeader,
+  generatePassword,
+  handleExpiredToken,
+  roundToNearestHour
+} from '../../../helper/utils'
+function CreateMeeting() {
   const API_URL = process.env.REACT_APP_API_URL
+  const defaultPassword = generatePassword()
   const [input, setInput] = useState({
-    subjectCode: '',
-    term: 1,
-    teacher: '',
-    classCode: '',
-    studentYear: '',
-    educationLevel: '',
-    examCode: '',
-    examTime: 0,
-    name: '',
-    schoolYear: '',
-    examDate: new Date()
+    agenda: '',
+    default_password: false,
+    duration: 60,
+    password: defaultPassword,
+    settings: {
+      host_video: false,
+      mute_upon_entry: false,
+      participant_video: false,
+      waiting_room: false,
+      use_pmi: false,
+      join_before_host: false,
+      jbh_time: 0,
+      auto_recording: ''
+      //alternative_hosts: ''
+    },
+    start_time: new Date().toUTCString(),
+    timezone: 'Asia/Vietnam',
+    topic: 'My Meeting',
+    type: 2
   })
-  const [startTime, onChangeTime] = useState('10:00')
-  const [examDate, setExamDate] = useState(new Date())
 
   const [errors, setErrors] = useState({
-    subjectCode: null,
+    topic: null,
     term: null,
     teacher: null,
     classCode: null,
@@ -35,83 +49,123 @@ function CreateSubject() {
     examDate: null,
     startTime: null
   })
+  const [startTime, onChangeTime] = useState(
+    roundToNearestHour(new Date()).getHours() +
+      ':' +
+      roundToNearestHour(new Date()).getMinutes()
+  )
+  const [startDate, onChangeDate] = useState(roundToNearestHour(new Date()))
+  const [duration, setDuration] = useState({ hours: 1, minutes: 0 })
   function handleChange(event) {
+    console.log('123');
+    
     switch (event.target.name) {
-      case 'subjectCode':
+      case 'agenda':
+        if (event.target.value.length <= 2000)
+          setInput({
+            ...input,
+            agenda: event.target.value
+          })
+        break
+      case 'topic':
+        if (event.target.value.length <= 200)
+          setInput({
+            ...input,
+            topic: event.target.value
+          })
+        break
+      case 'duration_hours':
+        setDuration({ ...duration, hours: parseFloat(event.target.value) })
         setInput({
           ...input,
-          subjectCode: event.target.value
+          duration: parseInt(event.target.value) * 60 + duration.minutes
         })
         break
-      case 'term':
+      case 'duration_minutes':
+        setDuration({ ...duration, minutes: parseFloat(event.target.value) })
         setInput({
           ...input,
-          term: event.target.value
+          duration: duration.hours * 60 + parseFloat(event.target.value)
         })
         break
-      case 'teacher':
+      case 'password':
         setInput({
           ...input,
-          teacher: event.target.value
+          password: event.target.value
         })
         break
-      case 'classCode':
+      case 'host_video':
         setInput({
           ...input,
-          classCode: event.target.value
+          settings: { ...input.settings, host_video: !event.target.value }
         })
         break
-      case 'studentYear':
+      case 'mute_upon_entry':
         setInput({
           ...input,
-          studentYear: event.target.value
+          settings: { ...input.settings, mute_upon_entry: event.target.checked }
         })
         break
-      case 'educationLevel':
+      case 'participant_video':
         setInput({
           ...input,
-          educationLevel: event.target.value
+          settings: {
+            ...input.settings,
+            participant_video: event.target.value
+          }
         })
         break
-      case 'examCode':
+      case 'waiting_room':
+        console.log('event.target.checked', event.target.checked)
+
         setInput({
           ...input,
-          examCode: event.target.value
+          settings: { ...input.settings, waiting_room: event.target.checked }
         })
         break
-      case 'startTime':
+      case 'use_pmi':
+        console.log('pmi', event.target.value)
+
         setInput({
           ...input,
-          startTime: event.target.value
+          settings: { ...input.settings, use_pmi: event.target.value }
         })
         break
-      case 'examTime':
+      case 'join_before_host':
         setInput({
           ...input,
-          examTime: event.target.value
+          settings: {
+            ...input.settings,
+            join_before_host: event.target.checked
+          }
         })
         break
-      case 'name':
+      case 'auto_recording':
+        console.log('event.target.checked', event.target.checked)
+
         setInput({
           ...input,
-          name: event.target.value
+          settings: {
+            ...input.settings,
+            auto_recording: event.target.checked ? 'local' : ''
+          }
         })
         break
-      case 'schoolYear':
+      case 'start_time':
         setInput({
           ...input,
-          schoolYear: event.target.value
+          start_time: event.target.value
         })
         break
-      case 'examDate':
-        setInput({
-          ...input,
-          examDate: event.target.value
-        })
+      case 'alternative_hosts':
+       console.log(event.target.value)
+       
         break
+
       default:
         break
     }
+    console.log('input', input)
   }
   function validate() {
     let isValid = true
@@ -170,52 +224,56 @@ function CreateSubject() {
         errs.schooYear = 'Phải ít hơn 50 kí tự'
       }
     }
-    if (!startTime) {
-      isValid = false
-      errs.startTime = 'Thời gian không hợp lệ'
-    }
-    if (!examDate) {
-      isValid = false
-      errs.examDate = 'Ngày thi không hợp lệ'
-    }
+
     setErrors(errs)
 
     return isValid
   }
   function handleSubmit(event) {
     event.preventDefault()
+    console.log(input)
 
-    if (validate()) {
-        axios
-          .post(`${API_URL}/subjects`, {...input, startTime, examDate}, authHeader())
-          .then((res) => {           
-            setInput({
-              subjectCode: '',
-              term: 1,
-              teacher: '',
-              classCode: '',
-              studentYear: '',
-              educationLevel: '',
-              examCode: '',
-              examTime: 0,
-              name: '',
-              schoolYear: '',
-              examDate: new Date()
-            })
-            toast.success('Tạo thành công môn học', {
-              position: 'top-right',
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined
-            })
-          })
-          .catch((err) => {
-            
-          })
-    }
+    // axios
+    //   .post(
+    //     `${API_URL}/zooms/meeting`,
+    //     input,
+    //     authHeader()
+    //   )
+    //   .then((res) => {
+    //     setInput({
+    //       agenda: '',
+    //       default_password: false,
+    //       duration: 60,
+    //       password: defaultPassword,
+    //       settings: {
+    //         host_video: false,
+    //         mute_upon_entry: false,
+    //         participant_video: false,
+    //         waiting_room: false,
+    //         use_pmi: false,
+    //         join_before_host: false,
+    //         jbh_time: 0,
+    //         auto_recording: ''
+    //         //alternative_hosts: ''
+    //       },
+    //       start_time: new Date().toUTCString(),
+    //       timezone: 'Asia/Vietnam',
+    //       topic: 'My Meeting',
+    //       type: 2
+    //     })
+    //     toast.success('Create Zoom Meeting successfully', {
+    //       position: 'top-right',
+    //       autoClose: 3000,
+    //       hideProgressBar: false,
+    //       closeOnClick: true,
+    //       pauseOnHover: true,
+    //       draggable: true,
+    //       progress: undefined
+    //     })
+    //   })
+    //   .catch((err) => {
+    //     handleExpiredToken(err, swal)
+    //   })
   }
 
   return (
@@ -223,7 +281,7 @@ function CreateSubject() {
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-          <h5 className='txt-dark'>Tạo môn học</h5>
+          <h5 className='txt-dark'>Create meeting</h5>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
@@ -232,10 +290,10 @@ function CreateSubject() {
               <a href='index.html'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>Danh sách phòng </a>
+              <a href='/subject'>Room List</a>
             </li>
             <li className='active'>
-              <span>Tạo zoom meeting</span>
+              <span>Create Zoom meeting</span>
             </li>
           </ol>
         </div>
@@ -247,45 +305,191 @@ function CreateSubject() {
               <div className='panel-body'>
                 <div className='form-wrap'>
                   <form>
-                    <div className={`form-group ${errors.name && 'has-error'}`}>
+                    <div
+                      className={`form-group ${errors.topic && 'has-error'}`}
+                    >
                       <label className='control-label mb-10 text-left'>
-                        Tên môn học (*)
+                        Topic
                       </label>
                       <input
                         type='text'
                         className='form-control'
-                        name='name'
+                        name='topic'
                         onChange={handleChange}
-                        value={input.name}
-                        placeholder='Nhập tên môn học'
+                        value={input.topic}
+                        placeholder='My Meeting'
                       />
-                      {errors.name && (
+                      {errors.topic && (
                         <div className='help-block with-errors'>
-                          {errors.name}
+                          {errors.topic}
                         </div>
                       )}
                     </div>
                     <div
-                      className={`form-group ${
-                        errors.subjectCode && 'has-error'
-                      }`}
+                      className={`form-group ${errors.agenda && 'has-error'}`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Mã môn học (*)
+                        Description
                       </label>
-                      <input
-                        type='text'
+                      <textarea
                         className='form-control'
-                        name='subjectCode'
+                        name='agenda'
+                        rows={5}
+                        defaultValue={''}
+                        value={input.agenda}
                         onChange={handleChange}
-                        value={input.subjectCode}
-                        placeholder='Nhập mã môn học'
                       />
-                      {errors.subjectCode && (
-                        <div className='help-block with-errors'>
-                          {errors.subjectCode}
+                    </div>
+                    <div className='form-group'>
+                      <label className='control-label mb-10 text-left'>
+                        When
+                      </label>
+                      <div className='row'>
+                        <div className='col-md-6 col-sm-12 col-xs-12 form-group'>
+                          <DatePicker
+                            className='form-control'
+                            minDate={new Date()}
+                            value={startDate}
+                            onChange={onChangeDate}
+                          />
                         </div>
-                      )}
+                        <div className='col-md-6 col-sm-12 col-xs-12 form-group'>
+                          <TimePicker
+                            className='form-control'
+                            value={startTime}
+                            onChange={onChangeTime}
+                          />
+                          {errors.startTime && (
+                            <div className='help-block with-errors'>
+                              {errors.startTime}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className='form-group'>
+                      <label className='control-label mb-10 text-left'>
+                        Duration
+                      </label>
+                      <div className='row'>
+                        <div className='col-md-5 col-sm-10 col-xs-10 form-group'>
+                          <select
+                            className='form-control'
+                            tabIndex={input.term}
+                            onChange={handleChange}
+                            name='duration_hours'
+                          >
+                            <option value='1'>1</option>
+                            <option value='2'>2</option>
+                            <option value='3'>3</option>
+                            <option value='4'>4</option>
+                            <option value='5'>5</option>
+                            <option value='6'>6</option>
+                            <option value='7'>7</option>
+                            <option value='8'>8</option>
+                            <option value='9'>9</option>
+                            <option value='10'>10</option>
+                            <option value='11'>11</option>
+                            <option value='12'>12</option>
+                            <option value='13'>13</option>
+                            <option value='14'>14</option>
+                            <option value='15'>15</option>
+                            <option value='16'>16</option>
+                            <option value='17'>17</option>
+                            <option value='18'>18</option>
+                            <option value='19'>19</option>
+                            <option value='20'>20</option>
+                            <option value='21'>21</option>
+                            <option value='22'>22</option>
+                            <option value='23'>23</option>
+                            <option value='24'>24</option>
+                          </select>
+                        </div>
+                        <div className='col-md-1'>hr</div>
+                        <div className='col-md-5 col-sm-10 col-xs-10 form-group'>
+                          <select
+                            className='form-control '
+                            name='duration_minutes'
+                            onChange={handleChange}
+                          >
+                            <option value='0'>0</option>
+                            <option value='15'>15</option>
+                            <option value='30'>30</option>
+                            <option value='45'>45</option>
+                          </select>
+                        </div>
+                        <div className='col-md-1'>min</div>
+                      </div>
+                    </div>
+                    <div className='form-group'>
+                      <label className='control-label mb-10'>Meeting ID</label>
+                      <div>
+                        <div className='radio'>
+                          <input
+                            type='radio'
+                            name='use_pmi'
+                            id='ami'
+                            value={false}
+                            onChange={handleChange}
+                            defaultChecked
+                          />
+                          <label htmlFor='ami'>Generate Automatically</label>
+                        </div>
+                        <div className='radio'>
+                          <input
+                            type='radio'
+                            name='use_pmi'
+                            id='pmi'
+                            value={true}
+                            onChange={handleChange}
+                          />
+                          <label htmlFor='pmi'>Personal Meeting </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='form-group mb-30'>
+                      <label className='control-label mb-10 text-left'>
+                        Security
+                      </label>
+                      <div className='row'>
+                        <div className='col-md-2'>
+                          <div className='checkbox checkbox-primary'>
+                            <input
+                              id='default_password'
+                              type='checkbox'
+                              name='default_password'
+                              disabled
+                              checked
+                            />
+                            <label htmlFor='password'>Password</label>
+                          </div>
+                        </div>
+                        <div className='col-md-10'>
+                          <input
+                            type='text'
+                            name='password'
+                            onChange={handleChange}
+                            value={input.password}
+                          />
+                          {errors.password && (
+                            <div className='help-block with-errors'>
+                              {errors.password}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className='checkbox checkbox-primary'>
+                        <input
+                          id='waiting_room'
+                          type='checkbox'
+                          name='waiting_room'
+                          checked={input.settings.waiting_room}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor='waiting_room'>Waiting room</label>
+                      </div>
                     </div>
                     <div
                       className={`form-group ${
@@ -293,170 +497,129 @@ function CreateSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Khóa
+                        Video
                       </label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        name='studentYear'
-                        onChange={handleChange}
-                        value={input.studentYear}
-                        placeholder='Nhập khóa sinh viên'
-                      />
-                      {errors.studentYear && (
-                        <div className='help-block with-errors'>
-                          {errors.studentYear}
+                      <div className='radio-list'>
+                        <span>Host</span>
+
+                        <div className='radio-inline pl-10'>
+                          <span className='radio radio-info'>
+                            <input
+                              type='radio'
+                              name='host_video'
+                              id='host_video_on'
+                              value='true'
+                              onChange={handleChange}
+                            />
+                            <label htmlFor='host_video_on'>on</label>
+                          </span>
                         </div>
-                      )}
+                        <div className='radio-inline'>
+                          <span className='radio radio-info'>
+                            <input
+                              type='radio'
+                              name='host_video'
+                              id='host_video_off'
+                              value='false'
+                              defaultChecked
+                              onChange={handleChange}
+                            />
+                            <label htmlFor='host_video_off'>off </label>
+                          </span>
+                        </div>
+                      </div>
+                      <div className='radio-list'>
+                        <span>Participant</span>
+
+                        <div className='radio-inline pl-10'>
+                          <span className='radio radio-info'>
+                            <input
+                              type='radio'
+                              name='participant_video'
+                              id='participant_video_on'
+                              value='true'
+                              onChange={handleChange}
+                            />
+                            <label htmlFor='participant_video_on'>on</label>
+                          </span>
+                        </div>
+                        <div className='radio-inline'>
+                          <span className='radio radio-info'>
+                            <input
+                              type='radio'
+                              name='participant_video'
+                              id='participant_video_off'
+                              value='false'
+                              defaultChecked
+                              onChange={handleChange}
+                            />
+                            <label htmlFor='participant_video_off'>off</label>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                     <div className='form-group'>
-                      <label className='control-label mb-10'>Học kì</label>
-                      <select
-                        className='form-control'
-                        data-placeholder='Choose a Category'
-                        tabIndex={input.term}
-                        name='term'
-                        onChange={handleChange}
-                      >
-                        <option value='1'>1</option>
-                        <option value='2'>2</option>
-                        <option value='3'>3</option>
-                      </select>
+                      <label className='control-label mb-10'>Option</label>
+                      <div className='checkbox checkbox-primary'>
+                        <input
+                          id='join_before_host'
+                          type='checkbox'
+                          name='join_before_host'
+                          checked={input.settings.join_before_host}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor='jbh_time'>
+                          Allow participants to join anytime
+                        </label>
+                      </div>
+                      <div className='checkbox checkbox-primary'>
+                        <input
+                          id='mute_upon_entry'
+                          type='checkbox'
+                          name='mute_upon_entry'
+                          checked={input.settings.mute_upon_entry}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor='mute_upon_entry'>
+                          Mute participants upon entry
+                        </label>
+                      </div>
+                      <div className='checkbox checkbox-primary'>
+                        <input
+                          id='auto_recording'
+                          name='auto_recording'
+                          type='checkbox'
+                          checked={input.settings.auto_recording === 'local'}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor='auto_recording'>
+                          Automatically record meeting on the local computer
+                        </label>
+                      </div>
                     </div>
+
                     <div
                       className={`form-group ${
-                        errors.schoolYear && 'has-error'
+                        errors.alternative_hosts && 'has-error'
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Năm học
+                        Alternative hosts
                       </label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        name='schoolYear'
-                        onChange={handleChange}
-                        value={input.schoolYear}
-                        placeholder='Nhập năm học'
-                      />
-                      {errors.schoolYear && (
-                        <div className='help-block with-errors'>
-                          {errors.schoolYear}
+                      <div className='row'>
+                        <div className='col-sm-12'>
+                          <h5 className='box-title' />
+                          <select
+                            id='pre-selected-options'
+                            multiple='multiple'
+                            name='alternative_hosts'
+                            onClick={handleChange}
+                          >
+                            <option value='elem_1'>Nguyễn Bình Nguyên</option>
+                            <option value='elem_2'>Triệu Mai Ngọc Thức</option>
+                          </select>
                         </div>
-                      )}
-                    </div>
-                    <div
-                      className={`form-group ${
-                        errors.classCode && 'has-error'
-                      }`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Lớp học
-                      </label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        name='classCode'
-                        onChange={handleChange}
-                        value={input.classCode}
-                        placeholder='Nhập lớp học'
-                      />
-                      {errors.classCode && (
-                        <div className='help-block with-errors'>
-                          {errors.classCode}
-                        </div>
-                      )}
-                    </div>
-                    <div className='form-group'>
-                      <label className='control-label mb-10 text-left'>
-                        Mã kì thi
-                      </label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        name='examCode'
-                        onChange={handleChange}
-                        value={input.examCode}
-                        placeholder='Nhập mã kì thi'
-                      />
-                    </div>
-                    <div
-                      className={`form-group ${errors.examDate && 'has-error'}`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Ngày thi
-                      </label>
-                      <DatePicker
-                        className='form-control'
-                        onChange={setExamDate}
-                        value={examDate}
-                      />
-                      {errors.examDate && (
-                        <div className='help-block with-errors'>
-                          {errors.examDate}
-                        </div>
-                      )}
-                    </div>
-                    <div
-                      className={`form-group ${
-                        errors.startTime && 'has-error'
-                      }`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Giờ bắt đầu
-                      </label>
-                      <TimePicker
-                        className='form-control'
-                        onChange={onChangeTime}
-                        value={startTime}
-                      />
-                      {errors.startTime && (
-                        <div className='help-block with-errors'>
-                          {errors.startTime}
-                        </div>
-                      )}
-                    </div>
-                    <div className='form-group'>
-                      <label className='control-label mb-10 text-left'>
-                        Thời gian thi
-                      </label>
-                      <input
-                        type='number'
-                        className='form-control'
-                        name='examTime'
-                        onChange={handleChange}
-                        value={input.examTime}
-                        placeholder='Nhập thời gian thi'
-                      />
-                    </div>
-                    <div
-                      className={`form-group ${errors.teacher && 'has-error'}`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Tên Giảng viên
-                      </label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        name='teacher'
-                        onChange={handleChange}
-                        value={input.teacher}
-                        placeholder='Nhập tên giảng viên'
-                      />
-                    </div>
-                    <div className='form-group'>
-                      <label className='control-label mb-10 text-left'>
-                        Loại lớp
-                        <span className='help'> (Ví dụ: ĐHCQ, CLC)</span>
-                      </label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        name='educationLevel'
-                        onChange={handleChange}
-                        value={input.educationLevel}
-                        placeholder='Nhập loại lớp học'
-                      />
+                      </div>
                     </div>
                   </form>
                   <div className='form-actions mt-10'>
@@ -464,10 +627,10 @@ function CreateSubject() {
                       className='btn btn-success  mr-10'
                       onClick={handleSubmit}
                     >
-                      Lưu
+                      Save
                     </button>
                     <a href='/subject' className='btn btn-default'>
-                      Thoát
+                      Cancel
                     </a>
                   </div>
                 </div>
@@ -481,4 +644,4 @@ function CreateSubject() {
   )
 }
 
-export default CreateSubject
+export default CreateMeeting
