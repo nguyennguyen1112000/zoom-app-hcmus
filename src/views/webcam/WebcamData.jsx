@@ -19,8 +19,8 @@ export const WebcamData = (props) => {
   const webcamRef = useRef(null)
   const canvasRef = React.useRef()
 
-  const videoHeight = 600
-  const videoWidth = 800
+  const videoHeight = 480
+  const videoWidth = 640
   const API_URL = process.env.REACT_APP_API_URL
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
@@ -32,8 +32,6 @@ export const WebcamData = (props) => {
   const verifyImage = (e) => {
     e.preventDefault()
     const err = !validate()
-    console.log('sfsdfd', err)
-
     if (err) return
 
     fetch(image)
@@ -96,6 +94,7 @@ export const WebcamData = (props) => {
               screenshotFormat='image/jpeg'
               width={videoWidth}
               videoConstraints={videoConstraints}
+              className="media-box"
               //onPlay={handleVideoOnPlay}
             />
           ) : (
@@ -107,22 +106,25 @@ export const WebcamData = (props) => {
       <div>
         {image != '' ? (
           <div className='form-group text-center'>
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                setImage('')
-                dispatch(addCaptureImage(null))
-              }}
-              className='btn btn-danger  btn-icon right-icon mr-2'
-            >
-              <span>Chụp lại</span> <i className='fa fa-camera' />{' '}
-            </button>
-            <button
-              onClick={verifyImage}
-              className='btn btn-success  btn-icon right-icon'
-            >
-              <span>Tải ảnh lên</span> <i className='fa fa-upload' />{' '}
-            </button>
+            <div className='button-list'>
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  setImage('')
+                  dispatch(addCaptureImage(null))
+                }}
+                className='btn btn-danger  btn-icon right-icon mr-2'
+              >
+                <i className='fa fa-refresh' /> <span>Retake photo</span>
+              </button>
+              <button
+                onClick={verifyImage}
+                className='btn btn-success  btn-icon right-icon'
+              >
+                <i className='fa fa-arrow-right' />
+                <span>Submit image</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className='form-group text-center'>
@@ -133,7 +135,7 @@ export const WebcamData = (props) => {
                 capture()
               }}
             >
-              <span>Chụp</span> <i className='fa fa-camera' />{' '}
+              <span>Take picture</span> <i className='fa fa-camera' />{' '}
             </button>
           </div>
         )}

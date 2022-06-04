@@ -23,3 +23,6 @@ export const GET_SUBJECTS = 'GET_SUBJECTS'
 export const GET_SUBJECT = 'GET_SUBJECT'
 
 export const GET_USERS= 'GET_USERS'
+export const GET_SETTING = 'GET_SETTING'
+
+export const GET_IDENTITY_SESSION = 'GET_IDENTITY_SESSION'

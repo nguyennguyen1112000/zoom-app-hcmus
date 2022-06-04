@@ -1,14 +1,14 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import TimePicker from 'react-time-picker'
 import DatePicker from 'react-date-picker'
+
+import TimePicker from 'react-time-picker'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { authHeader } from '../../../helper/utils'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { getCurrentSubject } from '../../../services/api/subject'
-import { useHistory } from 'react-router-dom'
 function EditSubject() {
   const API_URL = process.env.REACT_APP_API_URL
   const dispatch = useDispatch()
@@ -35,7 +35,7 @@ function EditSubject() {
   useEffect(() => {
     if (currentSubject) {
       setInput({ ...input, ...currentSubject })
-      setExamDate(new Date(currentSubject.examDate))
+      setExamDate(currentSubject.examDate)
       onChangeTime(currentSubject.startTime)
     }
   }, [currentSubject])

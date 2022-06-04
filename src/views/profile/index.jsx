@@ -183,7 +183,7 @@ function Profile() {
                 <div className='profile-box'>
                   <div className='profile-cover-pic'>
                     <div className='fileupload btn btn-default'>
-                      <span className='btn-text'>Chỉnh sửa</span>
+                      <span className='btn-text'>Edit</span>
                       <input className='upload' type='file' />
                     </div>
                     <div className='profile-image-overlay' />
@@ -201,7 +201,7 @@ function Profile() {
                         {getShortName(user?.firstName + ' ' + user?.lastName)}
                       </div>
                       <div className='fileupload btn btn-default'>
-                        <span className='btn-text'>Chỉnh sửa</span>
+                        <span className='btn-text'>Edit</span>
                         <input className='upload' type='file' />
                       </div>
                     </div>
@@ -213,22 +213,22 @@ function Profile() {
                     </h6>
                   </div>
                   <div className='social-info'>
-                    <button className='btn btn-primary btn-block mt-30'>
+                   {user.role ==="admin" && <button className='btn btn-primary btn-block mt-30'>
                       <i className='fa fa-connect' />
                       <span
                         className='btn-text'
                         onClick={() => setMode('connectMoodle')}
                       >
-                        Liên kết với Moodle
+                        Link with Moodle account
                       </span>
-                    </button>
+                    </button>}
                     <button
                       className='btn btn-default btn-block btn-outline btn-anim'
                       data-toggle='modal'
                       data-target='#myModal'
                     >
                       <i className='fa fa-pencil' />
-                      <span className='btn-text'>Chỉnh sửa profile</span>
+                      <span className='btn-text'>Edit profile</span>
                     </button>
                   </div>
                 </div>

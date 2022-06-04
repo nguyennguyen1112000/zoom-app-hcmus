@@ -54,47 +54,28 @@ function LeftSideBar() {
             <hr className='light-grey-hr mb-10' />
           </li>
           <li className='navigation-header'>
-            <span>Quản lý định danh</span>
+            <span>Identity</span>
             <i className='zmdi zmdi-more' />
           </li>
 
           <li>
-            <a
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#table_dr'
-            >
+            <NavLink to='/identity/settings' activeClassName='active'>
               <div className='pull-left'>
-                <i className='zmdi zmdi-search mr-20' />
-                <span className='right-nav-text'>Tìm kiếm phòng thi</span>
+                <i className='fa fa-gear mr-20' />
+                <span className='right-nav-text'>Configuration</span>
               </div>
-
               <div className='clearfix' />
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a
-              href='javascript:void(0);'
-              data-toggle='collapse'
-              data-target='#icon_dr'
-            >
+            <NavLink to='/identity/sessions' activeClassName='active'>
               <div className='pull-left'>
-                <i className='zmdi zmdi-iridescent mr-20' />
-                <span className='right-nav-text'>Hôm nay</span>
-              </div>
-              <div className='pull-right'>
-                <i className='zmdi zmdi-caret-down' />
+                <i className='fa fa-calendar mr-20' />
+                <span className='right-nav-text'>Sessions</span>
               </div>
               <div className='clearfix' />
-            </a>
-            <ul id='icon_dr' className='collapse collapse-level-1'>
-              <li>
-                <a href='fontawesome.html'>Thi CK Lập trình hướng đối tượng</a>
-              </li>
-              <li>
-                <a href='themify.html'>Thi CK Lập trình Web</a>
-              </li>
-            </ul>
+            </NavLink>
+            
           </li>
 
           <li>

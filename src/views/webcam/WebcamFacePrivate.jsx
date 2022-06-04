@@ -21,8 +21,8 @@ export const WebcamFacePrivate = (props) => {
   const webcamRef = useRef(null)
   const canvasRef = React.useRef()
 
-  const videoHeight = 600
-  const videoWidth = 800
+  const videoHeight = 480
+  const videoWidth = 640
   const API_URL = process.env.REACT_APP_API_URL
   const [loading, setLoading] = useState(false)
   const capture = React.useCallback(() => {
@@ -91,6 +91,7 @@ export const WebcamFacePrivate = (props) => {
               width={videoWidth}
               videoConstraints={videoConstraints}
               //onPlay={handleVideoOnPlay}
+              className='media-box'
             />
           ) : (
             <img src={image} />

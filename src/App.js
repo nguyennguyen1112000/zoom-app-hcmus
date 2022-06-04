@@ -34,6 +34,8 @@ import CreateMeeting from './views/room/create'
 import ProctorList from './views/proctor/list'
 import RoomDetail from './views/room/detail'
 import StudentVerificationS2 from './views/verification/id_verify'
+import Setting from './views/verification/setting'
+import VerifySession from './views/session/list'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -93,13 +95,13 @@ function App() {
               path='/subject/0/create'
               exact
             />
-            <PrivateRoute component={SubjectDetail} path='/subject/:id' exact />
-
             <PrivateRoute
               component={EditSubject}
               path='/subject/update/:id'
               exact
             />
+            <PrivateRoute component={SubjectDetail} path='/subject/:id' exact />
+
             <PrivateRoute
               component={StudentVerificationS2}
               path='/room/:id/verify/s2'
@@ -133,6 +135,13 @@ function App() {
               path='/verify/data'
               exact
             />
+            <PrivateRoute
+              component={VerifySession}
+              path='/identity/sessions'
+              exact
+            />
+
+            <PrivateRoute component={Setting} path='/identity/settings' exact />
             <PrivateRoute component={Profile} path='/profile' exact />
             {/* <PublicRoute
           restricted={false}

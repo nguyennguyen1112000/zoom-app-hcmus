@@ -1,9 +1,25 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { WebcamData} from '../webcam/WebcamData'
-
+import { authHeader } from '../../helper/utils'
+import { WebcamData } from '../webcam/WebcamData'
+import { WebcamFacePrivate } from '../webcam/WebcamFacePrivate'
+const API_URL = process.env.REACT_APP_API_URL
 function VerificationCollectData() {
   const user = useSelector((state) => state.auth.currentUser)
+  const [config, setConfig] = useState(null)
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/configuration`, authHeader())
+      .then((res) => {
+        console.log('res.data', res.data)
+
+        setConfig(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
   return (
     <div className='container-fluid'>
       {/* Title */}
@@ -33,7 +49,46 @@ function VerificationCollectData() {
             <div className='panel-heading'></div>
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
-                <WebcamData studentId={user?.studentId} />
+                <div className='col-sm-12'>
+                  {!config?.openCollectData && (
+                    <h5 className='text-primary'>
+                      {' '}
+                      "It 's not time to collect data, please come back later!"
+                    </h5>
+                  )}
+                  {config?.openCollectData && (
+                    <div className='row'>
+                      <div className='col-md-3'>
+                        <div className='panel panel-default card-view'>
+                          <div className='panel-heading'>
+                            <div className='pull-left'>
+                              <h6 className='panel-title txt-primary'>
+                                Center your face in the webcam
+                              </h6>
+                              <img
+                                src='/img/face_recognition_example.png'
+                                alt='face_recognition_example'
+                                width={270}
+                              />
+                              <h6 className='panel-title txt-primary mt-10'>
+                                Please follow the instructions below
+                              </h6>
+                              <img
+                                src='/img/face_recognition_instruction.png'
+                                alt='face_recognition_instruction'
+                                width={270}
+                              />
+                            </div>
+                            <div className='clearfix' />
+                          </div>
+                        </div>
+                      </div>
+                      <div className='col-md-9'>
+                        <WebcamFacePrivate studentId={user?.studentId} />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

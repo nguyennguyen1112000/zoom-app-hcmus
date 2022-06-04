@@ -160,7 +160,7 @@ function Header() {
                 <div className="profile_link">
                   <img src="/images/left-imgs/user.png" alt="" />
                   <div className="pd_content">
-                    <h6>Thông tin cá nhân</h6>
+                    <h6>Profile</h6>
                     <p>{user && user.email}</p>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ function Header() {
               >
                 <div>
                   <h6>
-                    Đăng xuất <i className="uil uil-sign-out-alt" />
+                   Logout<i className="uil uil-sign-out-alt" />
                   </h6>
 
                   <div className="pd_content"></div>

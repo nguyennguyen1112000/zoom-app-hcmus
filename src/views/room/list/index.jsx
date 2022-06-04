@@ -235,7 +235,6 @@ function RoomList() {
                             <th>Class Code</th>
                             <th>Exam date</th>
                             <th>No. Students</th>
-                            <th>Status</th>
                             <th>ACTION</th>
                           </tr>
                         </thead>
@@ -266,11 +265,7 @@ function RoomList() {
                               <td>{room.subject.classCode}</td>
                               <td> {room.examDate && formatDate(room.examDate)}</td>
                               <td>{room.students.length}</td>
-                              <td>
-                                <span className='label label-danger'>
-                                  Đã kết thúc
-                                </span>
-                              </td>
+                          
                               <td>
                                 <a
                                   href={`/room/edit/${room.id}`}

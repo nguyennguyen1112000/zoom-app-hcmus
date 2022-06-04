@@ -3,25 +3,29 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
-import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
+import { authHeader, formatDate, formatTime, tConv24 } from '../../../helper/utils'
 import { getAllSubjects } from '../../../services/api/subject'
 import 'react-toastify/dist/ReactToastify.css'
 import { SpinnerCircularFixed } from 'spinners-react'
+import { getIdentitySessions } from '../../../services/api/session'
+import { Link } from 'react-router-dom'
 
-function SubjectList() {
+function VerifySession() {
   const dispatch = useDispatch()
   const subjects = useSelector((state) => state.subject.subjects)
+  const sessions = useSelector((state) => state.session.identity)
+  console.log(sessions)
   const [reload, setReload] = useState(false)
   const [loading, setLoading] = useState(false)
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
-      dispatch(getAllSubjects())
+      dispatch(getIdentitySessions())
     }, 2000)
   }, [reload])
   useEffect(() => {
     $('#datable_1').DataTable()
-  }, [subjects, reload])
+  }, [sessions, reload])
 
   const API_URL = process.env.REACT_APP_API_URL
   const downloadTemplate = (e) => {
@@ -35,12 +39,12 @@ function SubjectList() {
   const handleSelect = (e) => {
     const index = e.currentTarget.getAttribute('index')
     const checked = e.target.checked
-    if (checked) setSelect([...select, parseInt(index)])
-    else setSelect(select.filter((x) => x != parseInt(index)))
+    if (checked) setSelect([...select, index])
+    else setSelect(select.filter((x) => x !== index))
   }
   const handleSelectAll = (e) => {
     const checked = e.target.checked
-    if (checked) setSelect(subjects.map((subject) => subject.id))
+    if (checked) setSelect(sessions.map((s) => s.id))
     else setSelect([])
   }
   const isChecked = (index) => {
@@ -125,7 +129,7 @@ function SubjectList() {
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-          <h5 className='txt-dark'>Danh sách môn học</h5>
+          <h5 className='txt-dark'>Identity Sessions</h5>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
@@ -135,7 +139,7 @@ function SubjectList() {
             </li>
 
             <li className='active'>
-              <span>Danh sách môn học</span>
+              <span>Identity sessions</span>
             </li>
           </ol>
         </div>
@@ -149,51 +153,36 @@ function SubjectList() {
             <div className='panel-heading'>
               {select.length > 0 && (
                 <div className='pull-left button-list'>
-                  <button class='btn btn-danger btn-lable-wrap left-label'>
+                  <button
+                    class='btn btn-danger btn-square'
+                    onClick={handleDelete}
+                  >
                     <span class='btn-label'>
                       <i class='fa fa-trash'></i>
-                    </span>
-                    <span class='btn-text' onClick={handleDelete}>
-                      Xóa đã chọn
                     </span>
                   </button>
                 </div>
               )}
               <div className='pull-right button-list'>
-                <button class='btn btn-default '>
-                  <span class='btn-text' onClick={handleSync}>
-                    Đồng bộ Moodle
-                  </span>
-                </button>
-                <button class='btn btn-success btn-lable-wrap left-label'>
+                <button
+                  class='btn btn-success btn-square btn-outline'
+                  onClick={downloadTemplate}
+                >
                   <span class='btn-label'>
                     <i class='fa fa-download'></i>
                   </span>
-                  <span class='btn-text' onClick={downloadTemplate}>
-                    Tải về template
-                  </span>
                 </button>
-                <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
+                <button class='btn btn-danger btn-square btn-outline fileupload'>
                   <span class='btn-label'>
                     <i class='fa fa-upload'></i>
                   </span>
-                  <span class='btn-text' for='file_upload'>
-                    Tải lên file
-                  </span>
+
                   <input
                     id='file_upload'
                     type='file'
                     className='upload'
                     onChange={uploadFile}
                   />
-                </button>
-                <button class='btn btn-primary btn-lable-wrap left-label'>
-                  <span class='btn-label'>
-                    <i class='fa fa-plus'></i>{' '}
-                  </span>
-                  <a href='/subject/0/create' className='btn-text text-white'>
-                    Thêm môn học
-                  </a>
                 </button>
               </div>
               <div className='clearfix' />
@@ -220,85 +209,98 @@ function SubjectList() {
                               )}
                             </th>
                             <th>#</th>
-                            <th>Mã môn học/ Moodle ID</th>
-                            <th>Tên môn học </th>
-                            <th>HK/NH</th>
-                            <th>Import</th>
+                            <th>Room </th>
+                            <th>Subject </th>
+                            <th>Student</th>
+                            <th>Proctor</th>
 
-                            <th>Khóa</th>
-                            <th>Tác vụ</th>
+                            <th>Started at</th>
+                            <th>Duration</th>
+                            <th>Credibility</th>
+                            <th>Status</th>
+                            <th>Flag</th>
                           </tr>
                         </thead>
 
                         <tbody>
-                          {subjects?.map((subject, index) => (
+                          {sessions?.map((session, index) => (
                             <tr key={index}>
                               <td>
                                 <input
                                   type='checkbox'
                                   name='checkbox'
-                                  index={subject.id}
+                                  index={session.id}
                                   onChange={handleSelect}
-                                  checked={isChecked(subject.id)}
+                                  checked={isChecked(session.id)}
                                 />
                               </td>
                               <td>{index + 1}</td>
                               <td>
-                                <a href={`/subject/${subject.id}`}>
-                                  {subject.subjectCode
-                                    ? subject.subjectCode
-                                    : subject.moodleId}
+                                <a href={`/room/${session.room?.id}`}>
+                                  {session.room?.name}
                                 </a>
                               </td>
-                              <td>{subject.name}</td>
                               <td>
-                                {' '}
-                                {subject.term &&
-                                  subject.schoolYear &&
-                                  `${subject.term}/${subject.schoolYear}`}
+                                <a
+                                  href={`/subject/${session.room?.subject?.id}`}
+                                >
+                                  {session.room?.subject?.name}
+                                </a>
                               </td>
                               <td>
-                                {subject.moodleId ? (
+                                <a href={`/student/${session.studentId}`}>
+                                  {' '}
+                                  <i className='fa fa-user'></i>
+                                  {session.studentId}
+                                </a>
+                              </td>
+                              <td>
+                                {session.room?.proctors?.map((proctor) => (
+                                  <>
+                                    <span className='label label-default'>
+                                      {proctor.firstName +
+                                        ' ' +
+                                        proctor.lastName}
+                                    </span>
+                                    <br />
+                                  </>
+                                ))}
+                              </td>
+                              <td>
+                                {formatTime(new Date(session.created_at))}
+                              </td>
+                              <td>
+                                {Math.round(session.duration / 1000 / 60) +
+                                  ' minutes'}
+                              </td>
+                              <td>
+                                {Math.round(session.credibility * 100) / 100}
+                              </td>
+                              <td>
+                                {session.faceStatus && session.idStatus && (
                                   <span className='label label-primary'>
-                                    moodle
+                                    Pass
                                   </span>
-                                ) : (
-                                  <span className='label label-success'>
-                                    file
+                                )}
+                                {session.faceStatus && !session.idStatus && (
+                                  <span className='label label-warning'>
+                                    Face Pass
+                                  </span>
+                                )}
+                                {!session.faceStatus && !session.idStatus && (
+                                  <span className='label label-primary'>
+                                    Fail
                                   </span>
                                 )}
                               </td>
-                              {/* <td>
-                                {subject.examDate &&
-                                  formatDate(new Date(subject.examDate))}
-                              </td>
-                              <td>
-                                {subject.startTime
-                                  ? tConv24(subject.startTime)
-                                  : ''}
-                              </td>
-                              <td>{subject.examTime}</td> */}
-                              <td>{subject.studentYear}</td>
 
                               <td>
-                                <a
-                                  href={`/subject/update/${subject.id}`}
-                                  className='text-inverse pr-10'
-                                  title='Edit'
-                                  data-toggle='tooltip'
-                                >
-                                  <i className='zmdi zmdi-edit txt-warning' />
-                                </a>
-                                <a
-                                  href='/'
-                                  className='text-inverse'
-                                  title='Delete'
-                                  data-toggle='tooltip'
-                                  index={subject.id}
-                                  onClick={handleDelete}
-                                >
-                                  <i className='zmdi zmdi-delete txt-danger' />
-                                </a>
+                                <div className='buttion-list'>
+                                  <button className='btn-primary'>
+                                    Accept
+                                  </button>
+                                  <button className='btn-danger'>Reject</button>
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -325,4 +327,4 @@ function SubjectList() {
   )
 }
 
-export default SubjectList
+export default VerifySession

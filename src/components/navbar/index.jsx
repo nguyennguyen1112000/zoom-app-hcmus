@@ -284,11 +284,12 @@ function NavBar() {
           </li>
           <li className='dropdown auth-drp'>
             <a href='/' className='dropdown-toggle pr-0' data-toggle='dropdown'>
-              <img
-                src='/img/user1.jpg'
-                alt='user_auth'
-                className='user-auth-img img-circle'
-              />
+              <span
+                className='user-auth-img'
+                style={{ background: '#eb4034' , padding: 5, color:"white"}}
+              >
+                NN
+              </span>
               <span className='user-online-status' />
             </a>
             <ul
@@ -299,14 +300,14 @@ function NavBar() {
               <li>
                 <a href='/profile'>
                   <i className='zmdi zmdi-account' />
-                  <span>Hồ sơ</span>
+                  <span>Profile</span>
                 </a>
               </li>
               <li className='divider' />
               <li>
                 <a href='/signin' onClick={handleLogout}>
                   <i className='zmdi zmdi-power' />
-                  <span>Đăng xuất</span>
+                  <span>Logout</span>
                 </a>
               </li>
             </ul>
