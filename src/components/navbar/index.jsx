@@ -53,7 +53,7 @@ function NavBar() {
               type='text'
               name='example-input1-group2'
               className='form-control'
-              placeholder='Tìm kiếm'
+              placeholder='Search (student, room, subject) ...'
             />
             <span className='input-group-btn'>
               <button

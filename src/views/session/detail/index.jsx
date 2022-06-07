@@ -4,154 +4,39 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { SpinnerCircularFixed } from 'spinners-react'
-import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
-import { getCurrentSubject } from '../../../services/api/subject'
+import { authHeader, formatTime } from '../../../helper/utils'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { getRoomIdentitySession } from '../../../services/api/session'
+import { getRoom } from '../../../services/api/room'
 const API_URL = process.env.REACT_APP_API_URL
-function SubjectDetail() {
+function SessionRoomDetail() {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [reload, setReload] = useState(false)
   let { id } = useParams()
-  const user = useSelector((state) => state.auth.currentUser)
-  const currentSubject = useSelector((state) => state.subject.currentSubject)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [searchStudent, setSearchStudent] = useState(null)
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (searchTerm)
-        axios
-          .get(`${API_URL}/students/${searchTerm}`, authHeader())
-          .then((res) => {
-            console.log(res.data)
-
-            setSearchStudent(res.data)
-          })
-          .catch((err) => {
-            setSearchStudent(null)
-            console.log(err)
-          })
-    }, 3000)
-
-    return () => clearTimeout(delayDebounceFn)
-  }, [searchTerm])
+  const sessions = useSelector((state) => state.session.identity)
+  const room = useSelector((state) => state.room.currentRoom)
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
       if (id) {
-        dispatch(getCurrentSubject(id))
+        dispatch(getRoomIdentitySession(id))
+        dispatch(getRoom(id))
       }
     }, 2000)
   }, [id, reload])
   useEffect(() => {
     $('#datable_1').DataTable()
-  }, [currentSubject, reload])
-  const downloadTemplate = (e) => {
-    e.preventDefault()
-    const downloadLink = `${API_URL}/subjects/template/add_students`
-    const a = document.createElement('a')
-    a.href = downloadLink
-    a.click()
-  }
+  }, [sessions, reload])
 
-  const uploadFile = (e) => {
-    const formData = new FormData()
-    //console.log('e.target.value', e.target.file)
+  console.log('Session', sessions)
 
-    formData.append('file', e.target.files[0])
-    axios
-      .post(`${API_URL}/subjects/upload/${currentSubject?.id}/students`, formData, authHeader())
-      .then((res) => {
-        e.target.value = null
-        toast.success('Đăng tải thành công', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        setReload(!reload)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-  const handleAddStudent = () => {
-    axios
-      .post(
-        `${API_URL}/subjects/${currentSubject?.id}/students`,
-        [searchTerm],
-        authHeader()
-      )
-      .then((res) => {
-        setSearchStudent(null)
-        setSearchTerm('')
-        toast.success('Đã thêm sinh viên', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        document.getElementById('close-modal').click()
-        setReload(!reload)
-      })
-      .catch((err) => {
-        toast.error(err?.response?.data?.message, {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-      })
-  }
-
-  const handleSyncStudents = (e) => {
-    setLoading(true)
-    axios
-      .post(
-        `${API_URL}/moodles/sync/subject/${currentSubject?.id}/students`,
-        null,
-        authHeader()
-      )
-      .then((res) => {
-        setReload(!reload)
-        setLoading(false)
-      })
-      .catch((err) => {
-        setLoading(false)
-        console.log(err)
-      })
-  }
-  const [select, setSelect] = useState([])
-  const handleSelect = (e) => {
-    const index = e.currentTarget.getAttribute('index')
-    const checked = e.target.checked
-    if (checked) setSelect([...select, parseInt(index)])
-    else setSelect(select.filter((x) => x != parseInt(index)))
-  }
-  const handleSelectAll = (e) => {
-    const checked = e.target.checked
-    if (checked)
-      setSelect(currentSubject?.students?.map((student) => student.id))
-    else setSelect([])
-  }
-  const isChecked = (index) => {
-    return select.includes(index)
-  }
   const handleDelete = (e) => {
     e.preventDefault()
 
     axios
-      .delete(`${API_URL}/subjects/${currentSubject.id}/students`, {
+      .delete(`${API_URL}/subjects/${id}/students`, {
         data: select,
         headers: {
           Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
@@ -190,102 +75,152 @@ function SubjectDetail() {
         <div className='col-lg-12 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='/room'>Quản lý</a>
+              <a href='/room'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>
-                <span>Môn học</span>
+              <a href='/identity/sessions-room'>
+                <span>Room Session</span>
               </a>
             </li>
             <li className='active'>
-              <span>{currentSubject?.name}</span>
+              <span>{room?.name}</span>
             </li>
           </ol>
         </div>
         {/* /Breadcrumb */}
       </div>
-      {/* /Title */}
-      {/*Row*/}
       <div className='row'>
-        <div className='col-md-12'>
-          <div className='panel panel-default card-view'>
-            <div className='panel-heading'>
-              <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>Thông tin môn học</h6>
-              </div>
-              <div className='pull-right'>
-                <a
-                  href={`/subject/update/${currentSubject?.id}`}
-                  className='btn btn-default btn-icon-anim btn-square edit-button'
-                >
-                  <i className='fa fa-pencil' />
-                </a>
-              </div>
-              <div className='clearfix' />
-            </div>
+        <div className='col-lg-3 col-md-6 col-sm-6 col-xs-12'>
+          <div className='panel panel-default card-view pa-0'>
             <div className='panel-wrapper collapse in'>
-              <div className='panel-body'>
-                <div className='table-responsive mt-40'>
-                  <table className='table table-bordered '>
-                    <tbody>
-                      <tr>
-                        <td className='table-title-cell '>ID môn học Moodle</td>
-                        <td colSpan={7}>{currentSubject?.moodleId}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell '>Mã môn học</td>
-                        <td colSpan={7}>{currentSubject?.subjectCode}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell '>Tên môn học</td>
-                        <td colSpan={7}>{currentSubject?.name}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Học kì</td>
-                        <td colSpan={7}> {currentSubject?.term}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Năm học</td>
-                        <td colSpan={7}> {currentSubject?.schoolYear}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Giảng viên</td>
-                        <td colSpan={7}> {currentSubject?.teacher}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Khóa</td>
-                        <td colSpan={7}> {currentSubject?.studentYear}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Mã lớp</td>
-                        <td colSpan={7}> {currentSubject?.classCode}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Mã bậc</td>
-                        <td colSpan={7}> {currentSubject?.educationLevel}</td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Mã kì thi</td>
-                        <td colSpan={7}> {currentSubject?.examCode}</td>
-                      </tr>
-                      {/* <tr>
-                        <td className='table-title-cell'>Giờ thi</td>
-                        <td colSpan={7}>
-                          {currentSubject?.startTime
-                            ? tConv24(currentSubject?.startTime)
-                            : ''}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className='table-title-cell'>Ngày thi</td>
-                        <td colSpan={7}>
-                          {currentSubject?.examDate
-                            ? formatDate(new Date(currentSubject.examDate))
-                            : ''}
-                        </td>
-                      </tr> */}
-                    </tbody>
-                  </table>
+              <div className='panel-body pa-0'>
+                <div className='sm-data-box'>
+                  <div className='container-fluid'>
+                    <div className='row'>
+                      <div className='col-xs-6 text-center pl-0 pr-0 data-wrap-left'>
+                        <span className='txt-dark block counter'>
+                          <span className='counter-anim'>
+                            {room?.students?.length}
+                          </span>
+                        </span>
+                        <span className='weight-500 uppercase-font block font-13'>
+                          Students
+                        </span>
+                      </div>
+                      <div className='col-xs-6 text-center  pl-0 pr-0 data-wrap-right'>
+                        <i className='icon-user-following data-right-rep-icon txt-light-grey' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='col-lg-3 col-md-6 col-sm-6 col-xs-12'>
+          <div className='panel panel-default card-view pa-0'>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body pa-0'>
+                <div className='sm-data-box'>
+                  <div className='container-fluid'>
+                    <div className='row'>
+                      <div className='col-xs-6 text-center pl-0 pr-0 data-wrap-left'>
+                        <span className='txt-dark block counter'>
+                          <span className='counter-anim'>
+                            {
+                              sessions?.filter((s) => s.status === 'Passed')
+                                .length
+                            }
+                          </span>
+                        </span>
+                        <span className='weight-500 uppercase-font block'>
+                          Passed
+                        </span>
+                      </div>
+                      <div className='col-xs-6 text-center  pl-0 pr-0 data-wrap-right'>
+                        <i className='icon-control-rewind data-right-rep-icon txt-light-grey' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='col-lg-3 col-md-6 col-sm-6 col-xs-12'>
+          <div className='panel panel-default card-view pa-0'>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body pa-0'>
+                <div className='sm-data-box'>
+                  <div className='container-fluid'>
+                    <div className='row'>
+                      <div className='col-xs-6 text-center pl-0 pr-0 data-wrap-left'>
+                        <span className='txt-dark block counter'>
+                          <span className='counter-anim'>
+                            {
+                              sessions?.filter(
+                                (s) => s.status === 'Not start yet'
+                              ).length
+                            }
+                          </span>
+                        </span>
+                        <span className='weight-500 uppercase-font block'>
+                          Not start yet
+                        </span>
+                      </div>
+                      <div className='col-xs-6 text-center  pl-0 pr-0 data-wrap-right'>
+                        <i className='icon-layers data-right-rep-icon txt-light-grey' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='col-lg-3 col-md-6 col-sm-6 col-xs-12'>
+          <div className='panel panel-default card-view pa-0'>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body pa-0'>
+                <div className='sm-data-box'>
+                  <div className='container-fluid'>
+                    <div className='row'>
+                      <div className='col-xs-6 text-center pl-0 pr-0 data-wrap-left'>
+                        <span className='txt-dark block counter'>
+                          <span className='counter-anim'>
+                            {
+                              sessions?.filter((s) => s.status === 'Failed')
+                                .length
+                            }
+                          </span>
+                        </span>
+                        <span className='weight-500 uppercase-font block'>
+                          Failed
+                        </span>
+                      </div>
+                      <div className='col-xs-6 text-center  pl-0 pr-0 pt-25  data-wrap-right'>
+                        <div
+                          id='sparkline_4'
+                          style={{
+                            width: '100px',
+                            overflow: 'hidden',
+                            margin: '0px auto'
+                          }}
+                        >
+                          <canvas
+                            width={115}
+                            height={50}
+                            style={{
+                              display: 'inline-block',
+                              width: '115px',
+                              height: '50px',
+                              verticalAlign: 'top'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -296,132 +231,6 @@ function SubjectDetail() {
       <div className='row'>
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
-            <div className='panel-heading'>
-              <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>Danh sách sinh viên</h6>
-              </div>
-              <div></div>
-              <div className='pull-right button-list'>
-                {select.length > 0 && (
-                  <button class='btn btn-danger ' onClick={handleDelete}>
-                    <span class='btn-label'>
-                      <i class='fa fa-trash'></i>
-                    </span>
-                  </button>
-                )}
-                {currentSubject?.moodleId && (
-                  <button class='btn btn-default'>
-                    <span class='btn-text' onClick={handleSyncStudents}>
-                      Đồng bộ Moodle
-                    </span>
-                  </button>
-                )}
-                <button class='btn btn-success btn-lable-wrap left-label'>
-                  <span class='btn-label'>
-                    <i class='fa fa-download'></i>
-                  </span>
-                  <span class='btn-text' onClick={downloadTemplate}>
-                    Tải về template
-                  </span>
-                </button>
-                <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
-                  <span class='btn-label'>
-                    <i class='fa fa-upload'></i>
-                  </span>
-                  <span class='btn-text' for='file_upload'>
-                    Tải lên file sinh viên
-                  </span>
-                  <input
-                    id='file_upload'
-                    type='file'
-                    className='upload'
-                    onChange={uploadFile}
-                  />
-                </button>
-                <button
-                  type='button'
-                  className='btn btn-primary'
-                  data-toggle='modal'
-                  data-target='#myModal'
-                >
-                  Thêm SV
-                </button>
-                <div className='modal' id='myModal'>
-                  <div className='modal-dialog'>
-                    <div className='modal-content'>
-                      <div className='modal-header'>
-                        <button
-                          type='button'
-                          className='close'
-                          data-dismiss='modal'
-                          aria-hidden='true'
-                          id='close-modal'
-                        >
-                          ×
-                        </button>
-                        <h5 className='modal-title'>
-                          Thêm sinh viên vào lớp học
-                        </h5>
-                      </div>
-                      <div className='modal-body'>
-                        <form>
-                          <div className='form-group'>
-                            <label
-                              htmlFor='recipient-name'
-                              className='control-label mb-10'
-                            >
-                              MSSV
-                            </label>
-                            <input
-                              type='text'
-                              className='form-control'
-                              id='recipient-name'
-                              name='studentId'
-                              placeholder='Nhập MSSV'
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            {!searchStudent && (
-                              <div className='help-block with-errors'>
-                                Không tìm thấy sinh viên
-                              </div>
-                            )}
-                          </div>
-                          {searchStudent && (
-                            <div className='form-group'>
-                              <label
-                                htmlFor='message-text'
-                                className='control-label mb-10'
-                              >
-                                {searchStudent.firstName +
-                                  ' ' +
-                                  searchStudent.lastName}
-                              </label>
-                            </div>
-                          )}
-                        </form>
-                      </div>
-                      <div className='modal-footer'>
-                        <button
-                          type='button'
-                          className='btn btn-default'
-                          data-dismiss='modal'
-                        >
-                          Thoát
-                        </button>
-                        <button
-                          type='button'
-                          className='btn btn-danger'
-                          onClick={handleAddStudent}
-                        >
-                          Thêm sinh viên
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='clearfix' />
-            </div>
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
                 <div className='table-wrap'>
@@ -432,52 +241,112 @@ function SubjectDetail() {
                     >
                       <thead>
                         <tr>
-                          <th>
-                            {currentSubject?.students && (
-                              <input
-                                type='checkbox'
-                                name='checkbox'
-                                index='all'
-                                onChange={handleSelectAll}
-                              />
-                            )}
-                          </th>
                           <th>#</th>
-                          <th>Họ và tên</th>
-                          <th>MSSV</th>
-                          <th>Email</th>
-                          <th>Import</th>
+
+                          <th>Student</th>
+
+                          <th>Started at</th>
+                          <th>Duration</th>
+                          <th>Credibility</th>
+                          <th>Status</th>
+                          <th>Flag</th>
+                          <th>Session Detail</th>
                         </tr>
                       </thead>
 
                       <tbody>
-                        {currentSubject?.students?.map((student, index) => (
+                        {sessions?.map((session, index) => (
                           <tr key={index}>
-                            <td>
-                              <input
-                                type='checkbox'
-                                name='checkbox'
-                                index={student.id}
-                                onChange={handleSelect}
-                                checked={isChecked(student.id)}
-                              />
-                            </td>
                             <td>{index + 1}</td>
+
                             <td>
-                              {student.firstName + ' ' + student.lastName}
+                              <a href={`/student/${session.studentId}`}>
+                                {' '}
+                                <i className='fa fa-user'></i>
+                                {session.studentId}
+                              </a>
                             </td>
-                            <td>{student.studentId}</td>
-                            <td>{student.email}</td>
+
                             <td>
-                              {student.moodleId ? (
-                                <span className='label label-primary'>
-                                  moodle
-                                </span>
+                              {session.created_at
+                                ? formatTime(new Date(session.created_at))
+                                : '--'}
+                            </td>
+                            <td>
+                              {session.duration
+                                ? Math.round(session.duration / 1000 / 60) +
+                                  ' minutes'
+                                : '--'}
+                            </td>
+                            <td>
+                              {session.credibility ? (
+                                <div className='progress progress-lg'>
+                                  <div
+                                    className='progress-bar progress-bar-danger'
+                                    style={{
+                                      width: `${Math.round(
+                                        session.credibility * 100
+                                      )}%`
+                                    }}
+                                    role='progressbar'
+                                  >
+                                    {session.credibility &&
+                                      Math.round(session.credibility * 100) +
+                                        '%'}
+                                  </div>
+                                </div>
                               ) : (
-                                <span className='label label-success'>
-                                  file
+                                '--'
+                              )}
+                            </td>
+                            <td>
+                              {session.status === 'Not start yet' && (
+                                <span className='label label-default'>
+                                  {session.status}
                                 </span>
                               )}
+                              {session.status === 'Face passed' && (
+                                <span className='label label-warning'>
+                                  {session.status}
+                                </span>
+                              )}
+                              {session.status === 'Passed' && (
+                                <span className='label label-success'>
+                                  {session.status}
+                                </span>
+                              )}
+                              {session.status === 'Failed' && (
+                                <span className='label label-danger'>
+                                  {session.status}
+                                </span>
+                              )}
+                            </td>
+
+                            <td>
+                              {}
+                              <div className='buttion-list'>
+                                <div className='buttion-list'>
+                                  {session.accepted && (
+                                    <span className='label label-success'>
+                                      <i className='fa fa-check'></i>
+                                    </span>
+                                  )}
+                                  {session.accepted === false && (
+                                    <span className='label label-danger'>
+                                      <i className='fa fa-times'></i>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <a
+                                href={`/identity/sessions-room/${room?.id}/${session.studentId}
+                                `}
+                              >
+                                {' '}
+                                View
+                              </a>
                             </td>
                           </tr>
                         ))}
@@ -491,16 +360,8 @@ function SubjectDetail() {
         </div>
       </div>
       <ToastContainer />
-      <div className='spinner-loading'>
-        <SpinnerCircularFixed
-          size={100}
-          thickness={200}
-          color='#2986CC'
-          enabled={loading}
-        />
-      </div>
     </div>
   )
 }
 
-export default SubjectDetail
+export default SessionRoomDetail

@@ -91,16 +91,17 @@ function Login() {
         <div className='container' id='container'>
           <div className='form-container sign-in-container'>
             <div className='form'>
-              <h4 className='mb-20'>Đăng nhập HCMUSID</h4>
+              <h4 className='mb-20'>Login HCMUSID</h4>
               <a
-                className='btn btn-primary btn-outline btn-block'
+			  
+                className='btn btn-primary btn-block'
                 href={`https://zoom.us/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URL}`}
               >
-                Đăng nhập với Zoom
+                Login with Zoom
               </a>
-              <button className='btn btn-primary  btn-block'>
+              {/* <button className='btn btn-primary  btn-block'>
                 Đăng nhập với Moodle
-              </button>
+              </button> */}
             </div>
           </div>
           <div className='overlay-container'>

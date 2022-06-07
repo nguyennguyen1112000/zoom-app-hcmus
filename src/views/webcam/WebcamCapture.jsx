@@ -68,7 +68,7 @@ export const WebcamCapture = (props) => {
             sendNotification(identifiedRes.roomId)
             console.log('identifiedRes', identifiedRes)
 
-            if (identifiedRes.status)
+            if (identifiedRes.faceStatus)
               history.push(
                 `/room/${roomId}/verify/s2?record_id=${identifiedRes.id}`
               )

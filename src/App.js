@@ -36,6 +36,13 @@ import RoomDetail from './views/room/detail'
 import StudentVerificationS2 from './views/verification/id_verify'
 import Setting from './views/verification/setting'
 import VerifySession from './views/session/list'
+import RoomSession from './views/session/list/room_session'
+import SessionRoomDetail from './views/session/detail'
+import CreateStudent from './views/student/create'
+import StudentSessionDetail from './views/session/list/student_session'
+import Privacy from './views/document/privacy'
+import TermOfUse from './views/document/term_of_use'
+import Contact from './views/document/contact'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -62,6 +69,24 @@ function App() {
           path='/data/collect'
           exact
         />
+        <PublicRoute
+          restricted={false}
+          component={Privacy}
+          path='/privacy'
+          exact
+        />
+        <PublicRoute
+          restricted={false}
+          component={TermOfUse}
+          path='/term_of_use'
+          exact
+        />
+        <PublicRoute
+          restricted={false}
+          component={Contact}
+          path='/contact'
+          exact
+        />
         {/* <PublicRoute
           restricted={false}
           component={VerificationStep2}
@@ -82,6 +107,11 @@ function App() {
             <PrivateRoute component={StudentList} path='/' exact />
             <PrivateRoute component={StudentList} path='/student' exact />
             <PrivateRoute component={StudentDetail} path='/student/:id' exact />
+            <PrivateRoute
+              component={CreateStudent}
+              path='/student/0/create'
+              exact
+            />
             <PrivateRoute component={RoomList} path='/room' exact />
             <PrivateRoute
               component={CreateMeeting}
@@ -140,7 +170,21 @@ function App() {
               path='/identity/sessions'
               exact
             />
-
+            <PrivateRoute
+              component={RoomSession}
+              path='/identity/sessions-room'
+              exact
+            />
+            <PrivateRoute
+              component={SessionRoomDetail}
+              path='/identity/sessions-room/:id'
+              exact
+            />
+            <PrivateRoute
+              component={StudentSessionDetail}
+              path='/identity/sessions-room/:id/:studentId'
+              exact
+            />
             <PrivateRoute component={Setting} path='/identity/settings' exact />
             <PrivateRoute component={Profile} path='/profile' exact />
             {/* <PublicRoute

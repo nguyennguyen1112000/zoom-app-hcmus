@@ -89,7 +89,7 @@ function SubjectDetail() {
       .then((res) => {
         setSearchStudent(null)
         setSearchTerm('')
-        toast.success('Đã thêm sinh viên', {
+        toast.success('Add student successfully', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,

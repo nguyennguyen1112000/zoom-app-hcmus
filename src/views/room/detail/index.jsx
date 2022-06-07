@@ -7,7 +7,10 @@ import { getRoom } from '../../../services/api/room'
 import { getIdentityResults } from '../../../services/api/student'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { getAllSubjects } from '../../../services/api/subject'
+import {
+  getAllSubjects,
+  getCurrentSubject
+} from '../../../services/api/subject'
 import axios from 'axios'
 import TimePicker from 'react-time-picker/dist/TimePicker'
 import DatePicker from 'react-date-picker'
@@ -22,6 +25,7 @@ function RoomDetail() {
   const records = useSelector((state) => state.student.identityResults)
   const subjects = useSelector((state) => state.subject.subjects)
   const proctorList = useSelector((state) => state.user.userList)
+  const currentSubject = useSelector((state) => state.subject.currentSubject)
   const [reload, setReload] = useState(false)
   const [subjectId, setSubjectId] = useState(null)
   const [startTime, setStartTime] = useState('07:00')
@@ -34,6 +38,7 @@ function RoomDetail() {
     checkInStartTime: startTime,
     checkInEndTime: endTime
   })
+  const [studentsChooice, setStudentChoice] = useState([])
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -48,7 +53,17 @@ function RoomDetail() {
   useEffect(() => {
     $('#datable_1').DataTable()
   }, [currentRoom, reload])
-
+  useEffect(() => {
+    if (currentSubject && currentRoom) {
+      let students = []
+      console.log('students', currentSubject.students)
+      currentSubject.students.forEach((student) => {
+        if (!currentRoom.students.some((s) => s.id === student.id))
+          students.push(student)
+      })
+      setStudentChoice(students)
+    }
+  }, [currentSubject])
   useEffect(() => {
     if (currentRoom) {
       setInput({ ...input, checkInConfigType: currentRoom.checkInConfigType })
@@ -64,6 +79,7 @@ function RoomDetail() {
           ':' +
           new Date(currentRoom?.checkInEndTime).getMinutes()
       )
+      dispatch(getCurrentSubject(currentRoom?.subject?.id))
     }
   }, [currentRoom])
 
@@ -71,8 +87,6 @@ function RoomDetail() {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm) {
         const proctor = proctorList?.filter((x) => x.staffCode == searchTerm)
-        console.log('proctor', proctor, searchTerm)
-
         if (proctor.length > 0) setSearchProctor(proctor[0])
         else setSearchProctor(null)
       }
@@ -81,6 +95,7 @@ function RoomDetail() {
     return () => clearTimeout(delayDebounceFn)
   }, [searchTerm])
   const [select, setSelect] = useState([])
+  const [selectStudents, setSelectStudents] = useState([])
 
   /*************Handle add proctor ********** */
   const handleAddProctor = () => {
@@ -117,6 +132,41 @@ function RoomDetail() {
         })
       })
   }
+
+  /*************Handle add students ********** */
+  const handleAddStudents = () => {
+    axios
+      .post(
+        `${API_URL}/rooms/${currentRoom?.id}/students`,
+        { studentIds: selectStudents },
+        authHeader()
+      )
+      .then((res) => {
+        toast.success('Added successfully', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+        document.getElementById('close-modal-student').click()
+        setStudentChoice([])
+        setReload(!reload)
+      })
+      .catch((err) => {
+        toast.error(err?.response?.data?.message, {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+      })
+  }
   /*************Handle delete students********** */
   const handleSelect = (e) => {
     const index = e.currentTarget.getAttribute('index')
@@ -124,11 +174,13 @@ function RoomDetail() {
     if (checked) setSelect([...select, parseInt(index)])
     else setSelect(select.filter((x) => x != parseInt(index)))
   }
+
   const handleSelectAll = (e) => {
     const checked = e.target.checked
     if (checked) setSelect(currentRoom?.students?.map((student) => student.id))
     else setSelect([])
   }
+
   const isChecked = (index) => {
     return select.includes(index)
   }
@@ -166,6 +218,21 @@ function RoomDetail() {
         })
         console.log(err.response.data.message)
       })
+  }
+  /*************Handle add students from subject ********** */
+  const handleSelectStudents = (e) => {
+    const index = e.currentTarget.getAttribute('index')
+    const checked = e.target.checked
+    if (checked) setSelectStudents([...selectStudents, parseInt(index)])
+    else setSelectStudents(selectStudents.filter((x) => x != parseInt(index)))
+  }
+  const handleSelectAllStudents = (e) => {
+    const checked = e.target.checked
+    if (checked) setSelectStudents(studentsChooice.map((student) => student.id))
+    else setSelectStudents([])
+  }
+  const isCheckedStudent = (index) => {
+    return selectStudents.includes(index)
   }
   /*************Handle delete proctor********** */
   const handleDeleteProctor = (e) => {
@@ -590,15 +657,15 @@ function RoomDetail() {
           <div className='col-lg-12 col-sm-8 col-md-8 col-xs-12'>
             <ol className='breadcrumb'>
               <li>
-                <a href='index.html'>Quản lý</a>
+                <a href='/'>HCMUSID</a>
               </li>
               <li>
                 <a href='/room'>
-                  <span>Phòng Zoom</span>
+                  <span>Room zooms</span>
                 </a>
               </li>
               <li className='active'>
-                <span>{currentRoom && currentRoom.name}</span>
+                <span>{currentRoom?.name}</span>
               </li>
             </ol>
           </div>
@@ -611,7 +678,7 @@ function RoomDetail() {
             <div className='panel panel-default card-view'>
               <div className='panel-heading'>
                 <div className='pull-left'>
-                  <h6 className='panel-title txt-dark'>Zoom Room</h6>
+                  <h6 className='panel-title txt-dark'>Room Information </h6>
                 </div>
                 <div className='pull-right'>
                   <button className='btn btn-default btn-icon-anim btn-square edit-button'>
@@ -658,10 +725,7 @@ function RoomDetail() {
                           <tr>
                             <th className='table-title-cell'>Subject</th>
                             <td colSpan={7}>
-                              <a
-                                href={`/subject/${currentRoom.subject?.id}`}
-                                style={{ color: 'blue' }}
-                              >
+                              <a href={`/subject/${currentRoom.subject?.id}`}>
                                 {currentRoom.subject?.name
                                   ? currentRoom.subject.name
                                   : 'Not yet selected'}
@@ -684,7 +748,7 @@ function RoomDetail() {
               <div className='panel panel-default card-view'>
                 <div className='panel-heading'>
                   <div className='pull-left'>
-                    <h6 className='panel-title txt-dark'>Subject Detail</h6>
+                    <h6 className='panel-title txt-dark'>Subject</h6>
                   </div>
                   <div className='pull-right'>
                     <button
@@ -999,6 +1063,99 @@ function RoomDetail() {
                       onChange={uploadStudentFile}
                     />
                   </button>
+                  <button
+                    class='btn btn-primary btn-square'
+                    data-toggle='modal'
+                    data-target='#addStudentModal'
+                  >
+                    <span class='btn-label'>
+                      <i class='fa fa-plus'></i>
+                    </span>
+                  </button>
+                  <div className='modal' id='addStudentModal'>
+                    <div className='modal-dialog'>
+                      <div className='modal-content'>
+                        <div className='modal-header'>
+                          <button
+                            type='button'
+                            className='close'
+                            data-dismiss='modal'
+                            aria-hidden='true'
+                            id='close-modal-student'
+                          >
+                            ×
+                          </button>
+                          <h5 className='modal-title'>
+                            Choose students from {currentSubject?.name}
+                          </h5>
+                        </div>
+                        <div className='modal-body'>
+                          <div className='table-wrap'>
+                            <div className='table-responsive'>
+                              <table className='table table-hover display  pb-30'>
+                                <thead>
+                                  <tr>
+                                    <th>
+                                      {studentsChooice && (
+                                        <input
+                                          type='checkbox'
+                                          name='checkbox'
+                                          index='all'
+                                          onChange={handleSelectAllStudents}
+                                        />
+                                      )}
+                                    </th>
+                                    <th>#</th>
+                                    <th>Id</th>
+                                    <th>Full name</th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                                  {studentsChooice.map((student, index) => (
+                                    <tr key={index}>
+                                      <td>
+                                        <input
+                                          type='checkbox'
+                                          name='checkbox'
+                                          index={student.id}
+                                          onChange={handleSelectStudents}
+                                          checked={isCheckedStudent(student.id)}
+                                        />
+                                      </td>
+                                      <td>{index + 1}</td>
+                                      <td>{student.studentId}</td>
+                                      <td>
+                                        {student.firstName +
+                                          ' ' +
+                                          student.lastName}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='modal-footer'>
+                          <button
+                            type='button'
+                            className='btn btn-default'
+                            data-dismiss='modal'
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type='button'
+                            className='btn btn-danger'
+                            onClick={handleAddStudents}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className='clearfix' />
               </div>

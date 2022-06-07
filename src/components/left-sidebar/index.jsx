@@ -75,7 +75,15 @@ function LeftSideBar() {
               </div>
               <div className='clearfix' />
             </NavLink>
-            
+          </li>
+          <li>
+            <NavLink to='/identity/sessions-room' activeClassName='active'>
+              <div className='pull-left'>
+                <i className='fa fa-calendar-check-o mr-20' />
+                <span className='right-nav-text'>Room Session</span>
+              </div>
+              <div className='clearfix' />
+            </NavLink>
           </li>
 
           <li>

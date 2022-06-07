@@ -52,12 +52,17 @@ export function handleExpiredToken(error, swal) {
   }
 }
 export function formatDate(date) {
-  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+  return `${('0' + date.getDate()).slice(-2)}/${(
+    '0' +
+    (date.getMonth() + 1)
+  ).slice(-2)}/${('0' + date.getFullYear()).slice(-4)}`
 }
 export function formatTime(date) {
-  return `${('0' + date.getHours()).slice(-2)}:${(
+  const time = `${('0' + date.getHours()).slice(-2)}:${(
     '0' + date.getMinutes()
-  ).slice(-2)} ${('0' + date.getDate()).slice(-2)}/${(
+  ).slice(-2)}`
+
+  return `${tConv24(time)} ${('0' + date.getDate()).slice(-2)}/${(
     '0' +
     (date.getMonth() + 1)
   ).slice(-2)}/${date.getFullYear()} `
@@ -95,7 +100,7 @@ export const findDaysDifferent = (fromDate) => {
 }
 
 export const getShortName = (name) => {
-  console.log(name);
+  console.log(name)
   const arrNames = name.split(' ')
   if (arrNames.length >= 2) {
     return (

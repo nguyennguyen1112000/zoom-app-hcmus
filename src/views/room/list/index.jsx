@@ -66,38 +66,47 @@ function RoomList() {
   }
   const handleDelete = (e) => {
     e.preventDefault()
-    console.log('selects', select)
-
-    axios
-      .delete(`${API_URL}/rooms`, {
-        data: select,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
-        }
-      })
-      .then((res) => {
-        toast.success('Xóa thành công', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        setReload(!reload)
-      })
-      .catch((err) => {
-        toast.error(err?.response?.data?.message, {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-      })
+    swal({
+      title: 'Are you sure?',
+      text: 'This record and it`s details will be permanantly deleted!',
+      icon: 'warning',
+      buttons: ['Cancel', 'Yes']
+    }).then(function (value) {
+      if (value) {
+        axios
+          .delete(`${API_URL}/rooms`, {
+            data: select,
+            headers: {
+              Authorization: `Bearer ${JSON.parse(
+                localStorage.getItem('token')
+              )}`
+            }
+          })
+          .then((res) => {
+            toast.success('Delete successfully', {
+              position: 'top-right',
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+            setReload(!reload)
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data?.message, {
+              position: 'top-right',
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+          })
+      }
+    })
   }
   /************* Upload file *********** */
 
@@ -137,17 +146,17 @@ function RoomList() {
         {/* Title */}
         <div className='row heading-bg'>
           <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-            <h5 className='txt-dark'>Danh sách phòng thi</h5>
+            <h5 className='txt-dark'>Rooms list</h5>
           </div>
           {/* Breadcrumb */}
           <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
             <ol className='breadcrumb'>
               <li>
-                <a href='index.html'>HCMUSID</a>
+                <a href='/room'>HCMUSID</a>
               </li>
 
               <li className='active'>
-                <span>Danh sách phòng thi</span>
+                <span>Rooms</span>
               </li>
             </ol>
           </div>
@@ -160,21 +169,19 @@ function RoomList() {
             <div className='panel panel-default card-view'>
               <div className='panel-heading'>
                 {select.length > 0 && (
-                  <div className='pull-left button-list'>
-                    <button class='btn btn-danger btn-lable-wrap left-label'>
+                  <div className='pull-left button-list' onClick={handleDelete}>
+                    <button class='btn btn-danger  btn-square'>
                       <span class='btn-label'>
                         <i class='fa fa-trash'></i>
                       </span>
-                      <span class='btn-text' onClick={handleDelete}>
-                        Delete
-                      </span>
+                     
                     </button>
                   </div>
                 )}
                 <div className='pull-right button-list'>
-                  <button class='btn btn-default' onClick={handleImportZoom}>
+                  {/* <button class='btn btn-default' onClick={handleImportZoom}>
                     Import Zoom
-                  </button>
+                  </button> */}
                   <button
                     class='btn btn-success btn-square btn-outline'
                     onClick={downloadTemplate}
@@ -263,9 +270,12 @@ function RoomList() {
                               </td>
                               <td>{room.subject.subjectCode}</td>
                               <td>{room.subject.classCode}</td>
-                              <td> {room.examDate && formatDate(room.examDate)}</td>
+                              <td>
+                                {' '}
+                                {room.examDate && formatDate(room.examDate)}
+                              </td>
                               <td>{room.students.length}</td>
-                          
+
                               <td>
                                 <a
                                   href={`/room/edit/${room.id}`}
@@ -349,7 +359,7 @@ function RoomList() {
                         <tbody>
                           {roomList &&
                             roomList.map((room, index) => (
-                              <tr >
+                              <tr>
                                 <td>{index + 1}</td>
                                 <td>
                                   <a href={`/room/${room.id}`}>{room.name}</a>

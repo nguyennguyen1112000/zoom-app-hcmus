@@ -1169,7 +1169,7 @@ button.fc-agendaWeek-button,
 .fc-today-button {
   color: #fff;
   padding: 10px 25px;
-  text-transform: capitalize;
+  /* text-transform: capitalize; */
   border-radius: 2px;
   outline: none;
   box-shadow: none;
@@ -25376,4 +25376,18 @@ ul.inbox-nav li a:focus {
 #footer {
   position: fixed;
 
+}
+
+
+
+.modal-dialog,
+.modal-content {
+    /* 80% of window height */
+    height: 80%;
+}
+
+.modal-body {
+    /* 100% = dialog height, 120px = header + footer */
+    max-height: calc(100% - 140px);
+    overflow-y: scroll;
 }
