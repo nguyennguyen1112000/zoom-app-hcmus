@@ -25391,3 +25391,7 @@ ul.inbox-nav li a:focus {
     max-height: calc(100% - 140px);
     overflow-y: scroll;
 }
+
+.input-error{
+  border: 1px solid #ff3333;
+}

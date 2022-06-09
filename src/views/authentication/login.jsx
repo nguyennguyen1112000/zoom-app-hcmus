@@ -12,13 +12,82 @@ function Login() {
   const dispatch = useDispatch()
 
   const logIn = useSelector((state) => state.auth.isLoggedIn)
-  const user = useSelector((state) => state.auth.currentUser)
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
   const [redirect, setRedirect] = useState(false)
-  
+  const [input, setInput] = useState({
+    username: '',
+    password: ''
+  })
+  const [moodleLogin, setMoodleLogin] = useState(false)
+  const [errors, setErrors] = useState({
+    username: null,
+    password: null,
+    invalidAccount: null
+  })
+
+  function handleChange(event) {
+    switch (event.target.name) {
+      case 'username':
+        if (event.target.value.length <= 20)
+          setInput({
+            ...input,
+            username: event.target.value
+          })
+        break
+      case 'password':
+        setInput({
+          ...input,
+          password: event.target.value
+        })
+        break
+
+      default:
+        break
+    }
+  }
+  function validate() {
+    let isValid = true
+    var errs = {}
+    if (!input.username) {
+      isValid = false
+      errs.username = 'This field is required'
+    }
+
+    if (!input.password) {
+      isValid = false
+      errs.password = 'This field is required'
+    }
+    setErrors(errs)
+    return isValid
+  }
+  function handleLoginMoodle(event) {
+    event.preventDefault()
+    if (validate()) {
+      axios
+        .post(`${API_URL}/auth/login/moodle`, input)
+        .then((res) => {
+          setInput({
+            username: '',
+            password: ''
+          })
+          setErrors({ username: null, password: null })
+          const { access_token, user } = res.data
+          localStorage.setItem('user', JSON.stringify(user))
+          localStorage.setItem('token', JSON.stringify(access_token))
+          const action = userLoginSuccess(user)
+          dispatch(action)
+          setRedirect(true)
+        })
+        .catch((err) => {
+          setErrors({
+            ...errors,
+            invalidAccount: 'Invalid username or password'
+          })
+        })
+    }
+  }
   useEffect(() => {
-    console.log('code', code, logIn, user)
     // localStorage.setItem(
     //   'user',
     //   JSON.stringify({
@@ -70,19 +139,18 @@ function Login() {
       axios
         .post(`${API_URL}/auth/login`, input)
         .then((res) => {
-          setRedirect(true)
           const { access_token, user } = res.data
           localStorage.setItem('user', JSON.stringify(user))
           localStorage.setItem('token', JSON.stringify(access_token))
           const action = userLoginSuccess(user)
           dispatch(action)
+          setRedirect(true)
         })
         .catch((err) => {
           console.log('Error', err)
         })
     }
   }, [code, logIn, redirect])
-  console.log('redirect', redirect)
 
   if (redirect) return <Redirect to='/room' />
   return (
@@ -91,24 +159,70 @@ function Login() {
         <div className='container' id='container'>
           <div className='form-container sign-in-container'>
             <div className='form'>
-              <h4 className='mb-20'>Login HCMUSID</h4>
+              <h4 className='mb-20' style={{ color: 'Highlight' }}>
+                Sign in HCMUSID
+              </h4>
               <a
-			  
                 className='btn btn-primary btn-block'
                 href={`https://zoom.us/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URL}`}
               >
-                Login with Zoom
+                Sign in with Zoom
               </a>
-              {/* <button className='btn btn-primary  btn-block'>
-                Đăng nhập với Moodle
-              </button> */}
+              <button
+                className='btn btn-default btn-block'
+                onClick={() => setMoodleLogin(true)}
+              >
+                Sign in with FIT Moodle
+              </button>
+              {moodleLogin && (
+                <>
+                  <input
+                    type='text'
+                    className={`form-control ${
+                      errors.username && 'input-error'
+                    }`}
+                    placeholder='Enter username'
+                    name='username'
+                    value={input.username}
+                    onChange={handleChange}
+                  />
+
+                  <input
+                    type='password'
+                    className={`form-control ${
+                      errors.username && 'input-error'
+                    }`}
+                    placeholder='Enter password'
+                    name='password'
+                    value={input.password}
+                    onChange={handleChange}
+                  />
+                  {errors.invalidAccount && (
+                    <span
+                      className='help-block with-errors'
+                      style={{ color: 'red' }}
+                    >
+                      {errors.invalidAccount}
+                    </span>
+                  )}
+                  <button
+                    className='btn btn-danger'
+                    onClick={handleLoginMoodle}
+                  >
+                    Sign in <i className='fa fa-arrow-right'></i>
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <div className='overlay-container'>
             <div className='overlay'>
               <div className='overlay-panel overlay-right'>
                 <img src='img/logo_signin.png' style={{ height: '250px' }} />
-                <h6>Ứng dụng định danh thi trực tuyến qua ứng dụng Zoom</h6>
+                <h6>
+                  Solution for remote exams held on Zoom platform, quickly
+                  verifying the identity of exam-takers
+                </h6>
               </div>
             </div>
           </div>
@@ -163,7 +277,6 @@ button {
 	font-weight: bold;
 	padding: 12px 45px;
 	letter-spacing: 1px;
-	text-transform: uppercase;
 	transition: transform 80ms ease-in;
 }
 
@@ -188,7 +301,6 @@ button.ghost {
 	flex-direction: column;
 	padding: 0 50px;
 	height: 100%;
-	text-align: center;
 }
 
 input {

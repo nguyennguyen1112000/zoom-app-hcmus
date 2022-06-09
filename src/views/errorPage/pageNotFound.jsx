@@ -2,10 +2,10 @@ import React from 'react';
 
 function PageNotFound() {
     return (
-      <>
+      <div className='wrapper error-page pa-0'>
         <header className='sp-header'>
           <div className='sp-logo-wrap pull-left'>
-            <a href='index.html'>
+            <a href='/'>
               <img
                 className='brand-img mr-10'
                 src='../img/logo.png'
@@ -16,10 +16,10 @@ function PageNotFound() {
           </div>
           <div className='form-group mb-0 pull-right'>
             <a
-              className='inline-block btn btn-success btn-rounded btn-outline nonecase-font'
+              className='inline-block btn btn-primary btn-rounded btn-outline nonecase-font'
               href='/'
             >
-              Trở lại trang chủ
+              Back to Home
             </a>
           </div>
           <div className='clearfix' />
@@ -27,28 +27,28 @@ function PageNotFound() {
         {/* Main Content */}
         <div
           className='page-wrapper pa-0 ma-0 error-bg-img'
-          style={{ minHeight: '283px' }}
+          style={{ minHeight: '722px' }}
         >
           <div className='container-fluid'>
             {/* Row */}
             <div
               className='table-struct full-width full-height'
-              style={{ height: '283px' }}
+              style={{ height: '722px' }}
             >
               <div className='table-cell vertical-align-middle auth-form-wrap'>
                 <div className='auth-form  ml-auto mr-auto no-float'>
                   <div className='row'>
                     <div className='col-sm-12 col-xs-12'>
                       <div className='mb-30'>
-                        <span className='block error-head text-center txt-success mb-10'>
+                        <span className='block error-head text-center txt-primary mb-10'>
                           404
                         </span>
                         <span className='text-center nonecase-font mb-20 block error-comment'>
-                          Không tìm thấy trang
+                          Page Not Found
                         </span>
                         <p className='text-center'>
-                          URL có thể được đặt sai vị trí hoặc trang bạn đang tìm
-                          kiếm không còn nữa.
+                          The URL may be misplaced or the pahe you are looking
+                          is no longer available.
                         </p>
                       </div>
                     </div>
@@ -60,7 +60,7 @@ function PageNotFound() {
           </div>
         </div>
         {/* /Main Content */}
-      </>
+      </div>
     )
 }
 

@@ -62,7 +62,7 @@ export const WebcamID = (props) => {
         axios
           .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
-            console.log(res)
+            console.log(res.data)
 
             setLoading(false)
             const identifiedRes = res.data
@@ -70,7 +70,7 @@ export const WebcamID = (props) => {
             if (identifiedRes.idStatus)
               history.push(`/room/${roomId}/verify/result/${identifiedRes.id}`)
             else
-              toast.error('Student Id verification fail, please try again', {
+              toast.error('Student Id verification failed, please try again', {
                 position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -83,8 +83,8 @@ export const WebcamID = (props) => {
           .catch((err) => {
             setLoading(false)
             toast.error(err?.response?.data?.message, {
-              position: 'top-right',
-              autoClose: 3000,
+              position: 'top-center',
+              autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,

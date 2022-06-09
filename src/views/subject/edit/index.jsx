@@ -254,10 +254,10 @@ function EditSubject() {
               <a href='index.html'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>Danh sách môn học</a>
+              <a href='/subject'>Subjects</a>
             </li>
             <li className='active'>
-              <span>Thêm môn học</span>
+              <span>Update subject</span>
             </li>
           </ol>
         </div>
@@ -391,7 +391,7 @@ function EditSubject() {
                     </div>
                     <div className='form-group'>
                       <label className='control-label mb-10 text-left'>
-                        Mã kì thi
+                        Exam code
                       </label>
                       <input
                         type='text'
@@ -399,14 +399,14 @@ function EditSubject() {
                         name='examCode'
                         onChange={handleChange}
                         value={input.examCode}
-                        placeholder='Nhập mã kì thi'
+                        placeholder='Enter exam code'
                       />
                     </div>
                     <div
                       className={`form-group ${errors.examDate && 'has-error'}`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Ngày thi
+                        Exam date
                       </label>
                       <DatePicker
                         className='form-control'

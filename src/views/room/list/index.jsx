@@ -310,7 +310,7 @@ function RoomList() {
     )
   }
 
-  if (user.role != 'student') return renderRooms()
+  if (user.role !== 'student') return renderRooms()
   else
     return (
       <div className='container-fluid'>
@@ -351,7 +351,7 @@ function RoomList() {
                             <th>Room code</th>
                             <th>ZoomId </th>
                             <th>Passcode</th>
-                            <th>Link</th>
+                            <th>Link Zoom</th>
                             <th>Subject</th>
                           </tr>
                         </thead>
@@ -371,8 +371,8 @@ function RoomList() {
                                 </td>
                                 <td>
                                   <a href={room.url}>
-                                    Enter room{' '}
-                                    <i className='fa fa-arrow-right'></i>
+                                    Enter room {" "}
+                                    <i className='fa fa-sign-in'></i>
                                   </a>
                                 </td>
                                 <td>{room.subject.name}</td>

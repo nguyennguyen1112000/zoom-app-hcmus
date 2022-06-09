@@ -593,6 +593,7 @@ function RoomDetail() {
                             <th>Id verification status</th>
                             <th>Face image</th>
                             <th>Student ID/ID Card Image</th>
+                            <th>Image type</th>
                           </tr>
                         </thead>
 
@@ -633,6 +634,7 @@ function RoomDetail() {
                                   {record.cardImage?.imageUrl && 'View'}
                                 </a>
                               </td>
+                              <td>{record.cardImage?.type}</td>
                             </tr>
                           ))}
                         </tbody>

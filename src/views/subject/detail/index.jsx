@@ -8,6 +8,7 @@ import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
 import { getCurrentSubject } from '../../../services/api/subject'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { Link } from 'react-router-dom'
 const API_URL = process.env.REACT_APP_API_URL
 function SubjectDetail() {
   const dispatch = useDispatch()
@@ -61,7 +62,11 @@ function SubjectDetail() {
 
     formData.append('file', e.target.files[0])
     axios
-      .post(`${API_URL}/subjects/upload/${currentSubject?.id}/students`, formData, authHeader())
+      .post(
+        `${API_URL}/subjects/upload/${currentSubject?.id}/students`,
+        formData,
+        authHeader()
+      )
       .then((res) => {
         e.target.value = null
         toast.success('Đăng tải thành công', {
@@ -190,11 +195,11 @@ function SubjectDetail() {
         <div className='col-lg-12 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='/room'>Quản lý</a>
+              <a href='/room'>HCMUSID</a>
             </li>
             <li>
               <a href='/subject'>
-                <span>Môn học</span>
+                <span>Subjects</span>
               </a>
             </li>
             <li className='active'>
@@ -211,15 +216,14 @@ function SubjectDetail() {
           <div className='panel panel-default card-view'>
             <div className='panel-heading'>
               <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>Thông tin môn học</h6>
+                <h6 className='panel-title txt-dark'>Subject's information</h6>
               </div>
               <div className='pull-right'>
-                <a
-                  href={`/subject/update/${currentSubject?.id}`}
-                  className='btn btn-default btn-icon-anim btn-square edit-button'
-                >
-                  <i className='fa fa-pencil' />
-                </a>
+                <Link to={`/subject/update/${currentSubject?.id}`}>
+                  <button className='btn btn-default btn-icon-anim btn-square edit-button'>
+                    <i className='fa fa-pencil' />
+                  </button>
+                </Link>
               </div>
               <div className='clearfix' />
             </div>
@@ -229,43 +233,43 @@ function SubjectDetail() {
                   <table className='table table-bordered '>
                     <tbody>
                       <tr>
-                        <td className='table-title-cell '>ID môn học Moodle</td>
+                        <td className='table-title-cell '>ID Moodle</td>
                         <td colSpan={7}>{currentSubject?.moodleId}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell '>Mã môn học</td>
+                        <td className='table-title-cell '>ID</td>
                         <td colSpan={7}>{currentSubject?.subjectCode}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell '>Tên môn học</td>
+                        <td className='table-title-cell '>Name</td>
                         <td colSpan={7}>{currentSubject?.name}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Học kì</td>
+                        <td className='table-title-cell'>Term</td>
                         <td colSpan={7}> {currentSubject?.term}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Năm học</td>
+                        <td className='table-title-cell'>School year</td>
                         <td colSpan={7}> {currentSubject?.schoolYear}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Giảng viên</td>
+                        <td className='table-title-cell'>Teacher</td>
                         <td colSpan={7}> {currentSubject?.teacher}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Khóa</td>
+                        <td className='table-title-cell'>School year</td>
                         <td colSpan={7}> {currentSubject?.studentYear}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Mã lớp</td>
+                        <td className='table-title-cell'>Class code</td>
                         <td colSpan={7}> {currentSubject?.classCode}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Mã bậc</td>
+                        <td className='table-title-cell'>Education level</td>
                         <td colSpan={7}> {currentSubject?.educationLevel}</td>
                       </tr>
                       <tr>
-                        <td className='table-title-cell'>Mã kì thi</td>
+                        <td className='table-title-cell'>Exam code</td>
                         <td colSpan={7}> {currentSubject?.examCode}</td>
                       </tr>
                       {/* <tr>
@@ -298,7 +302,7 @@ function SubjectDetail() {
           <div className='panel panel-default card-view'>
             <div className='panel-heading'>
               <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>Danh sách sinh viên</h6>
+                <h6 className='panel-title txt-dark'>Students</h6>
               </div>
               <div></div>
               <div className='pull-right button-list'>
@@ -310,27 +314,29 @@ function SubjectDetail() {
                   </button>
                 )}
                 {currentSubject?.moodleId && (
-                  <button class='btn btn-default'>
-                    <span class='btn-text' onClick={handleSyncStudents}>
-                      Đồng bộ Moodle
-                    </span>
+                  <button
+                    className='btn btn-default btn-lable-wrap left-label'
+                    onClick={handleSyncStudents}
+                  >
+                    <span class='btn-label'>
+                      <i class='fa fa-refresh'></i>
+                    </span>{' '}
+                    <span class='btn-text'>Sync Moodle</span>
                   </button>
                 )}
-                <button class='btn btn-success btn-lable-wrap left-label'>
+                <button
+                  class='btn btn-success btn-square btn-outline'
+                  onClick={downloadTemplate}
+                >
                   <span class='btn-label'>
                     <i class='fa fa-download'></i>
                   </span>
-                  <span class='btn-text' onClick={downloadTemplate}>
-                    Tải về template
-                  </span>
                 </button>
-                <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
+                <button class='btn btn-danger btn-square btn-outline fileupload'>
                   <span class='btn-label'>
                     <i class='fa fa-upload'></i>
                   </span>
-                  <span class='btn-text' for='file_upload'>
-                    Tải lên file sinh viên
-                  </span>
+                 
                   <input
                     id='file_upload'
                     type='file'
@@ -340,11 +346,11 @@ function SubjectDetail() {
                 </button>
                 <button
                   type='button'
-                  className='btn btn-primary'
+                  className='btn btn-primary btn-square'
                   data-toggle='modal'
                   data-target='#myModal'
                 >
-                  Thêm SV
+                  <i className="fa fa-plus"></i>
                 </button>
                 <div className='modal' id='myModal'>
                   <div className='modal-dialog'>
@@ -360,7 +366,7 @@ function SubjectDetail() {
                           ×
                         </button>
                         <h5 className='modal-title'>
-                          Thêm sinh viên vào lớp học
+                          Add students to {currentSubject?.name}
                         </h5>
                       </div>
                       <div className='modal-body'>
@@ -370,19 +376,19 @@ function SubjectDetail() {
                               htmlFor='recipient-name'
                               className='control-label mb-10'
                             >
-                              MSSV
+                              Student ID
                             </label>
                             <input
                               type='text'
                               className='form-control'
                               id='recipient-name'
                               name='studentId'
-                              placeholder='Nhập MSSV'
+                              placeholder='Enter student id ...'
                               onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             {!searchStudent && (
                               <div className='help-block with-errors'>
-                                Không tìm thấy sinh viên
+                                Not found student 
                               </div>
                             )}
                           </div>
@@ -406,14 +412,14 @@ function SubjectDetail() {
                           className='btn btn-default'
                           data-dismiss='modal'
                         >
-                          Thoát
+                          Cancel
                         </button>
                         <button
                           type='button'
                           className='btn btn-danger'
                           onClick={handleAddStudent}
                         >
-                          Thêm sinh viên
+                          Add
                         </button>
                       </div>
                     </div>

@@ -25,8 +25,7 @@ function CreateSubject() {
     teacher: null,
     classCode: null,
     name: null,
-    schoolYear: null,
-
+    schoolYear: null
   })
   function handleChange(event) {
     switch (event.target.name) {
@@ -99,7 +98,7 @@ function CreateSubject() {
     var errs = {}
     if (!input.subjectCode) {
       isValid = false
-      errs.subjectCode = 'Không được để trống'
+      errs.subjectCode = 'This field is required'
     }
     if (input.subjectCode) {
       if (input.subjectCode.length > 20) {
@@ -149,7 +148,6 @@ function CreateSubject() {
       }
     }
 
-
     setErrors(errs)
 
     return isValid
@@ -158,35 +156,43 @@ function CreateSubject() {
     event.preventDefault()
 
     if (validate()) {
-        axios
-          .post(`${API_URL}/subjects`, input, authHeader())
-          .then((res) => {           
-            setInput({
-              subjectCode: '',
-              term: 1,
-              teacher: '',
-              classCode: '',
-              studentYear: '',
-              educationLevel: '',
-              examCode: '',
-              examTime: 0,
-              name: '',
-              schoolYear: '',
-              examDate: new Date()
-            })
-            toast.success('Tạo thành công môn học', {
-              position: 'top-right',
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined
-            })
+      axios
+        .post(`${API_URL}/subjects`, input, authHeader())
+        .then((res) => {
+          setInput({
+            subjectCode: '',
+            term: 1,
+            teacher: '',
+            classCode: '',
+            studentYear: '',
+            educationLevel: '',
+            examCode: '',
+            examTime: 0,
+            name: '',
+            schoolYear: '',
+            examDate: new Date()
           })
-          .catch((err) => {
-            
+          toast.success('Created successfully', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
           })
+        })
+        .catch((err) => {
+          toast.error(err?.response?.data?.message, {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
+          })
+        })
     }
   }
 
@@ -195,19 +201,19 @@ function CreateSubject() {
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-          <h5 className='txt-dark'>Tạo môn học</h5>
+          <h5 className='txt-dark'>Subject form</h5>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='index.html'>HCMUSID</a>
+              <a href='/room'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>Danh sách môn học</a>
+              <a href='/subject'>Subjects</a>
             </li>
             <li className='active'>
-              <span>Thêm môn học</span>
+              <span>Add new subject</span>
             </li>
           </ol>
         </div>
@@ -221,7 +227,7 @@ function CreateSubject() {
                   <form>
                     <div className={`form-group ${errors.name && 'has-error'}`}>
                       <label className='control-label mb-10 text-left'>
-                        Tên môn học (*)
+                        Name (*)
                       </label>
                       <input
                         type='text'
@@ -229,7 +235,7 @@ function CreateSubject() {
                         name='name'
                         onChange={handleChange}
                         value={input.name}
-                        placeholder='Nhập tên môn học'
+                        placeholder={`Enter subject's name`}
                       />
                       {errors.name && (
                         <div className='help-block with-errors'>
@@ -243,7 +249,7 @@ function CreateSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Mã môn học (*)
+                        Subject code (*)
                       </label>
                       <input
                         type='text'
@@ -251,7 +257,7 @@ function CreateSubject() {
                         name='subjectCode'
                         onChange={handleChange}
                         value={input.subjectCode}
-                        placeholder='Nhập mã môn học'
+                        placeholder='Enter subject code'
                       />
                       {errors.subjectCode && (
                         <div className='help-block with-errors'>
@@ -265,7 +271,7 @@ function CreateSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Khóa
+                        Student year
                       </label>
                       <input
                         type='text'
@@ -273,7 +279,7 @@ function CreateSubject() {
                         name='studentYear'
                         onChange={handleChange}
                         value={input.studentYear}
-                        placeholder='Nhập khóa sinh viên'
+                        placeholder='Enter student year'
                       />
                       {errors.studentYear && (
                         <div className='help-block with-errors'>
@@ -282,7 +288,7 @@ function CreateSubject() {
                       )}
                     </div>
                     <div className='form-group'>
-                      <label className='control-label mb-10'>Học kì</label>
+                      <label className='control-label mb-10'>Term</label>
                       <select
                         className='form-control'
                         data-placeholder='Choose a Category'
@@ -301,7 +307,7 @@ function CreateSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Năm học
+                        School year
                       </label>
                       <input
                         type='text'
@@ -309,7 +315,7 @@ function CreateSubject() {
                         name='schoolYear'
                         onChange={handleChange}
                         value={input.schoolYear}
-                        placeholder='Nhập năm học'
+                        placeholder='Enter school year'
                       />
                       {errors.schoolYear && (
                         <div className='help-block with-errors'>
@@ -323,7 +329,7 @@ function CreateSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Lớp học
+                        Class
                       </label>
                       <input
                         type='text'
@@ -331,7 +337,7 @@ function CreateSubject() {
                         name='classCode'
                         onChange={handleChange}
                         value={input.classCode}
-                        placeholder='Nhập lớp học'
+                        placeholder='Enter class code'
                       />
                       {errors.classCode && (
                         <div className='help-block with-errors'>
@@ -341,7 +347,7 @@ function CreateSubject() {
                     </div>
                     <div className='form-group'>
                       <label className='control-label mb-10 text-left'>
-                        Mã kì thi
+                        Exam code
                       </label>
                       <input
                         type='text'
@@ -349,15 +355,15 @@ function CreateSubject() {
                         name='examCode'
                         onChange={handleChange}
                         value={input.examCode}
-                        placeholder='Nhập mã kì thi'
+                        placeholder='Enter exam code'
                       />
                     </div>
-                  
+
                     <div
                       className={`form-group ${errors.teacher && 'has-error'}`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Tên Giảng viên
+                        Teacher
                       </label>
                       <input
                         type='text'
@@ -365,13 +371,13 @@ function CreateSubject() {
                         name='teacher'
                         onChange={handleChange}
                         value={input.teacher}
-                        placeholder='Nhập tên giảng viên'
+                        placeholder={`Enter teacher's name`}
                       />
                     </div>
                     <div className='form-group'>
                       <label className='control-label mb-10 text-left'>
-                        Loại lớp
-                        <span className='help'> (Ví dụ: ĐHCQ, CLC)</span>
+                        Class type
+                        <span className='help'> (Example: ĐHCQ, CLC)</span>
                       </label>
                       <input
                         type='text'
@@ -379,7 +385,7 @@ function CreateSubject() {
                         name='educationLevel'
                         onChange={handleChange}
                         value={input.educationLevel}
-                        placeholder='Nhập loại lớp học'
+                        placeholder='Enter class type'
                       />
                     </div>
                   </form>
@@ -388,10 +394,10 @@ function CreateSubject() {
                       className='btn btn-success  mr-10'
                       onClick={handleSubmit}
                     >
-                      Lưu
+                      Save
                     </button>
                     <a href='/subject' className='btn btn-default'>
-                      Thoát
+                      Cancel
                     </a>
                   </div>
                 </div>

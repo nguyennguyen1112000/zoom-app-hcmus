@@ -209,19 +209,21 @@ function Profile() {
                       {user?.studentId}
                     </h5>
                     <h6 className='block capitalize-font pb-20'>
-                      {user?.first_name + ' ' + user?.last_name}
+                      {user?.firstName + ' ' + user?.lastName}
                     </h6>
                   </div>
                   <div className='social-info'>
-                   {user.role ==="admin" && <button className='btn btn-primary btn-block mt-30'>
-                      <i className='fa fa-connect' />
-                      <span
-                        className='btn-text'
-                        onClick={() => setMode('connectMoodle')}
-                      >
-                        Link with Moodle account
-                      </span>
-                    </button>}
+                    {user.role === 'admin' && (
+                      <button className='btn btn-primary btn-block mt-30'>
+                        <i className='fa fa-connect' />
+                        <span
+                          className='btn-text'
+                          onClick={() => setMode('connectMoodle')}
+                        >
+                          Connect Moodle account
+                        </span>
+                      </button>
+                    )}
                     <button
                       className='btn btn-default btn-block btn-outline btn-anim'
                       data-toggle='modal'
@@ -248,206 +250,78 @@ function Profile() {
                         style={{ width: '891px' }}
                       >
                         {modeView === 'default' && (
-                          <ul
-                            id='portfolio_1'
-                            className='portf auto-construct  project-gallery'
-                            data-col={4}
-                            style={{
-                              position: 'relative',
-                              height: '479.124px'
-                            }}
-                          >
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock1.jpg'
-                              data-sub-html='<h6>Bagwati</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '0px',
-                                top: '0px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock1.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>Bagwati</span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock2.jpg'
-                              data-sub-html='<h6>Not a Keyboard</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '222px',
-                                top: '0px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock2.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>
-                                  Not a Keyboard
-                                </span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock3.jpg'
-                              data-sub-html='<h6>Into the Woods</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '444px',
-                                top: '0px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock3.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>
-                                  Into the Woods
-                                </span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock4.jpg'
-                              data-sub-html='<h6>Ultra Saffire</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '666px',
-                                top: '0px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock4.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>
-                                  {' '}
-                                  Ultra Saffire
-                                </span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock5.jpg'
-                              data-sub-html='<h6>Happy Puppy</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '0px',
-                                top: '239px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock5.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>Happy Puppy</span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock6.jpg'
-                              data-sub-html='<h6>Wooden Closet</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '222px',
-                                top: '239px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock6.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>Wooden Closet</span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock7.jpg'
-                              data-sub-html='<h6>Happy Puppy</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '444px',
-                                top: '239px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock7.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>Happy Puppy</span>
-                              </a>
-                            </li>
-                            <li
-                              className='item'
-                              data-src='../img/gallery/equal-size/mock8.jpg'
-                              data-sub-html='<h6>Wooden Closet</h6><p>Classic view from Rigwood Jetty on Coniston Water an old archive shot similar to an old post but a little later on.</p>'
-                              style={{
-                                width: '202px',
-                                height: 'auto',
-                                margin: '10px',
-                                position: 'absolute',
-                                left: '666px',
-                                top: '239px'
-                              }}
-                            >
-                              <a href='#'>
-                                <img
-                                  className='img-responsive'
-                                  src='../img/gallery/equal-size/mock8.jpg'
-                                  alt='Image description'
-                                />
-                                <span className='hover-cap'>Wooden Closet</span>
-                              </a>
-                            </li>
-                          </ul>
+                          <div className='panel panel-default card-view'>
+                            <div className='panel-heading'>
+                              <div className='pull-left'>
+                                <h6 className='panel-title txt-dark'>
+                                  Bootstrap carousel without caption
+                                </h6>
+                              </div>
+                              <div className='clearfix' />
+                            </div>
+                            <div className='panel-wrapper collapse in'>
+                              <div className='panel-body'>
+                                {/* START carousel*/}
+                                <div
+                                  id='carousel-example-captions-1'
+                                  data-ride='carousel'
+                                  className='carousel slide'
+                                >
+                                  <ol className='carousel-indicators'>
+                                    <li
+                                      data-target='#carousel-example-captions-1'
+                                      data-slide-to={0}
+                                      className
+                                    />
+                                    <li
+                                      data-target='#carousel-example-captions-1'
+                                      data-slide-to={1}
+                                      className='active'
+                                    />
+                                    <li
+                                      data-target='#carousel-example-captions-1'
+                                      data-slide-to={2}
+                                      className
+                                    />
+                                  </ol>
+                                  <div
+                                    role='listbox'
+                                    className='carousel-inner'
+                                  >
+                                    <div className='item'>
+                                      {' '}
+                                      <img
+                                        src='../img/big/img4.jpg'
+                                        alt='First slide image'
+                                      />{' '}
+                                    </div>
+                                    <div className='item active'>
+                                      {' '}
+                                      <img
+                                        src='../img/big/img5.jpg'
+                                        alt='Second slide image'
+                                      />{' '}
+                                    </div>
+                                    <div className='item'>
+                                      {' '}
+                                      <img
+                                        src='../img/big/img6.jpg'
+                                        alt='Third slide image'
+                                      />{' '}
+                                    </div>
+                                  </div>
+                                </div>
+                                {/* END carousel*/}
+                              </div>
+                            </div>
+                          </div>
                         )}
                         {modeView === 'connectMoodle' && (
                           <div className='panel panel-default card-view'>
                             <div className='panel-heading'>
                               <div className='pull-left'>
                                 <h6 className='panel-title txt-dark'>
-                                  Kết nối tài khoản HCMUS Moodle
+                                  Connect to HCMUS Moodle
                                 </h6>
                               </div>
                               <div className='clearfix' />

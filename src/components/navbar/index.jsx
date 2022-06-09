@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { userLogout } from '../../actions/auth'
-import { logOut } from '../../helper/utils'
+import { getShortName, logOut } from '../../helper/utils'
 
 function NavBar() {
   const dispatch = useDispatch()
@@ -11,7 +11,7 @@ function NavBar() {
     logOut()
     dispatch(action)
   }
-  // const user = useSelector((state) => state.auth.currentUser);
+  const user = useSelector((state) => state.auth.currentUser);
 
   return (
     <nav className='navbar navbar-inverse navbar-fixed-top'>
@@ -288,7 +288,7 @@ function NavBar() {
                 className='user-auth-img'
                 style={{ background: '#eb4034' , padding: 5, color:"white"}}
               >
-                NN
+               {user && getShortName(user?.firstName+" "+user?.lastName)}
               </span>
               <span className='user-online-status' />
             </a>

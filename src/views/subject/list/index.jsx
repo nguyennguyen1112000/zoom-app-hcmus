@@ -7,6 +7,7 @@ import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
 import { getAllSubjects } from '../../../services/api/subject'
 import 'react-toastify/dist/ReactToastify.css'
 import { SpinnerCircularFixed } from 'spinners-react'
+import { Link } from 'react-router-dom'
 
 function SubjectList() {
   const dispatch = useDispatch()
@@ -48,38 +49,48 @@ function SubjectList() {
   }
   const handleDelete = (e) => {
     e.preventDefault()
-
-    axios
-      .delete(`${API_URL}/subjects`, {
-        data: select,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
-        }
-      })
-      .then((res) => {
-        toast.success('Xóa thành công', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        setReload(!reload)
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message, {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        console.log(err.response.data.message)
-      })
+    swal({
+      title: 'Are you sure?',
+      text: 'This record and it`s details will be permanantly deleted!',
+      icon: 'warning',
+      buttons: ['Cancel', 'Yes']
+    }).then(function (value) {
+      if (value) {
+        axios
+          .delete(`${API_URL}/subjects`, {
+            data: select,
+            headers: {
+              Authorization: `Bearer ${JSON.parse(
+                localStorage.getItem('token')
+              )}`
+            }
+          })
+          .then((res) => {
+            setSelect([])
+            toast.success('Delete successfully', {
+              position: 'top-right',
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+            setReload(!reload)
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data?.message, {
+              position: 'top-right',
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+          })
+      }
+    })
   }
 
   const uploadFile = (e) => {
@@ -125,17 +136,16 @@ function SubjectList() {
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-          <h5 className='txt-dark'>Danh sách môn học</h5>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='index.html'>HCMUSID</a>
+              <a href='/'>HCMUSID</a>
             </li>
 
             <li className='active'>
-              <span>Danh sách môn học</span>
+              <span>Subjects</span>
             </li>
           </ol>
         </div>
@@ -147,39 +157,51 @@ function SubjectList() {
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
             <div className='panel-heading'>
-              {select.length > 0 && (
-                <div className='pull-left button-list'>
-                  <button class='btn btn-danger btn-lable-wrap left-label'>
-                    <span class='btn-label'>
-                      <i class='fa fa-trash'></i>
-                    </span>
-                    <span class='btn-text' onClick={handleDelete}>
-                      Xóa đã chọn
+              <div className='pull-left button-list'>
+                {select.length > 0 && (
+                  <button
+                    className='btn btn-danger btn-square'
+                    onClick={handleDelete}
+                  >
+                    <span className='btn-label'>
+                      <i className='fa fa-trash'></i>
                     </span>
                   </button>
-                </div>
-              )}
+                )}
+                {select.length === 1 && (
+                  <Link to={`/subject/update/${select[0]}`}>
+                    {' '}
+                    <button className='btn btn-default btn-square'>
+                      <span className='btn-label'>
+                        <i className='fa fa-pencil'></i>
+                      </span>
+                    </button>
+                  </Link>
+                )}
+              </div>
+
               <div className='pull-right button-list'>
-                <button class='btn btn-default '>
-                  <span class='btn-text' onClick={handleSync}>
-                    Đồng bộ Moodle
+                <button className='btn btn-default btn-lable-wrap left-label'>
+                  <span className='btn-label'>
+                    <i className='fa fa-refresh'></i>{' '}
+                  </span>
+                  <span className='btn-text' onClick={handleSync}>
+                    Sync Moodle
                   </span>
                 </button>
-                <button class='btn btn-success btn-lable-wrap left-label'>
-                  <span class='btn-label'>
-                    <i class='fa fa-download'></i>
-                  </span>
-                  <span class='btn-text' onClick={downloadTemplate}>
-                    Tải về template
+                <button
+                  className='btn btn-success btn-square btn-outline'
+                  onClick={downloadTemplate}
+                >
+                  <span className='btn-label'>
+                    <i className='fa fa-download'></i>
                   </span>
                 </button>
-                <button class='btn btn-danger btn-lable-wrap left-label fileupload'>
-                  <span class='btn-label'>
-                    <i class='fa fa-upload'></i>
+                <button className='btn btn-danger btn-square btn-outline fileupload'>
+                  <span className='btn-label'>
+                    <i className='fa fa-upload'></i>
                   </span>
-                  <span class='btn-text' for='file_upload'>
-                    Tải lên file
-                  </span>
+
                   <input
                     id='file_upload'
                     type='file'
@@ -187,14 +209,13 @@ function SubjectList() {
                     onChange={uploadFile}
                   />
                 </button>
-                <button class='btn btn-primary btn-lable-wrap left-label'>
-                  <span class='btn-label'>
-                    <i class='fa fa-plus'></i>{' '}
-                  </span>
-                  <a href='/subject/0/create' className='btn-text text-white'>
-                    Thêm môn học
-                  </a>
-                </button>
+                <Link to='/subject/0/create'>
+                  <button className='btn btn-primary btn-square'>
+                    <span className='btn-label'>
+                      <i className='fa fa-plus'></i>
+                    </span>
+                  </button>
+                </Link>
               </div>
               <div className='clearfix' />
             </div>
@@ -220,13 +241,12 @@ function SubjectList() {
                               )}
                             </th>
                             <th>#</th>
-                            <th>Mã môn học/ Moodle ID</th>
-                            <th>Tên môn học </th>
-                            <th>HK/NH</th>
-                            <th>Import</th>
+                            <th>ID/ Moodle ID</th>
+                            <th>Name </th>
+                            <th>Term/School year</th>
+                            <th>Import type</th>
 
-                            <th>Khóa</th>
-                            <th>Tác vụ</th>
+                            <th>Student year</th>
                           </tr>
                         </thead>
 
@@ -279,27 +299,6 @@ function SubjectList() {
                               </td>
                               <td>{subject.examTime}</td> */}
                               <td>{subject.studentYear}</td>
-
-                              <td>
-                                <a
-                                  href={`/subject/update/${subject.id}`}
-                                  className='text-inverse pr-10'
-                                  title='Edit'
-                                  data-toggle='tooltip'
-                                >
-                                  <i className='zmdi zmdi-edit txt-warning' />
-                                </a>
-                                <a
-                                  href='/'
-                                  className='text-inverse'
-                                  title='Delete'
-                                  data-toggle='tooltip'
-                                  index={subject.id}
-                                  onClick={handleDelete}
-                                >
-                                  <i className='zmdi zmdi-delete txt-danger' />
-                                </a>
-                              </td>
                             </tr>
                           ))}
                         </tbody>
