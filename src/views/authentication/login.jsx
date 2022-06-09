@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
@@ -147,7 +148,17 @@ function Login() {
           setRedirect(true)
         })
         .catch((err) => {
-          console.log('Error', err)
+          // eslint-disable-next-line no-undef
+
+          if (err?.response?.status === 401)
+            swal(
+              'Your account doest not exist. Please contact your system administrator',
+              {
+                buttons: false,
+                timer: 5000
+              }
+            )
+          console.log('Error', err?.response)
         })
     }
   }, [code, logIn, redirect])
