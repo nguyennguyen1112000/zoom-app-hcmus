@@ -268,8 +268,8 @@ function RoomList() {
                               <td>
                                 <a href={room.url}>Mở</a>
                               </td>
-                              <td>{room.subject.subjectCode}</td>
-                              <td>{room.subject.classCode}</td>
+                              <td>{room.subject?.subjectCode}</td>
+                              <td>{room.subject?.classCode}</td>
                               <td>
                                 {' '}
                                 {room.examDate && formatDate(room.examDate)}
@@ -375,7 +375,7 @@ function RoomList() {
                                     <i className='fa fa-sign-in'></i>
                                   </a>
                                 </td>
-                                <td>{room.subject.name}</td>
+                                <td>{room.subject?.name}</td>
                               </tr>
                             ))}
                         </tbody>

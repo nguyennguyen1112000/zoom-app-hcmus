@@ -69,7 +69,7 @@ function SubjectDetail() {
       )
       .then((res) => {
         e.target.value = null
-        toast.success('Đăng tải thành công', {
+        toast.success('Upload successfully', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
@@ -163,7 +163,7 @@ function SubjectDetail() {
         }
       })
       .then((res) => {
-        toast.success('Xóa thành công', {
+        toast.success('Delete successfully', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
@@ -336,7 +336,7 @@ function SubjectDetail() {
                   <span class='btn-label'>
                     <i class='fa fa-upload'></i>
                   </span>
-                 
+
                   <input
                     id='file_upload'
                     type='file'
@@ -350,7 +350,7 @@ function SubjectDetail() {
                   data-toggle='modal'
                   data-target='#myModal'
                 >
-                  <i className="fa fa-plus"></i>
+                  <i className='fa fa-plus'></i>
                 </button>
                 <div className='modal' id='myModal'>
                   <div className='modal-dialog'>
@@ -388,7 +388,7 @@ function SubjectDetail() {
                             />
                             {!searchStudent && (
                               <div className='help-block with-errors'>
-                                Not found student 
+                                Not found student
                               </div>
                             )}
                           </div>

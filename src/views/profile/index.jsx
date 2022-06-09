@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
-import Footer from '../../components/footer'
 import { authHeader, getShortName } from '../../helper/utils'
-import { updateProfile } from '../../actions/auth'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getMyImages } from '../../services/api/image'
@@ -16,25 +14,18 @@ function Profile() {
     moodleUsername: '',
     moodlePassword: ''
   })
-  console.log(user)
   const [errors, setErrors] = useState({
     moodleUsername: null,
     moodlePassword: null
   })
-  function formatDate(date) {
-    const newDate = new Date(date)
-    const day = ('0' + newDate.getDate()).slice(-2)
-    const month = ('0' + (newDate.getMonth() + 1)).slice(-2)
-    const year = ('0' + newDate.getFullYear()).slice(-4)
-    return `${year}-${month}-${day}`
-  }
+
   useEffect(() => {
     if (user.role === 'student') {
       dispatch(getMyImages())
     }
   }, [dispatch, user])
   console.log('user', user)
-  const [modeView, setMode] = useState('default')
+  const [modeView, setMode] = useState('connectMoodle')
   const imagesList = useSelector((state) => state.image.imageList)
   function handleChange(event) {
     switch (event.target.name) {
@@ -87,12 +78,12 @@ function Profile() {
     var errs = {}
     if (!input.moodleUsername) {
       isValid = false
-      errs.moodleUsername = 'Không được để trống'
+      errs.moodleUsername = 'Username is required'
     }
 
     if (!input.moodlePassword) {
       isValid = false
-      errs.moodlePassword = 'Không được để trống'
+      errs.moodlePassword = 'Password is required'
     }
     setErrors(errs)
 
@@ -111,7 +102,7 @@ function Profile() {
           authHeader()
         )
         .then((res) => {
-          toast.success('Kết nối thành công', {
+          toast.success('Connect successfully', {
             position: 'top-right',
             autoClose: 1000,
             hideProgressBar: false,
@@ -121,10 +112,10 @@ function Profile() {
             progress: undefined
           })
           setErrors({ moodleUsername: null, moodlePassword: null })
-          setMode('default')
+          //setMode('default')
         })
         .catch((err) => {
-          toast.error(err.response?.data?.message, {
+          toast.error(err?.response?.data?.message, {
             position: 'top-right',
             autoClose: 2000,
             hideProgressBar: false,
@@ -136,42 +127,7 @@ function Profile() {
         })
   }
 
-  function handleSubmit(event) {
-    event.preventDefault()
 
-    // if (validate()) {
-    //   console.log("input", input);
-    //   axios
-    //     .patch(`${API_URL}/users`, input, authHeader())
-    //     .then((res) => {
-    //       toast.success("Cập nhật thành công!", {
-    //         position: "top-right",
-    //         autoClose: 1000,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //       });
-    //       const user = res.data;
-    //       localStorage.setItem("user", JSON.stringify(user));
-    //       const action = updateProfile(user);
-    //       dispatch(action);
-    //       setErrors({ firstName: null, lastName: null });
-    //     })
-    //     .catch((err) => {
-    //       toast.error(err.response.data.message, {
-    //         position: "top-right",
-    //         autoClose: 2000,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //       });
-    //     });
-    // }
-  }
   return (
     <div className='container-fluid pt-25'>
       {/* Row */}
@@ -321,7 +277,7 @@ function Profile() {
                             <div className='panel-heading'>
                               <div className='pull-left'>
                                 <h6 className='panel-title txt-dark'>
-                                  Connect to HCMUS Moodle
+                                  Connect to FIT Moodle
                                 </h6>
                               </div>
                               <div className='clearfix' />
@@ -341,7 +297,7 @@ function Profile() {
                                             className='control-label mb-10'
                                             htmlFor='exampleInputuname_1'
                                           >
-                                            Tên đăng nhập
+                                            Username
                                           </label>
                                           <div className='input-group'>
                                             <div className='input-group-addon'>
@@ -351,7 +307,7 @@ function Profile() {
                                               type='text'
                                               className='form-control'
                                               id='exampleInputuname_1'
-                                              placeholder='Nhập tên đăng nhập'
+                                              placeholder={`Enter your Moodle's username`}
                                               name='moodleUsername'
                                               onChange={handleChange}
                                             />
@@ -372,7 +328,7 @@ function Profile() {
                                             className='control-label mb-10'
                                             htmlFor='exampleInputpwd_1'
                                           >
-                                            Mật khẩu
+                                           Password
                                           </label>
                                           <div className='input-group'>
                                             <div className='input-group-addon'>
@@ -382,7 +338,7 @@ function Profile() {
                                               type='password'
                                               className='form-control'
                                               id='exampleInputpwd_1'
-                                              placeholder='Nhập mật khẩu'
+                                              placeholder={`Enter your Moodle's password`}
                                               name='moodlePassword'
                                               onChange={handleChange}
                                             />
@@ -398,14 +354,14 @@ function Profile() {
                                           className='btn btn-success mr-10'
                                           onClick={handleConnectMoodle}
                                         >
-                                          Kiểm tra kết nối
+                                          Connect
                                         </button>
-                                        <button
+                                        {/* <button
                                           type='submit'
                                           className='btn btn-default'
                                         >
-                                          Thoát
-                                        </button>
+                                          
+                                        </button> */}
                                       </form>
                                     </div>
                                   </div>

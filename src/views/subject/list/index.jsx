@@ -14,6 +14,7 @@ function SubjectList() {
   const subjects = useSelector((state) => state.subject.subjects)
   const [reload, setReload] = useState(false)
   const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -23,6 +24,7 @@ function SubjectList() {
   useEffect(() => {
     $('#datable_1').DataTable()
   }, [subjects, reload])
+  const user = useSelector((state) => state.auth.currentUser)
 
   const API_URL = process.env.REACT_APP_API_URL
   const downloadTemplate = (e) => {
@@ -102,7 +104,7 @@ function SubjectList() {
       .post(`${API_URL}/subjects/upload`, formData, authHeader())
       .then((res) => {
         e.target.value = null
-        toast.success('Đăng tải thành công', {
+        toast.success('Upload successfully', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
@@ -135,8 +137,7 @@ function SubjectList() {
     <div className='container-fluid'>
       {/* Title */}
       <div className='row heading-bg'>
-        <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-        </div>
+        <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'></div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
@@ -181,14 +182,16 @@ function SubjectList() {
               </div>
 
               <div className='pull-right button-list'>
-                <button className='btn btn-default btn-lable-wrap left-label'>
-                  <span className='btn-label'>
-                    <i className='fa fa-refresh'></i>{' '}
-                  </span>
-                  <span className='btn-text' onClick={handleSync}>
-                    Sync Moodle
-                  </span>
-                </button>
+                {user.moodleId && (
+                  <button className='btn btn-default btn-lable-wrap left-label'>
+                    <span className='btn-label'>
+                      <i className='fa fa-refresh'></i>{' '}
+                    </span>
+                    <span className='btn-text' onClick={handleSync}>
+                      Sync Moodle
+                    </span>
+                  </button>
+                )}
                 <button
                   className='btn btn-success btn-square btn-outline'
                   onClick={downloadTemplate}

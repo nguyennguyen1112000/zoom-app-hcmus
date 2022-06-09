@@ -43,7 +43,7 @@ function SessionRoomDetail() {
         }
       })
       .then((res) => {
-        toast.success('Xóa thành công', {
+        toast.success('Delete successfully', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
