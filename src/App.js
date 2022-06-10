@@ -30,7 +30,7 @@ import SubjectList from './views/subject/list'
 import CreateSubject from './views/subject/create'
 import EditSubject from './views/subject/edit'
 import SubjectDetail from './views/subject/detail'
-import CreateMeeting from './views/room/create'
+import CreateMeeting from './views/room/create/meeting.jsx'
 import ProctorList from './views/proctor/list'
 import RoomDetail from './views/room/detail'
 import StudentVerificationS2 from './views/verification/id_verify'
@@ -44,6 +44,8 @@ import Privacy from './views/document/privacy'
 import TermOfUse from './views/document/term_of_use'
 import Contact from './views/document/contact'
 import Document from './views/document/doc'
+import CreateRoom from './views/room/create'
+import UpdateRoom from './views/room/update'
 //import VerificationClient from './views/verification'
 
 function App() {
@@ -127,12 +129,19 @@ function App() {
               exact
             />
             <PrivateRoute component={RoomDetail} path='/room/:id' exact />
+            <PrivateRoute component={CreateRoom} path='/room/0/create' exact />
+            <PrivateRoute
+              component={UpdateRoom}
+              path='/room/update/:id'
+              exact
+            />
             <PrivateRoute component={SubjectList} path='/subject' exact />
             <PrivateRoute
               component={CreateSubject}
               path='/subject/0/create'
               exact
             />
+
             <PrivateRoute
               component={EditSubject}
               path='/subject/update/:id'

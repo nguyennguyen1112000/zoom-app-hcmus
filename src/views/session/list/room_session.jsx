@@ -255,7 +255,7 @@ function RoomSession() {
                               </td>
                               <td> {room.roomCode}</td>
 
-                              <td>{room.subject.subjectCode}</td>
+                              <td>{room.subject?.subjectCode}</td>
                               <td>
                                 {room?.proctors?.map((proctor) => (
                                   <>
@@ -268,9 +268,9 @@ function RoomSession() {
                                   </>
                                 ))}
                               </td>
-                              <td>{room.subject.classCode}</td>
+                              <td>{room.subject?.classCode}</td>
 
-                              <td>{room.students.length}</td>
+                              <td>{room.students?.length}</td>
                               <td>{room.checkInConfigType}</td>
                               <td>
                                 {room.checkInStartTime
@@ -302,10 +302,10 @@ function RoomSession() {
                                       ).slice(-2)}`
                                     )
                                   : '??'}{' '}
-                                (
                                 {room.checkInStartTime &&
-                                  formatDate(new Date(room.checkInStartTime))}
-                                )
+                                  `(${formatDate(
+                                    new Date(room.checkInStartTime)
+                                  )}`}
                               </td>
                               <td>
                                 {room.status === 'Not start yet' && (

@@ -8,12 +8,13 @@ import axios from 'axios'
 import swal from 'sweetalert'
 import { authHeader, handleExpiredToken, tConv24 } from '../../../helper/utils'
 import { Link } from 'react-router-dom'
+import { SpinnerCircularFixed } from 'spinners-react'
 
 const API_URL = process.env.REACT_APP_API_URL
 function RoomList() {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.currentUser)
-
+  const [loading, setLoading] = useState(false)
   const roomList = useSelector((state) => state.room.roomList)
   const [reload, setReload] = useState(false)
   const [select, setSelect] = useState([])
@@ -37,15 +38,15 @@ function RoomList() {
   }
   /************* Import from zoom *********** */
   const handleImportZoom = () => {
+    setLoading(true)
     axios
-      .post(
-        `${API_URL}/rooms/import/zoom`,
-        { access_token: user.zoom_access_token },
-        authHeader()
-      )
-      .then((res) => {})
+      .post(`${API_URL}/rooms/import/zoom`, null, authHeader())
+      .then((res) => {
+        setLoading(false)
+        setReload(!reload)
+      })
       .catch((err) => {
-        console.log(err.response)
+        setLoading(false)
         handleExpiredToken(err, swal)
       })
   }
@@ -83,6 +84,7 @@ function RoomList() {
             }
           })
           .then((res) => {
+            setSelect([])
             toast.success('Delete successfully', {
               position: 'top-right',
               autoClose: 1000,
@@ -145,9 +147,7 @@ function RoomList() {
       <div className='container-fluid'>
         {/* Title */}
         <div className='row heading-bg'>
-          <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-            <h5 className='txt-dark'>Rooms list</h5>
-          </div>
+          <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'></div>
           {/* Breadcrumb */}
           <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
             <ol className='breadcrumb'>
@@ -160,28 +160,40 @@ function RoomList() {
               </li>
             </ol>
           </div>
-          {/* /Breadcrumb */}
         </div>
-        {/* /Title */}
-        {/* Row */}
         <div className='row'>
           <div className='col-lg-12'>
             <div className='panel panel-default card-view'>
               <div className='panel-heading'>
-                {select.length > 0 && (
-                  <div className='pull-left button-list' onClick={handleDelete}>
-                    <button class='btn btn-danger  btn-square'>
+                <div className='pull-left button-list'>
+                  {select.length > 0 && (
+                    <button
+                      class='btn btn-danger  btn-square'
+                      onClick={handleDelete}
+                    >
                       <span class='btn-label'>
                         <i class='fa fa-trash'></i>
                       </span>
-                     
                     </button>
-                  </div>
-                )}
+                  )}
+                  {select.length === 1 && (
+                    <Link to={`/room/update/${select[0]}`}>
+                      <button class='btn btn-default  btn-square'>
+                        <span class='btn-label'>
+                          <i class='fa fa-pencil'></i>
+                        </span>
+                      </button>
+                    </Link>
+                  )}
+                </div>
+
                 <div className='pull-right button-list'>
-                  {/* <button class='btn btn-default' onClick={handleImportZoom}>
-                    Import Zoom
-                  </button> */}
+                  <button
+                    class='btn btn-primary btn-outline btn-square'
+                    onClick={handleImportZoom}
+                  >
+                    <img src='/img/icons8-zoom.svg' width={30} />
+                  </button>
                   <button
                     class='btn btn-success btn-square btn-outline'
                     onClick={downloadTemplate}
@@ -201,11 +213,18 @@ function RoomList() {
                       onChange={uploadFile}
                     />
                   </button>
-                  <Link to='/room/0/create_meeting'>
+                  <Link to='/room/0/create'>
                     <button class='btn btn-primary btn-square'>
                       <span class='btn-label'>
                         <i class='fa fa-plus'></i>
-                      </span>
+                      </span>{' '}
+                    </button>
+                  </Link>
+                  <Link to='/room/0/create_meeting'>
+                    <button class='btn btn-success btn-square'>
+                      <span class='btn-label'>
+                        <i class='fa fa-calendar'></i>
+                      </span>{' '}
                     </button>
                   </Link>
                 </div>
@@ -237,12 +256,10 @@ function RoomList() {
                             <th>Room Code</th>
                             <th>ZoomId </th>
                             <th>Passcode</th>
-                            <th>Link</th>
-                            <th>Subject Code</th>
+                            <th>Join URL</th>
+                            <th>Subject</th>
                             <th>Class Code</th>
-                            <th>Exam date</th>
                             <th>No. Students</th>
-                            <th>ACTION</th>
                           </tr>
                         </thead>
 
@@ -266,34 +283,26 @@ function RoomList() {
                               <td>{room.zoomId}</td>
                               <td>{room.passcode}</td>
                               <td>
-                                <a href={room.url}>Mở</a>
+                                <button
+                                  style={{
+                                    border: 'none',
+                                    background: 'none'
+                                  }}
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(room.url)
+                                    swal({
+                                      text: 'Copied to clipboard',
+                                      button: false
+                                    })
+                                  }}
+                                >
+                                  Copy <i className='fa fa-copy'></i>
+                                </button>
                               </td>
-                              <td>{room.subject?.subjectCode}</td>
+                              <td>{room.subject?.name}</td>
                               <td>{room.subject?.classCode}</td>
-                              <td>
-                                {' '}
-                                {room.examDate && formatDate(room.examDate)}
-                              </td>
-                              <td>{room.students.length}</td>
-
-                              <td>
-                                <a
-                                  href={`/room/edit/${room.id}`}
-                                  className='text-inverse pr-10'
-                                  title='Edit'
-                                  data-toggle='tooltip'
-                                >
-                                  <i className='zmdi zmdi-edit txt-warning' />
-                                </a>
-                                <a
-                                  href='javascript:void(0)'
-                                  className='text-inverse'
-                                  title='Delete'
-                                  data-toggle='tooltip'
-                                >
-                                  <i className='zmdi zmdi-delete txt-danger' />
-                                </a>
-                              </td>
+                             
+                              <td>{room.students?.length}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -371,8 +380,7 @@ function RoomList() {
                                 </td>
                                 <td>
                                   <a href={room.url}>
-                                    Enter room {" "}
-                                    <i className='fa fa-sign-in'></i>
+                                    Enter room <i className='fa fa-sign-in'></i>
                                   </a>
                                 </td>
                                 <td>{room.subject?.name}</td>
@@ -386,6 +394,14 @@ function RoomList() {
               </div>
             </div>
           </div>
+        </div>
+        <div className='spinner-loading'>
+          <SpinnerCircularFixed
+            size={100}
+            thickness={200}
+            color='#2986CC'
+            enabled={loading}
+          />
         </div>
         <ToastContainer />
       </div>

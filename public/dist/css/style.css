@@ -25380,13 +25380,13 @@ ul.inbox-nav li a:focus {
 
 
 
-.modal-dialog,
-.modal-content {
+.modal-dialog-custom,
+.modal-content-custom {
     /* 80% of window height */
     height: 80%;
 }
 
-.modal-body {
+.modal-body-custom {
     /* 100% = dialog height, 120px = header + footer */
     max-height: calc(100% - 140px);
     overflow-y: scroll;
@@ -25395,3 +25395,4 @@ ul.inbox-nav li a:focus {
 .input-error{
   border: 1px solid #ff3333;
 }
+

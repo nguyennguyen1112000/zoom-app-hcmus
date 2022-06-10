@@ -359,30 +359,7 @@ function ProctorList() {
                             <h5 className='modal-title'>Add new Proctor</h5>
                           </div>
                           <div className='modal-body'>
-                            {/* <form>
-                          <div className='form-group'>
-                            <label
-                              htmlFor='recipient-name'
-                              className='control-label mb-10'
-                            >
-                              Add <code>emails</code> of protors
-                            </label>
-                            <div className='tags-default mt-40'>
-                              <input
-                                type='text'
-                                id='tagsinput'
-                                data-role='tagsinput'
-                                placeholder='Add Emails'
-                                name='emails'
-                              />
-                            </div>
-                            {errors.emails && (
-                              <div className='help-block with-errors text-danger'>
-                                {errors.emails}
-                              </div>
-                            )}
-                          </div>
-                        </form> */}
+                         
                             <form>
                               <div
                                 className={`form-group ${
@@ -599,7 +576,6 @@ function ProctorList() {
                           <th>#</th>
 
                           <th>Proctor ID </th>
-                          <th>Full name</th>
                           <th>Email </th>
 
                           <th>Status</th>
@@ -623,11 +599,7 @@ function ProctorList() {
                               <a href={`/proctor/${user.id}`}></a>
                               {user.staffCode}
                             </td>
-                            <td>
-                              {user.firstName && user.lastName
-                                ? user.firstName + ' ' + user.lastName
-                                : '--'}
-                            </td>
+                            
                             <td>{user.email}</td>
 
                             <td>

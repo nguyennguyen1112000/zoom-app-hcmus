@@ -28,19 +28,19 @@ export function handleExpiredToken(error, swal) {
     error.response?.data?.statusCode === 401
   ) {
     swal({
-      title: 'Phiên đăng nhập Zoom hết hạn',
-      text: 'Vui lòng đăng nhập lại để thực hiện chức năng!',
+      title: 'Zoom session expired',
+      text: 'Please sigin again to continue!',
       icon: 'warning',
       //buttons: true,
       dangerMode: true,
-      button: 'Đăng nhập lại'
+      button: 'Sign in again'
     }).then((willLoginAgain) => {
       if (willLoginAgain) {
         axios
           .post(`${API_URL}/zooms/refresh_token`, null, authHeader())
           .then((res) => {
-            localStorage.setItem('token', res.data)
-            swal('Đăng nhập thành công', {
+            localStorage.setItem('token', `"${res.data}"`)
+            swal('Login successfully', {
               icon: 'success'
             })
           })

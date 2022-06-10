@@ -15,7 +15,8 @@ function Setting() {
     openCollectData: true,
     refreshToken: false,
     ekycToken: '',
-    credibility: 0.7
+    credibility: 0.7,
+    maxFailAttempt: 3
   })
   const dispatch = useDispatch()
   useEffect(() => {
@@ -28,16 +29,12 @@ function Setting() {
       setInput(result)
     }
   }, [setting])
-  //const user = useSelector((state) => state.auth.currentUser)
-  console.log('Setting', input)
 
   const [errors, setErrors] = useState({
     ekycUsername: null,
     ekycPassword: null
   })
   function handleChange(event) {
-    console.log('event', event)
-
     switch (event.target.name) {
       case 'ekycUsername':
         setInput({
@@ -64,11 +61,15 @@ function Setting() {
         })
         break
       case 'openCollectData':
-        console.log(event.target.checked, event.target.value)
-
         setInput({
           ...input,
           openCollectData: event.target.checked
+        })
+        break
+      case 'maxFailAttempt':
+        setInput({
+          ...input,
+          maxFailAttempt: event.target.value
         })
         break
 
@@ -280,11 +281,33 @@ function Setting() {
                               step={0.05}
                             />
                           </div>
-                          {errors.ekycPassword && (
-                            <div className='help-block with-errors'>
-                              {errors.ekycPassword}
+                        </div>
+                        <div
+                          className='
+                              form-group'
+                        >
+                          <label
+                            className='control-label mb-10'
+                            htmlFor='credibility'
+                          >
+                            Limit fail to identity
+                          </label>
+                          <div className='input-group'>
+                            <div className='input-group-addon'>
+                              <i className='fa fa-exclamation-triangle' />
                             </div>
-                          )}
+                            <input
+                              type='number'
+                              className='form-control'
+                              id='maxFailAttempt'
+                              name='maxFailAttempt'
+                              onChange={handleChange}
+                              value={input.maxFailAttempt}
+                              min={1}
+                              max={10}
+                              step={1}
+                            />
+                          </div>
                         </div>
 
                         <div className='form-group'>

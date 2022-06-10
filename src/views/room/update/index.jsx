@@ -1,12 +1,19 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { authHeader } from '../../../helper/utils'
+import { getRoom } from '../../../services/api/room'
 import { getAllSubjects } from '../../../services/api/subject'
-function CreateRoom() {
+function UpdateRoom() {
   const API_URL = process.env.REACT_APP_API_URL
+  let { id } = useParams()
+  const { search } = useLocation()
+  const redirectTo = new URLSearchParams(search).get('redirectTo')
   const [input, setInput] = useState({
     name: '',
     zoomId: '',
@@ -23,11 +30,28 @@ function CreateRoom() {
     passcode: null,
     url: null
   })
+  const [redirect, setRedirect] = useState(false)
   const dispatch = useDispatch()
+  const currentRoom = useSelector((state) => state.room.currentRoom)
+  const subjects = useSelector((state) => state.subject.subjects)
   useEffect(() => {
     dispatch(getAllSubjects())
-  }, [dispatch])
-  const subjects = useSelector((state) => state.subject.subjects)
+    if (id) dispatch(getRoom(id))
+  }, [dispatch, id])
+
+  useEffect(() => {
+    if (currentRoom)
+      setInput({
+        name: currentRoom.name,
+        zoomId: currentRoom.zoomId,
+        passcode: currentRoom.passcode,
+        description: currentRoom.description,
+        url: currentRoom.url,
+        roomCode: currentRoom.roomCode,
+        subjectId: currentRoom.subject?.id
+      })
+  }, [currentRoom])
+
   function handleChange(event) {
     switch (event.target.name) {
       case 'name':
@@ -103,7 +127,7 @@ function CreateRoom() {
 
     if (validate()) {
       axios
-        .post(`${API_URL}/rooms`, input, authHeader())
+        .put(`${API_URL}/rooms/${currentRoom?.id}`, input, authHeader())
         .then((res) => {
           setInput({
             name: '',
@@ -120,15 +144,7 @@ function CreateRoom() {
             passcode: null,
             url: null
           })
-          toast.success('Created successfully', {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined
-          })
+          setRedirect(true)
         })
         .catch((err) => {
           toast.error(err?.response?.data?.message, {
@@ -143,6 +159,8 @@ function CreateRoom() {
         })
     }
   }
+  if (redirect)
+    return redirectTo ? <Redirect to={redirectTo} /> : <Redirect to='/room' />
 
   return (
     <div className='container-fluid'>
@@ -158,10 +176,10 @@ function CreateRoom() {
               <a href='/room'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>Rooms</a>
+              <a href='/room'>Rooms</a>
             </li>
             <li className='active'>
-              <span>Create new room</span>
+              <span>Update room {currentRoom?.name}</span>
             </li>
           </ol>
         </div>
@@ -281,9 +299,7 @@ function CreateRoom() {
                         onChange={handleChange}
                         value={input.subjectId}
                       >
-                        <option value={null}>
-                         ----Select subject ----
-                        </option>
+                        <option value={null}>----Select subject ----</option>
                         {subjects?.map((subject, index) => (
                           <option key={index} value={subject.id}>
                             {subject.name}
@@ -314,4 +330,4 @@ function CreateRoom() {
   )
 }
 
-export default CreateRoom
+export default UpdateRoom

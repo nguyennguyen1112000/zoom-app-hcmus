@@ -15,6 +15,7 @@ import axios from 'axios'
 import TimePicker from 'react-time-picker/dist/TimePicker'
 import DatePicker from 'react-date-picker'
 import { getAllUsers } from '../../../services/api/users'
+import { Link } from 'react-router-dom'
 const API_URL = process.env.REACT_APP_API_URL
 function RoomDetail() {
   const dispatch = useDispatch()
@@ -56,7 +57,6 @@ function RoomDetail() {
   useEffect(() => {
     if (currentSubject && currentRoom) {
       let students = []
-      console.log('students', currentSubject.students)
       currentSubject.students.forEach((student) => {
         if (!currentRoom.students.some((s) => s.id === student.id))
           students.push(student)
@@ -408,6 +408,11 @@ function RoomDetail() {
             buttons: false,
             timer: 3000
           })
+        else if (!res.data.failExceed)
+          swal('The number of failures exceeds the limit', {
+            buttons: false,
+            timer: 3000
+          })
         else
           window.open(
             `/room/${currentRoom?.id}/verify/s1`,
@@ -683,9 +688,15 @@ function RoomDetail() {
                   <h6 className='panel-title txt-dark'>Room Information </h6>
                 </div>
                 <div className='pull-right'>
-                  <button className='btn btn-default btn-icon-anim btn-square edit-button'>
-                    <i className='fa fa-pencil' />
-                  </button>
+                  <Link
+                    to={`/room/update/${
+                      currentRoom?.id
+                    }?redirectTo=${`/room/${currentRoom?.id}`}`}
+                  >
+                    <button className='btn btn-default btn-icon-anim btn-square edit-button'>
+                      <i className='fa fa-pencil' />
+                    </button>
+                  </Link>
                 </div>
               </div>
               <div className='panel-wrapper collapse in'>
@@ -734,6 +745,10 @@ function RoomDetail() {
                               </a>
                             </td>
                           </tr>
+                          <tr>
+                            <td className='table-title-cell'>Description</td>
+                            <td colSpan={7}>{currentRoom.description}</td>
+                          </tr>
                         </tbody>
                       )}
                     </table>
@@ -752,14 +767,7 @@ function RoomDetail() {
                   <div className='pull-left'>
                     <h6 className='panel-title txt-dark'>Subject</h6>
                   </div>
-                  <div className='pull-right'>
-                    <button
-                      className='btn btn-success btn-icon-anim btn-square edit-button'
-                      onClick={handleUpdateSubject}
-                    >
-                      <i className='fa fa-save' />
-                    </button>
-                  </div>
+
                   <div className='clearfix' />
                 </div>
                 <div className='panel-wrapper collapse in'>
@@ -781,6 +789,12 @@ function RoomDetail() {
                         ))}
                       </select>
                     </div>
+                    <button
+                      className='btn btn-success edit-button'
+                      onClick={handleUpdateSubject}
+                    >
+                      <i className='fa fa-save' /> Save
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1075,8 +1089,8 @@ function RoomDetail() {
                     </span>
                   </button>
                   <div className='modal' id='addStudentModal'>
-                    <div className='modal-dialog'>
-                      <div className='modal-content'>
+                    <div className='modal-dialog modal-dialog-custom'>
+                      <div className='modal-content modal-content-custom'>
                         <div className='modal-header'>
                           <button
                             type='button'
@@ -1091,7 +1105,7 @@ function RoomDetail() {
                             Choose students from {currentSubject?.name}
                           </h5>
                         </div>
-                        <div className='modal-body'>
+                        <div className='modal-body modal-body-custom'>
                           <div className='table-wrap'>
                             <div className='table-responsive'>
                               <table className='table table-hover display  pb-30'>
@@ -1255,7 +1269,7 @@ function RoomDetail() {
       </div>
     )
   }
-  if (user.role == 'student') return renderStudentRoom()
+  if (user.role === 'student') return renderStudentRoom()
   else return renderAdminRoom()
 }
 
