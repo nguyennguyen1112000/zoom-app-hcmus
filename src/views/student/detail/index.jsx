@@ -130,7 +130,7 @@ function StudentDetail() {
   useEffect(() => {
     if (currentStudent) {
       setInput(currentStudent)
-      if (currentStudent.birthday) setBirthday(currentStudent.birthday)
+      if (currentStudent.birthday) setBirthday(new Date(currentStudent.birthday))
     }
   }, [currentStudent])
   const handleClickFolder = (e) => {

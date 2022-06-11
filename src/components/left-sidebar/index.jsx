@@ -95,16 +95,19 @@ function LeftSideBar() {
           <li>
             <hr className='light-grey-hr mb-10' />
           </li>
+
           {/* <li className='navigation-header'>
             <span>GIÁM SÁT THI</span>
             <i className='zmdi zmdi-more' />
           </li> */}
           <li>
-            <div className='pull-left' onClick={handleLogout}>
-              <i className='fa fa-sign-out mr-20' />
-              <span className='right-nav-text'>Logout</span>
-            </div>
-            <div className='clearfix' />
+            <a href='' onClick={handleLogout} >
+              <div className='pull-left' >
+                <i className='fa fa-sign-out mr-20' />
+                <span className='right-nav-text'>Logout</span>
+              </div>
+              <div className='clearfix' />
+            </a>
           </li>
         </ul>
       )}
