@@ -24,7 +24,6 @@ function Profile() {
       dispatch(getMyImages())
     }
   }, [dispatch, user])
-  console.log('user', user)
   const [modeView, setMode] = useState('connectMoodle')
   const imagesList = useSelector((state) => state.image.imageList)
   function handleChange(event) {
@@ -205,7 +204,7 @@ function Profile() {
                         className='portfolio-wrap project-gallery'
                         style={{ width: '891px' }}
                       >
-                        {modeView === 'default' && (
+                        {modeView === 'default' && user.role ==="admin" && (
                           <div className='panel panel-default card-view'>
                             <div className='panel-heading'>
                               <div className='pull-left'>
@@ -272,7 +271,7 @@ function Profile() {
                             </div>
                           </div>
                         )}
-                        {modeView === 'connectMoodle' && (
+                        {modeView === 'connectMoodle' && user.role ==="admin" && (
                           <div className='panel panel-default card-view'>
                             <div className='panel-heading'>
                               <div className='pull-left'>

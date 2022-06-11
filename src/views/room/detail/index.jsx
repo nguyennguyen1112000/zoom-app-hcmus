@@ -63,6 +63,7 @@ function RoomDetail() {
       })
       setStudentChoice(students)
     }
+    
   }, [currentSubject])
   useEffect(() => {
     if (currentRoom) {
@@ -408,7 +409,7 @@ function RoomDetail() {
             buttons: false,
             timer: 3000
           })
-        else if (!res.data.failExceed)
+        else if (res.data.failExceed)
           swal('The number of failures exceeds the limit', {
             buttons: false,
             timer: 3000
@@ -1200,7 +1201,7 @@ function RoomDetail() {
                             <th>Id</th>
 
                             <th>Face Data</th>
-                            <th>Student ID</th>
+                            
                           </tr>
                         </thead>
 
@@ -1239,7 +1240,7 @@ function RoomDetail() {
                                     </span>
                                   )}
                                 </td>
-                                <td>
+                                {/* <td>
                                   {student.images &&
                                   student.images.length > 0 &&
                                   student.images.some(
@@ -1253,7 +1254,7 @@ function RoomDetail() {
                                       Not added yet
                                     </span>
                                   )}
-                                </td>
+                                </td> */}
                               </tr>
                             ))}
                         </tbody>

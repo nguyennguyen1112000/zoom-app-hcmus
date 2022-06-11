@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { SpinnerCircularFixed } from 'spinners-react'
@@ -9,8 +9,10 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getRoomIdentitySession } from '../../../services/api/session'
 import { getRoom } from '../../../services/api/room'
+import socketIOClient from 'socket.io-client'
 const API_URL = process.env.REACT_APP_API_URL
 function SessionRoomDetail() {
+  const socketRef = useRef()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [reload, setReload] = useState(false)
@@ -28,45 +30,21 @@ function SessionRoomDetail() {
   }, [id, reload])
   useEffect(() => {
     $('#datable_1').DataTable()
+    socketRef.current = socketIOClient.connect(API_URL)
+
+    socketRef.current.on('msgToClient', (data) => {
+      console.log('Datat', data)
+      if (data === parseInt(id)) setReload(!reload)
+      console.log('Đã cập nhật')
+    })
+    // mỗi khi có tin nhắn thì mess sẽ được render thêm
+
+    return () => {
+      socketRef.current.disconnect()
+    }
   }, [sessions, reload])
 
-  console.log('Session', sessions)
-
-  const handleDelete = (e) => {
-    e.preventDefault()
-
-    axios
-      .delete(`${API_URL}/subjects/${id}/students`, {
-        data: select,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
-        }
-      })
-      .then((res) => {
-        toast.success('Delete successfully', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        setReload(!reload)
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message, {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        console.log(err.response.data.message)
-      })
-  }
+  
   return (
     <div className='container-fluid'>
       {/* Title */}
@@ -231,6 +209,7 @@ function SessionRoomDetail() {
       <div className='row'>
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
+           
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
                 <div className='table-wrap'>
@@ -241,6 +220,7 @@ function SessionRoomDetail() {
                     >
                       <thead>
                         <tr>
+                          
                           <th>#</th>
 
                           <th>Student</th>
@@ -257,6 +237,7 @@ function SessionRoomDetail() {
                       <tbody>
                         {sessions?.map((session, index) => (
                           <tr key={index}>
+                           
                             <td>{index + 1}</td>
 
                             <td>

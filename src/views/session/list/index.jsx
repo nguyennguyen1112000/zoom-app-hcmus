@@ -1,26 +1,20 @@
 /* eslint-disable no-undef */
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toast, ToastContainer } from 'react-toastify'
+import {ToastContainer } from 'react-toastify'
 import {
-  authHeader,
-  formatDate,
   formatTime,
-  tConv24
 } from '../../../helper/utils'
-import { getAllSubjects } from '../../../services/api/subject'
 import 'react-toastify/dist/ReactToastify.css'
-import { SpinnerCircularFixed } from 'spinners-react'
 import { getIdentitySessions } from '../../../services/api/session'
-import { Link } from 'react-router-dom'
-
+import socketIOClient from 'socket.io-client'
+const API_URL = process.env.REACT_APP_API_URL
 function VerifySession() {
   const dispatch = useDispatch()
   const subjects = useSelector((state) => state.subject.subjects)
   const sessions = useSelector((state) => state.session.identity)
   const [reload, setReload] = useState(false)
-  const [loading, setLoading] = useState(false)
+   const socketRef = useRef()
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -29,6 +23,15 @@ function VerifySession() {
   }, [reload])
   useEffect(() => {
     $('#datable_1').DataTable()
+    socketRef.current = socketIOClient.connect(API_URL)
+
+    socketRef.current.on('msgToClient', (data) => {
+      setReload(!reload)
+    })
+
+    return () => {
+      socketRef.current.disconnect()
+    }
   }, [sessions, reload])
 
   return (
@@ -200,14 +203,7 @@ function VerifySession() {
           </div>
         </div>
       </div>
-      <div className='spinner-loading'>
-        <SpinnerCircularFixed
-          size={100}
-          thickness={200}
-          color='#2986CC'
-          enabled={loading}
-        />
-      </div>
+
       <ToastContainer />
     </div>
   )

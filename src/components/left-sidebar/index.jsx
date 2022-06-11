@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
+import { userLogout } from '../../actions/auth'
+import { logOut } from '../../helper/utils'
 function LeftSideBar() {
   const user = useSelector((state) => state.auth.currentUser)
-
+  function handleLogout() {
+    const action = userLogout()
+    logOut()
+    dispatchEvent(action)
+  }
   return (
     <div className='fixed-sidebar-left'>
       {user.role !== 'student' && (
@@ -89,9 +95,16 @@ function LeftSideBar() {
           <li>
             <hr className='light-grey-hr mb-10' />
           </li>
-          <li className='navigation-header'>
+          {/* <li className='navigation-header'>
             <span>GIÁM SÁT THI</span>
             <i className='zmdi zmdi-more' />
+          </li> */}
+          <li>
+            <div className='pull-left' onClick={handleLogout}>
+              <i className='fa fa-sign-out mr-20' />
+              <span className='right-nav-text'>Logout</span>
+            </div>
+            <div className='clearfix' />
           </li>
         </ul>
       )}

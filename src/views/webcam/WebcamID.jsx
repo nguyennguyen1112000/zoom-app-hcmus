@@ -62,8 +62,6 @@ export const WebcamID = (props) => {
         axios
           .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
-            console.log(res.data)
-
             setLoading(false)
             const identifiedRes = res.data
             sendNotification(identifiedRes.roomId)

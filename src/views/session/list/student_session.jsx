@@ -5,16 +5,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
 import {
   authHeader,
-  formatDate,
   formatTime,
-  tConv24
 } from '../../../helper/utils'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { getRoom, getRooms } from '../../../services/api/room'
+import { getRoom} from '../../../services/api/room'
 import { useParams } from 'react-router-dom'
 import { getStudentdentitySession } from '../../../services/api/session'
 import { Redirect } from 'react-router-dom'
+
 
 function StudentSessionDetail() {
   const dispatch = useDispatch()
@@ -44,7 +43,7 @@ function StudentSessionDetail() {
       }
     }
   }, [reload, sessions])
-
+ const [select, setSelect] = useState([])
   const API_URL = process.env.REACT_APP_API_URL
   const handleAccept = (e) => {
     e.preventDefault()
@@ -94,6 +93,66 @@ function StudentSessionDetail() {
   }
   if (redirect) {
     return <Redirect to={`/identity/sessions-room/${id}`} />
+  }
+  /********************** Handle delete students *********************/
+  const handleSelect = (e) => {
+    const index = e.currentTarget.getAttribute('index')
+    const checked = e.target.checked
+    if (checked) setSelect([...select, index])
+    else setSelect(select.filter((x) => x !== index))
+  }
+  const handleSelectAll = (e) => {
+    const checked = e.target.checked
+    if (checked) setSelect(sessions.map((s) => s.id))
+    else setSelect([])
+  }
+  const isChecked = (index) => {
+    return select.includes(index)
+  }
+  const handleDelete = (e) => {
+    e.preventDefault()
+    swal({
+      title: 'Are you sure?',
+      text: 'This record and it`s details will be permanantly deleted!',
+      icon: 'warning',
+      buttons: ['Cancel', 'Yes']
+    }).then(function (value) {
+      if (value) {
+        axios
+          .delete(`${API_URL}/identity-record`, {
+            data: select,
+            headers: {
+              Authorization: `Bearer ${JSON.parse(
+                localStorage.getItem('token')
+              )}`
+            }
+          })
+          .then((res) => {
+            toast.success('Delete successfully', {
+              position: 'top-right',
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+            setSelect([])
+            setReload(!reload)
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data?.message, {
+              position: 'top-right',
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined
+            })
+          })
+      }
+    })
   }
 
   const renderViewMode = () => {
@@ -255,6 +314,24 @@ function StudentSessionDetail() {
       <div className='row'>
         <div className='col-sm-12'>
           <div className='panel panel-default card-view'>
+            <div className='panel-heading'>
+              <div className='pull-left button-list'>
+                {select.length > 0 && (
+                  <div className='pull-left button-list'>
+                    <button
+                      class='btn btn-danger btn-square'
+                      onClick={handleDelete}
+                    >
+                      <span class='btn-label' style={{ color: 'white' }}>
+                        <i class='fa fa-trash'></i>
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className='clearfix' />
+            </div>
             <div className='panel-wrapper collapse in'>
               <div className='panel-body row'>
                 <div className='table-wrap'>
@@ -265,12 +342,23 @@ function StudentSessionDetail() {
                     >
                       <thead>
                         <tr>
+                          <th>
+                            {sessions && (
+                              <input
+                                type='checkbox'
+                                name='checkbox'
+                                index='all'
+                                onChange={handleSelectAll}
+                              />
+                            )}
+                          </th>
                           <th>#</th>
                           <th>Id</th>
                           <th>Face recognition</th>
                           <th>Id verification</th>
                           <th>Face image</th>
                           <th>Id image</th>
+                          <th>Id image type</th>
                           <th width='15%'>Credibility</th>
                           <th>Start time</th>
                           <th>Duration</th>
@@ -279,6 +367,15 @@ function StudentSessionDetail() {
                       <tbody>
                         {sessions?.map((session, index) => (
                           <tr key={index}>
+                            <td>
+                              <input
+                                type='checkbox'
+                                name='checkbox'
+                                index={session.id}
+                                onChange={handleSelect}
+                                checked={isChecked(session.id)}
+                              />
+                            </td>
                             <td>{index + 1}</td>
                             <td>{session.id}</td>
                             <td>
@@ -335,6 +432,7 @@ function StudentSessionDetail() {
                                 </a>
                               )}
                             </td>
+                            <td>{session?.cardImage?.type}</td>
                             <td>
                               {session.credibility ? (
                                 <div className='progress progress-lg'>
