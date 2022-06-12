@@ -18,7 +18,7 @@ function NavBar() {
       <div className='mobile-only-brand pull-left'>
         <div className='nav-header pull-left'>
           <div className='logo-wrap'>
-            <a href='index.html'>
+            <a href='/room'>
               <img className='brand-img' src='/img/logo.png' alt='brand' />
               <span className='brand-text'>HCMUSID</span>
             </a>

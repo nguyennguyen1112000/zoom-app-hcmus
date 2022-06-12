@@ -963,9 +963,7 @@ function RoomDetail() {
                                   htmlFor='message-text'
                                   className='control-label mb-10'
                                 >
-                                  {searchProctor.firstName +
-                                    ' ' +
-                                    searchProctor.lastName}
+                                  {searchProctor?.email}
                                 </label>
                               </div>
                             )}
@@ -1002,7 +1000,6 @@ function RoomDetail() {
                           <tr>
                             <th>#</th>
                             <th>Proctor Id</th>
-                            <th>Full name</th>
                             <th>Email</th>
 
                             <th>Action</th>
@@ -1016,9 +1013,7 @@ function RoomDetail() {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{staff.staffCode}</td>
-                                <td>
-                                  {staff.firstName + ' ' + staff.lastName}
-                                </td>
+                                
                                 <td>{staff.email}</td>
 
                                 <td>

@@ -356,7 +356,7 @@ function ProctorList() {
                             >
                               ×
                             </button>
-                            <h5 className='modal-title'>Add new Proctor</h5>
+                            <h5 className='modal-title'>Edit Proctor</h5>
                           </div>
                           <div className='modal-body'>
                          
