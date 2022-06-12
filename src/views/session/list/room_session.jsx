@@ -260,9 +260,7 @@ function RoomSession() {
                                 {room?.proctors?.map((proctor) => (
                                   <>
                                     <span className='label label-default'>
-                                      {proctor.firstName +
-                                        ' ' +
-                                        proctor.lastName}
+                                      {proctor.email}
                                     </span>
                                     <br />
                                   </>

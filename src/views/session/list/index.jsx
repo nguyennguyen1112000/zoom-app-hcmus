@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {ToastContainer } from 'react-toastify'
-import {
-  formatTime,
-} from '../../../helper/utils'
+import { ToastContainer } from 'react-toastify'
+import { formatTime } from '../../../helper/utils'
 import 'react-toastify/dist/ReactToastify.css'
 import { getIdentitySessions } from '../../../services/api/session'
 import socketIOClient from 'socket.io-client'
@@ -14,7 +12,7 @@ function VerifySession() {
   const subjects = useSelector((state) => state.subject.subjects)
   const sessions = useSelector((state) => state.session.identity)
   const [reload, setReload] = useState(false)
-   const socketRef = useRef()
+  const socketRef = useRef()
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -113,9 +111,7 @@ function VerifySession() {
                                 {session.room?.proctors?.map((proctor) => (
                                   <>
                                     <span className='label label-default'>
-                                      {proctor.firstName +
-                                        ' ' +
-                                        proctor.lastName}
+                                      {proctor.email}
                                     </span>
                                     <br />
                                   </>

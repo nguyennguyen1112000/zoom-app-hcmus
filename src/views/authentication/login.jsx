@@ -4,8 +4,10 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
-
+import { useMsal } from '@azure/msal-react'
+import { loginRequest } from '../../authConfig'
 function Login() {
+  const { instance } = useMsal()
   const API_URL = process.env.REACT_APP_API_URL
   const CLIENT_ID = process.env.REACT_APP_ZOOM_CLIENT_ID
   const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL
@@ -26,6 +28,12 @@ function Login() {
     password: null,
     invalidAccount: null
   })
+  function handleLoginMicrosoft(instance) {
+    instance.loginPopup(loginRequest).catch((e) => {
+      console.error(e)
+    })
+  }
+
 
   function handleChange(event) {
     switch (event.target.name) {
@@ -89,50 +97,7 @@ function Login() {
     }
   }
   useEffect(() => {
-    // localStorage.setItem(
-    //   'user',
-    //   JSON.stringify({
-    //     id: 'Bslzz4x0S1ycVG5L9KUXlw',
-    //     first_name: 'Nguyễn Bình',
-    //     last_name: 'Nguyên',
-    //     email: '18120486@student.hcmus.edu.vn',
-    //     type: 1,
-    //     role_name: 'Owner',
-    //     pmi: 7447313271,
-    //     use_pmi: false,
-    //     personal_meeting_url:
-    //       'https://us05web.zoom.us/j/7447313271?pwd=TWw4V3pGVDJscEVBVVN3bkQ5d3NFZz09',
-    //     timezone: 'Asia/Jakarta',
-    //     verified: 1,
-    //     dept: '',
-    //     created_at: '2020-04-05T11:03:09Z',
-    //     last_login_time: '2022-05-17T09:00:15Z',
-    //     last_client_version: '5.9.3.3169(win)',
-    //     host_key: '478688',
-    //     cms_user_id: '',
-    //     jid: 'bslzz4x0s1ycvg5l9kuxlw@xmpp.zoom.us',
-    //     group_ids: [],
-    //     im_group_ids: [],
-    //     account_id: 'Jrm08XawRdiDsM22c9OT7Q',
-    //     language: 'en-US',
-    //     phone_number: '',
-    //     status: 'active',
-    //     job_title: '',
-    //     location: '',
-    //     login_types: [100],
-    //     role_id: '0',
-    //     account_number: 2601475324,
-    //     cluster: 'us05',
-    //     role: 'student',
-    //     studentId: '18120486'
-    //   })
-    // )
-    // localStorage.setItem(
-    //   'token',
-    //   JSON.stringify(
-    //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjE4MTIwNDg2QHN0dWRlbnQuaGNtdXMuZWR1LnZuIiwic3ViIjoiQnNseno0eDBTMXljVkc1TDlLVVhsdyIsInN0dWRlbnRJZCI6IjE4MTIwNDg2Iiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE2NTI3Nzg4NjQsImV4cCI6MTY1Mjc5Njg2NH0.EoReT2UQlcBL5iSJW34dUil178jMrbi7sM58Y-TkM4M'
-    //   )
-    // )
+   
     if (code && !logIn) {
       const input = {
         code: code
@@ -179,6 +144,12 @@ function Login() {
               >
                 Sign in with Zoom
               </a>
+              {/* <button
+                className='btn btn-default btn-block'
+                onClick={() => handleLoginMicrosoft(instance)}
+              >
+                Sign in with Microsoft account
+              </button> */}
               <button
                 className='btn btn-default btn-block'
                 onClick={() => setMoodleLogin(true)}
