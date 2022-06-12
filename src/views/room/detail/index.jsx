@@ -1056,25 +1056,8 @@ function RoomDetail() {
                       </span>
                     </button>
                   )}
-                  <button
-                    class='btn btn-danger btn-outline btn-square'
-                    onClick={downloadTemplate}
-                  >
-                    <span class='btn-label'>
-                      <i class='fa fa-download'></i>
-                    </span>
-                  </button>
-                  <button class='btn btn-success btn-outline btn-square fileupload'>
-                    <span class='btn-label'>
-                      <i class='fa fa-upload'></i>
-                    </span>
-                    <input
-                      id='file_upload'
-                      type='file'
-                      className='upload'
-                      onChange={uploadStudentFile}
-                    />
-                  </button>
+                  
+                  
                   <button
                     class='btn btn-primary btn-square'
                     data-toggle='modal'
