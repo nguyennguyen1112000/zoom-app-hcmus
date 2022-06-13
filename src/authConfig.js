@@ -3,7 +3,7 @@ export const msalConfig = {
     clientId: 'f9c612af-7d22-4a06-a4eb-879327cbe80e',
     authority:
       'https://login.microsoftonline.com/40127cd4-45f3-49a3-b05d-315a43a9f033', // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
-    redirectUri: 'http://localhost:3000'
+    redirectUri: 'https://hcmus.examidentity.online'
   },
   cache: {
     cacheLocation: 'sessionStorage', // This configures where your cache will be stored
