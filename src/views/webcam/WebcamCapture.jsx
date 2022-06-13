@@ -64,7 +64,7 @@ export const WebcamCapture = (props) => {
             console.log(res)
 
             setLoading(false)
-            const identifiedRes = res.data
+            const identifiedRes = res.data.record
             sendNotification(identifiedRes.roomId)
             console.log('identifiedRes', identifiedRes)
 

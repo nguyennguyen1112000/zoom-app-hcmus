@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -45,6 +46,7 @@ export const WebcamID = (props) => {
   const sendNotification = (data) => {
     socketRef.current.emit('msgToServer', data)
   }
+
   const verifyID = (e) => {
     e.preventDefault()
     fetch(image)
@@ -63,20 +65,33 @@ export const WebcamID = (props) => {
           .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
             setLoading(false)
-            const identifiedRes = res.data
+            const identifiedRes = res.data.record
+            console.log(identifiedRes)
+
+            const errorMessages = res.data.errorMessages
             sendNotification(identifiedRes.roomId)
             if (identifiedRes.idStatus)
               history.push(`/room/${roomId}/verify/result/${identifiedRes.id}`)
-            else
-              toast.error('Student Id verification failed, please try again', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined
+            else {
+              // toast.error('Student Id verification failed, please try again', {
+              //   position: 'top-center',
+              //   autoClose: 3000,
+              //   hideProgressBar: false,
+              //   closeOnClick: true,
+              //   pauseOnHover: true,
+              //   draggable: true,
+              //   progress: undefined
+              // })              
+              swal({
+                icon: 'warning',
+                title:
+                  'Student Id verification failed. Considered reasons: ',
+                buttons: false,
+                //text: "fsdfsdf"
+                text: errorMessages.join('\n')
               })
+            }
+            console.log('err', errorMessages)
           })
           .catch((err) => {
             setLoading(false)

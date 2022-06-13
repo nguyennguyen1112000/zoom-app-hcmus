@@ -47,18 +47,18 @@ function Login() {
           })
           .catch((err) => {
             console.log(err)
+            if (err?.response?.status === 401)
+              swal(
+                'Your account doest not exist. Please contact your system administrator',
+                {
+                  buttons: false,
+                  timer: 5000
+                }
+              )
           })
       })
       .catch((e) => {
         console.error(e)
-        if (err?.response?.status === 401)
-          swal(
-            'Your account doest not exist. Please contact your system administrator',
-            {
-              buttons: false,
-              timer: 5000
-            }
-          )
       })
   }
 

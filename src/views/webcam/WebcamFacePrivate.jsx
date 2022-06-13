@@ -82,7 +82,7 @@ export const WebcamFacePrivate = (props) => {
             padding: '10px'
           }}
         >
-          {image == '' ? (
+          {image === '' ? (
             <Webcam
               audio={false}
               height={videoHeight}
@@ -100,7 +100,7 @@ export const WebcamFacePrivate = (props) => {
         </div>
       </div>
       <div>
-        {image != '' ? (
+        {image !== '' ? (
           <div className='form-group text-center'>
             <div className='button-list'>
               {' '}
