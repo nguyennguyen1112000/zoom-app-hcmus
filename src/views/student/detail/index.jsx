@@ -9,6 +9,7 @@ import { deleteImage, uploadImage } from '../../../services/api/image'
 import { getStudent } from '../../../services/api/student'
 const API_URL = process.env.REACT_APP_API_URL
 function StudentDetail() {
+  const user = useSelector((state) => state.auth.currentUser)
   const [currentFolder, setCurrentFolder] = useState('face_data')
   const dispatch = useDispatch()
   let { id } = useParams()
@@ -51,7 +52,7 @@ function StudentDetail() {
         console.log(event.target.value)
         setInput({
           ...input,
-          gender: event.target.value ==="true"
+          gender: event.target.value === 'true'
         })
         break
       case 'classCode':
@@ -130,7 +131,8 @@ function StudentDetail() {
   useEffect(() => {
     if (currentStudent) {
       setInput(currentStudent)
-      if (currentStudent.birthday) setBirthday(new Date(currentStudent.birthday))
+      if (currentStudent.birthday)
+        setBirthday(new Date(currentStudent.birthday))
     }
   }, [currentStudent])
   const handleClickFolder = (e) => {
@@ -181,7 +183,7 @@ function StudentDetail() {
               <div className='pull-left'>
                 <h6 className='panel-title txt-dark'>Student profile</h6>
               </div>
-              {!editMode && (
+              {!editMode && user?.role === 'admin' && (
                 <div className='pull-right'>
                   <button
                     className='btn btn-default btn-icon-anim btn-square edit-button'
@@ -221,13 +223,11 @@ function StudentDetail() {
                           <td className='table-title-cell'>Gender</td>
                           <td colSpan={7}>
                             {' '}
-                            {currentStudent?.gender === true ? (
-                              'Male'
-                            ) : currentStudent?.gender === false ? (
-                              'Female'
-                            ) : (
-                              <mark>Please update for ID verification</mark>
-                            )}
+                            {currentStudent?.gender === true
+                              ? 'Male'
+                              : currentStudent?.gender === false
+                              ? 'Female'
+                              : ''}
                           </td>
                         </tr>
                         <tr>
@@ -407,124 +407,128 @@ function StudentDetail() {
       </div>
       {/*/Row*/}
 
-      <div className='row'>
-        <div className='col-md-12'>
-          <div className='panel panel-default card-view pa-0'>
-            <div className='panel-wrapper collapse in'>
-              <div className='panel-body pa-0'>
-                <div className>
-                  <div className='col-lg-3 col-md-4 file-directory pa-0'>
-                    <div className='ibox float-e-margins'>
-                      <div className='ibox-content'>
-                        <div className='file-manager'>
-                          <div className='mt-20 mb-20 ml-15 mr-15'>
-                            <div className='fileupload btn btn-success btn-anim btn-block'>
-                              <i className='fa fa-upload' />
-                              <span className='btn-text' for='file_upload'>
-                                Upload file
-                              </span>
-                              <input
-                                id='file_upload'
-                                type='file'
-                                className='upload'
-                                onChange={handleUploadFile}
-                              />
+      {user?.role === 'admin' && (
+        <div className='row'>
+          <div className='col-md-12'>
+            <div className='panel panel-default card-view pa-0'>
+              <div className='panel-wrapper collapse in'>
+                <div className='panel-body pa-0'>
+                  <div className>
+                    <div className='col-lg-3 col-md-4 file-directory pa-0'>
+                      <div className='ibox float-e-margins'>
+                        <div className='ibox-content'>
+                          <div className='file-manager'>
+                            <div className='mt-20 mb-20 ml-15 mr-15'>
+                              <div className='fileupload btn btn-success btn-anim btn-block'>
+                                <i className='fa fa-upload' />
+                                <span className='btn-text' for='file_upload'>
+                                  Upload file
+                                </span>
+                                <input
+                                  id='file_upload'
+                                  type='file'
+                                  className='upload'
+                                  onChange={handleUploadFile}
+                                />
+                              </div>
                             </div>
+
+                            <h6 className='mb-10 pl-15'>Folders</h6>
+                            <ul className='folder-list mb-30'>
+                              <li
+                                className={
+                                  currentFolder === 'face_data' ? 'active' : ''
+                                }
+                              >
+                                <a
+                                  id='face_data'
+                                  href='/'
+                                  onClick={handleClickFolder}
+                                >
+                                  <i className='zmdi zmdi-folder' /> Face data
+                                </a>
+                              </li>
+                              <li
+                                className={
+                                  currentFolder === 'student_card'
+                                    ? 'active'
+                                    : ''
+                                }
+                              >
+                                <a
+                                  id='student_card'
+                                  href='/'
+                                  onClick={handleClickFolder}
+                                >
+                                  <i className='zmdi zmdi-folder' /> Student ID
+                                </a>
+                              </li>
+                              <li
+                                className={
+                                  currentFolder === 'id_card' ? 'active' : ''
+                                }
+                              >
+                                <a
+                                  id='id_card'
+                                  href='/'
+                                  onClick={handleClickFolder}
+                                >
+                                  <i className='zmdi zmdi-folder' /> CMND/ CCCD
+                                </a>
+                              </li>
+                            </ul>
+
+                            <div className='clearfix' />
                           </div>
-
-                          <h6 className='mb-10 pl-15'>Folders</h6>
-                          <ul className='folder-list mb-30'>
-                            <li
-                              className={
-                                currentFolder === 'face_data' ? 'active' : ''
-                              }
-                            >
-                              <a
-                                id='face_data'
-                                href='/'
-                                onClick={handleClickFolder}
-                              >
-                                <i className='zmdi zmdi-folder' /> Face data
-                              </a>
-                            </li>
-                            <li
-                              className={
-                                currentFolder === 'student_card' ? 'active' : ''
-                              }
-                            >
-                              <a
-                                id='student_card'
-                                href='/'
-                                onClick={handleClickFolder}
-                              >
-                                <i className='zmdi zmdi-folder' /> Student ID
-                              </a>
-                            </li>
-                            <li
-                              className={
-                                currentFolder === 'id_card' ? 'active' : ''
-                              }
-                            >
-                              <a
-                                id='id_card'
-                                href='/'
-                                onClick={handleClickFolder}
-                              >
-                                <i className='zmdi zmdi-folder' /> CMND/ CCCD
-                              </a>
-                            </li>
-                          </ul>
-
-                          <div className='clearfix' />
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className='col-lg-9 col-md-8 file-sec pt-20'>
-                    <div className='row'>
-                      <div className='col-lg-12'>
-                        <div className='row'>
-                          {currentStudent &&
-                            currentStudent.images &&
-                            currentStudent.images
-                              .filter((x) => x.type === currentFolder)
-                              .map((image, index) => (
-                                <div
-                                  className='col-lg-4 col-md-4 col-sm-6 col-xs-12  file-box'
-                                  key={index}
-                                >
-                                  <div className='file'>
-                                    <a href={image.imageUrl}>
-                                      <div
-                                        className='image'
-                                        style={{
-                                          backgroundImage: `url(https://drive.google.com/thumbnail?id=${image.imageId})`
-                                        }}
-                                      ></div>
-                                      <div className='file-name'>
-                                        {image.originFileName}
-                                        <br />
-                                        <span>
-                                          Created date:{' '}
-                                          {formatDate(
-                                            new Date(image.created_at)
-                                          )}
-                                        </span>
-                                      </div>
-                                      <div className='file-name'>
-                                        <button
-                                          id={image.id}
-                                          className='btn btn-danger'
-                                          onClick={handleDeleteImage}
-                                        >
-                                          <i className='fa fa-trash'></i>Delete
-                                          image{' '}
-                                        </button>
-                                      </div>
-                                    </a>
+                    <div className='col-lg-9 col-md-8 file-sec pt-20'>
+                      <div className='row'>
+                        <div className='col-lg-12'>
+                          <div className='row'>
+                            {currentStudent &&
+                              currentStudent.images &&
+                              currentStudent.images
+                                .filter((x) => x.type === currentFolder)
+                                .map((image, index) => (
+                                  <div
+                                    className='col-lg-4 col-md-4 col-sm-6 col-xs-12  file-box'
+                                    key={index}
+                                  >
+                                    <div className='file'>
+                                      <a href={image.imageUrl}>
+                                        <div
+                                          className='image'
+                                          style={{
+                                            backgroundImage: `url(https://drive.google.com/thumbnail?id=${image.imageId})`
+                                          }}
+                                        ></div>
+                                        <div className='file-name'>
+                                          {image.originFileName}
+                                          <br />
+                                          <span>
+                                            Created date:{' '}
+                                            {formatDate(
+                                              new Date(image.created_at)
+                                            )}
+                                          </span>
+                                        </div>
+                                        <div className='file-name'>
+                                          <button
+                                            id={image.id}
+                                            className='btn btn-danger'
+                                            onClick={handleDeleteImage}
+                                          >
+                                            <i className='fa fa-trash'></i>
+                                            Delete image{' '}
+                                          </button>
+                                        </div>
+                                      </a>
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -534,7 +538,7 @@ function StudentDetail() {
             </div>
           </div>
         </div>
-      </div>
+      )}
       <ToastContainer />
     </div>
   )

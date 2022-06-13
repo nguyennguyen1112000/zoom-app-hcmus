@@ -142,7 +142,7 @@ function RoomList() {
         })
       })
   }
-  const renderRooms = () => {
+  const renderAdminRooms = () => {
     return (
       <div className='container-fluid'>
         {/* Title */}
@@ -318,8 +318,103 @@ function RoomList() {
       </div>
     )
   }
+  const renderProctorRooms = () => {
+    return (
+      <div className='container-fluid'>
+        {/* Title */}
+        <div className='row heading-bg'>
+          <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'></div>
+          {/* Breadcrumb */}
+          <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
+            <ol className='breadcrumb'>
+              <li>
+                <a href='/room'>HCMUSID</a>
+              </li>
 
-  if (user.role !== 'student') return renderRooms()
+              <li className='active'>
+                <span>Rooms</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-lg-12'>
+            <div className='panel panel-default card-view'>
+             
+              <div className='panel-wrapper collapse in'>
+                <div className='panel-body'>
+                  <div className='table-wrap mb-0'>
+                    <div className='table-responsive'>
+                      <table
+                        id='datable_1'
+                        className='table table-hover display  pb-30'
+                      >
+                        <thead>
+                          <tr>
+                            
+                            <th>#</th>
+
+                            <th>Room name</th>
+                            <th>Room Code</th>
+                            <th>ZoomId </th>
+                            <th>Passcode</th>
+                            <th>Join URL</th>
+                            <th>Subject</th>
+                            <th>Class Code</th>
+                            <th>No. Students</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {roomList?.map((room, index) => (
+                            <tr>
+                              
+                              <td>{index + 1}</td>
+                              <td>
+                                <a href={`/room/${room.id}`}>{room.name}</a>
+                              </td>
+                              <td> {room.roomCode}</td>
+                              <td>{room.zoomId}</td>
+                              <td>{room.passcode}</td>
+                              <td>
+                                <button
+                                  style={{
+                                    border: 'none',
+                                    background: 'none'
+                                  }}
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(room.url)
+                                    swal({
+                                      text: 'Copied to clipboard',
+                                      button: false
+                                    })
+                                  }}
+                                >
+                                  Copy <i className='fa fa-copy'></i>
+                                </button>
+                              </td>
+                              <td>{room.subject?.name}</td>
+                              <td>{room.subject?.classCode}</td>
+
+                              <td>{room.students?.length}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* /Row */}
+      </div>
+    )
+  }
+
+  if (user.role ==="admin") return renderAdminRooms()
+  else if(user.role ==="proctor") return renderProctorRooms()
   else
     return (
       <div className='container-fluid'>

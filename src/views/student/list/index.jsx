@@ -2,12 +2,13 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { authHeader, formatDate } from '../../../helper/utils'
 import { getStudents } from '../../../services/api/student'
 
 function StudentList() {
+  const user = useSelector((state) => state.auth.currentUser)
   const dispatch = useDispatch()
   const studentList = useSelector((state) => state.student.studentList)
   const [select, setSelect] = useState([])
@@ -24,7 +25,7 @@ function StudentList() {
   }, [studentList, reload])
 
   const API_URL = process.env.REACT_APP_API_URL
-
+  if (user?.role !== 'admin') return <Redirect to='/room' />
   /********************** Handle delete students *********************/
   const handleSelect = (e) => {
     const index = e.currentTarget.getAttribute('index')

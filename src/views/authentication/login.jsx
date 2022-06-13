@@ -6,6 +6,7 @@ import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../authConfig'
+import { toast } from 'react-toastify'
 function Login() {
   const { instance } = useMsal()
   const API_URL = process.env.REACT_APP_API_URL
@@ -29,11 +30,37 @@ function Login() {
     invalidAccount: null
   })
   function handleLoginMicrosoft(instance) {
-    instance.loginPopup(loginRequest).catch((e) => {
-      console.error(e)
-    })
+    instance
+      .loginPopup(loginRequest)
+      .then((result) => {
+        axios
+          .post(`${API_URL}/auth/login/microsoft`, {
+            accessToken: result.accessToken
+          })
+          .then((res) => {
+            const { access_token, user } = res.data
+            localStorage.setItem('user', JSON.stringify(user))
+            localStorage.setItem('token', JSON.stringify(access_token))
+            const action = userLoginSuccess(user)
+            dispatch(action)
+            setRedirect(true)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      })
+      .catch((e) => {
+        console.error(e)
+        if (err?.response?.status === 401)
+          swal(
+            'Your account doest not exist. Please contact your system administrator',
+            {
+              buttons: false,
+              timer: 5000
+            }
+          )
+      })
   }
-
 
   function handleChange(event) {
     switch (event.target.name) {
@@ -97,7 +124,6 @@ function Login() {
     }
   }
   useEffect(() => {
-   
     if (code && !logIn) {
       const input = {
         code: code
@@ -123,7 +149,6 @@ function Login() {
                 timer: 5000
               }
             )
-          console.log('Error', err?.response)
         })
     }
   }, [code, logIn, redirect])
@@ -144,12 +169,12 @@ function Login() {
               >
                 Sign in with Zoom
               </a>
-              {/* <button
+              <button
                 className='btn btn-default btn-block'
                 onClick={() => handleLoginMicrosoft(instance)}
               >
                 Sign in with Microsoft account
-              </button> */}
+              </button>
               <button
                 className='btn btn-default btn-block'
                 onClick={() => setMoodleLogin(true)}

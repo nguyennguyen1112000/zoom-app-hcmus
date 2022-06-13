@@ -688,7 +688,7 @@ function RoomDetail() {
                 <div className='pull-left'>
                   <h6 className='panel-title txt-dark'>Room Information </h6>
                 </div>
-                <div className='pull-right'>
+                {user?.role ==="admin" &&<div className='pull-right'>
                   <Link
                     to={`/room/update/${
                       currentRoom?.id
@@ -698,7 +698,7 @@ function RoomDetail() {
                       <i className='fa fa-pencil' />
                     </button>
                   </Link>
-                </div>
+                </div>}
               </div>
               <div className='panel-wrapper collapse in'>
                 <div className='panel-body'>
@@ -901,324 +901,328 @@ function RoomDetail() {
           </div>
         </div>
 
-        <div className='row'>
-          <div className='col-lg-12'>
-            <div className='panel panel-default card-view'>
-              <div className='panel-heading'>
-                <div className='pull-left'>
-                  <h6 className='panel-title txt-dark'>Proctors</h6>
-                </div>
-                <div className='pull-right'>
-                  <button
-                    class='btn btn-primary btn-square'
-                    data-toggle='modal'
-                    data-target='#modalProctor'
-                  >
-                    <span class='btn-label'>
-                      <i class='fa fa-plus'></i>
-                    </span>
-                  </button>
-                  <div className='modal' id='modalProctor'>
-                    <div className='modal-dialog'>
-                      <div className='modal-content'>
-                        <div className='modal-header'>
-                          <button
-                            type='button'
-                            className='close'
-                            data-dismiss='modal'
-                            aria-hidden='true'
-                            id='close-modal'
-                          >
-                            ×
-                          </button>
-                          <h5 className='modal-title'>Add Proctor</h5>
-                        </div>
-                        <div className='modal-body'>
-                          <form>
-                            <div className='form-group'>
-                              <label
-                                htmlFor='recipient-name'
-                                className='control-label mb-10'
-                              >
-                                Proctor ID
-                              </label>
-                              <input
-                                type='text'
-                                className='form-control'
-                                id='recipient-name'
-                                name='proctorId'
-                                placeholder='Enter proctor ID'
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                              />
-                              {!searchProctor && (
-                                <div className='help-block with-errors'>
-                                  Proctor not found
-                                </div>
-                              )}
-                            </div>
-                            {searchProctor && (
+        {user?.role === 'admin' && (
+          <div className='row'>
+            <div className='col-lg-12'>
+              <div className='panel panel-default card-view'>
+                <div className='panel-heading'>
+                  <div className='pull-left'>
+                    <h6 className='panel-title txt-dark'>Proctors</h6>
+                  </div>
+                  <div className='pull-right'>
+                    <button
+                      class='btn btn-primary btn-square'
+                      data-toggle='modal'
+                      data-target='#modalProctor'
+                    >
+                      <span class='btn-label'>
+                        <i class='fa fa-plus'></i>
+                      </span>
+                    </button>
+                    <div className='modal' id='modalProctor'>
+                      <div className='modal-dialog'>
+                        <div className='modal-content'>
+                          <div className='modal-header'>
+                            <button
+                              type='button'
+                              className='close'
+                              data-dismiss='modal'
+                              aria-hidden='true'
+                              id='close-modal'
+                            >
+                              ×
+                            </button>
+                            <h5 className='modal-title'>Add Proctor</h5>
+                          </div>
+                          <div className='modal-body'>
+                            <form>
                               <div className='form-group'>
                                 <label
-                                  htmlFor='message-text'
+                                  htmlFor='recipient-name'
                                   className='control-label mb-10'
                                 >
-                                  {searchProctor?.email}
+                                  Proctor ID
                                 </label>
+                                <input
+                                  type='text'
+                                  className='form-control'
+                                  id='recipient-name'
+                                  name='proctorId'
+                                  placeholder='Enter proctor ID'
+                                  value={searchTerm}
+                                  onChange={(e) =>
+                                    setSearchTerm(e.target.value)
+                                  }
+                                />
+                                {!searchProctor && (
+                                  <div className='help-block with-errors'>
+                                    Proctor not found
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </form>
-                        </div>
-                        <div className='modal-footer'>
-                          <button
-                            type='button'
-                            className='btn btn-default'
-                            data-dismiss='modal'
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type='button'
-                            className='btn btn-danger'
-                            onClick={handleAddProctor}
-                          >
-                            Add
-                          </button>
+                              {searchProctor && (
+                                <div className='form-group'>
+                                  <label
+                                    htmlFor='message-text'
+                                    className='control-label mb-10'
+                                  >
+                                    {searchProctor?.email}
+                                  </label>
+                                </div>
+                              )}
+                            </form>
+                          </div>
+                          <div className='modal-footer'>
+                            <button
+                              type='button'
+                              className='btn btn-default'
+                              data-dismiss='modal'
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type='button'
+                              className='btn btn-danger'
+                              onClick={handleAddProctor}
+                            >
+                              Add
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <div className='clearfix' />
                 </div>
-                <div className='clearfix' />
-              </div>
-              <div className='panel-wrapper collapse in'>
-                <div className='panel-body'>
-                  <div className='table-wrap'>
-                    <div className='table-responsive'>
-                      <table className='table  display table-hover mb-30'>
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Proctor Id</th>
-                            <th>Email</th>
+                <div className='panel-wrapper collapse in'>
+                  <div className='panel-body'>
+                    <div className='table-wrap'>
+                      <div className='table-responsive'>
+                        <table className='table  display table-hover mb-30'>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Proctor Id</th>
+                              <th>Email</th>
 
-                            <th>Action</th>
-                          </tr>
-                        </thead>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
 
-                        <tbody>
-                          {currentRoom &&
-                            currentRoom.proctors &&
-                            currentRoom.proctors.map((staff, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{staff.staffCode}</td>
-                                
-                                <td>{staff.email}</td>
+                          <tbody>
+                            {currentRoom &&
+                              currentRoom.proctors &&
+                              currentRoom.proctors.map((staff, index) => (
+                                <tr key={index}>
+                                  <td>{index + 1}</td>
+                                  <td>{staff.staffCode}</td>
 
-                                <td>
-                                  <a
-                                    href='/'
-                                    data-toggle='tooltip'
-                                    index={staff.staffCode}
-                                    onClick={handleDeleteProctor}
-                                  >
-                                    <i className='fa fa-trash text-danger' />
-                                  </a>
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
+                                  <td>{staff.email}</td>
+
+                                  <td>
+                                    <a
+                                      href='/'
+                                      data-toggle='tooltip'
+                                      index={staff.staffCode}
+                                      onClick={handleDeleteProctor}
+                                    >
+                                      <i className='fa fa-trash text-danger' />
+                                    </a>
+                                  </td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+        {user?.role === 'admin' && (
+          <div className='row'>
+            <div className='col-lg-12'>
+              <div className='panel panel-default card-view'>
+                <div className='panel-heading'>
+                  <div className='pull-left'>
+                    <h6 className='panel-title txt-dark'>Students</h6>
+                  </div>
+                  <div className='pull-right button-list'>
+                    {select.length > 0 && (
+                      <button
+                        class='btn btn-danger btn-square '
+                        onClick={handleDelete}
+                      >
+                        <span class='btn-label'>
+                          <i class='fa fa-trash'></i>
+                        </span>
+                      </button>
+                    )}
 
-        <div className='row'>
-          <div className='col-lg-12'>
-            <div className='panel panel-default card-view'>
-              <div className='panel-heading'>
-                <div className='pull-left'>
-                  <h6 className='panel-title txt-dark'>Students</h6>
-                </div>
-                <div className='pull-right button-list'>
-                  {select.length > 0 && (
                     <button
-                      class='btn btn-danger btn-square '
-                      onClick={handleDelete}
+                      class='btn btn-primary btn-square'
+                      data-toggle='modal'
+                      data-target='#addStudentModal'
                     >
                       <span class='btn-label'>
-                        <i class='fa fa-trash'></i>
+                        <i class='fa fa-plus'></i>
                       </span>
                     </button>
-                  )}
-                  
-                  
-                  <button
-                    class='btn btn-primary btn-square'
-                    data-toggle='modal'
-                    data-target='#addStudentModal'
-                  >
-                    <span class='btn-label'>
-                      <i class='fa fa-plus'></i>
-                    </span>
-                  </button>
-                  <div className='modal' id='addStudentModal'>
-                    <div className='modal-dialog modal-dialog-custom'>
-                      <div className='modal-content modal-content-custom'>
-                        <div className='modal-header'>
-                          <button
-                            type='button'
-                            className='close'
-                            data-dismiss='modal'
-                            aria-hidden='true'
-                            id='close-modal-student'
-                          >
-                            ×
-                          </button>
-                          <h5 className='modal-title'>
-                            Choose students from {currentSubject?.name}
-                          </h5>
-                        </div>
-                        <div className='modal-body modal-body-custom'>
-                          <div className='table-wrap'>
-                            <div className='table-responsive'>
-                              <table className='table table-hover display  pb-30'>
-                                <thead>
-                                  <tr>
-                                    <th>
-                                      {studentsChooice && (
-                                        <input
-                                          type='checkbox'
-                                          name='checkbox'
-                                          index='all'
-                                          onChange={handleSelectAllStudents}
-                                        />
-                                      )}
-                                    </th>
-                                    <th>#</th>
-                                    <th>Id</th>
-                                    <th>Full name</th>
-                                  </tr>
-                                </thead>
-
-                                <tbody>
-                                  {studentsChooice.map((student, index) => (
-                                    <tr key={index}>
-                                      <td>
-                                        <input
-                                          type='checkbox'
-                                          name='checkbox'
-                                          index={student.id}
-                                          onChange={handleSelectStudents}
-                                          checked={isCheckedStudent(student.id)}
-                                        />
-                                      </td>
-                                      <td>{index + 1}</td>
-                                      <td>{student.studentId}</td>
-                                      <td>
-                                        {student.firstName +
-                                          ' ' +
-                                          student.lastName}
-                                      </td>
+                    <div className='modal' id='addStudentModal'>
+                      <div className='modal-dialog modal-dialog-custom'>
+                        <div className='modal-content modal-content-custom'>
+                          <div className='modal-header'>
+                            <button
+                              type='button'
+                              className='close'
+                              data-dismiss='modal'
+                              aria-hidden='true'
+                              id='close-modal-student'
+                            >
+                              ×
+                            </button>
+                            <h5 className='modal-title'>
+                              Choose students from {currentSubject?.name}
+                            </h5>
+                          </div>
+                          <div className='modal-body modal-body-custom'>
+                            <div className='table-wrap'>
+                              <div className='table-responsive'>
+                                <table className='table table-hover display  pb-30'>
+                                  <thead>
+                                    <tr>
+                                      <th>
+                                        {studentsChooice && (
+                                          <input
+                                            type='checkbox'
+                                            name='checkbox'
+                                            index='all'
+                                            onChange={handleSelectAllStudents}
+                                          />
+                                        )}
+                                      </th>
+                                      <th>#</th>
+                                      <th>Id</th>
+                                      <th>Full name</th>
                                     </tr>
-                                  ))}
-                                </tbody>
-                              </table>
+                                  </thead>
+
+                                  <tbody>
+                                    {studentsChooice.map((student, index) => (
+                                      <tr key={index}>
+                                        <td>
+                                          <input
+                                            type='checkbox'
+                                            name='checkbox'
+                                            index={student.id}
+                                            onChange={handleSelectStudents}
+                                            checked={isCheckedStudent(
+                                              student.id
+                                            )}
+                                          />
+                                        </td>
+                                        <td>{index + 1}</td>
+                                        <td>{student.studentId}</td>
+                                        <td>
+                                          {student.firstName +
+                                            ' ' +
+                                            student.lastName}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className='modal-footer'>
-                          <button
-                            type='button'
-                            className='btn btn-default'
-                            data-dismiss='modal'
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type='button'
-                            className='btn btn-danger'
-                            onClick={handleAddStudents}
-                          >
-                            Add
-                          </button>
+                          <div className='modal-footer'>
+                            <button
+                              type='button'
+                              className='btn btn-default'
+                              data-dismiss='modal'
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type='button'
+                              className='btn btn-danger'
+                              onClick={handleAddStudents}
+                            >
+                              Add
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <div className='clearfix' />
                 </div>
-                <div className='clearfix' />
-              </div>
-              <div className='panel-wrapper collapse in'>
-                <div className='panel-body'>
-                  <div className='table-wrap'>
-                    <div className='table-responsive'>
-                      <table
-                        id='datable_1'
-                        className='table table-hover display  pb-30'
-                      >
-                        <thead>
-                          <tr>
-                            <th>
-                              {currentRoom?.students && (
-                                <input
-                                  type='checkbox'
-                                  name='checkbox'
-                                  index='all'
-                                  onChange={handleSelectAll}
-                                />
-                              )}
-                            </th>
-                            <th>#</th>
-                            <th>Full name</th>
-                            <th>Id</th>
-
-                            <th>Face Data</th>
-                            
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          {currentRoom &&
-                            currentRoom.students &&
-                            currentRoom.students.map((student, index) => (
-                              <tr key={index}>
-                                <td>
+                <div className='panel-wrapper collapse in'>
+                  <div className='panel-body'>
+                    <div className='table-wrap'>
+                      <div className='table-responsive'>
+                        <table
+                          id='datable_1'
+                          className='table table-hover display  pb-30'
+                        >
+                          <thead>
+                            <tr>
+                              <th>
+                                {currentRoom?.students && (
                                   <input
                                     type='checkbox'
                                     name='checkbox'
-                                    index={student.id}
-                                    onChange={handleSelect}
-                                    checked={isChecked(student.id)}
+                                    index='all'
+                                    onChange={handleSelectAll}
                                   />
-                                </td>
-                                <td>{index + 1}</td>
-                                <td>
-                                  {student.firstName + ' ' + student.lastName}
-                                </td>
-                                <td>{student.studentId}</td>
+                                )}
+                              </th>
+                              <th>#</th>
+                              <th>Full name</th>
+                              <th>Id</th>
 
-                                <td>
-                                  {student.images &&
-                                  student.images.length > 0 &&
-                                  student.images.some(
-                                    (img) => img.type === 'face_data'
-                                  ) ? (
-                                    <span className='label label-success'>
-                                      Uploaded
-                                    </span>
-                                  ) : (
-                                    <span className='label label-danger'>
-                                      Not added yet
-                                    </span>
-                                  )}
-                                </td>
-                                {/* <td>
+                              <th>Face Data</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {currentRoom &&
+                              currentRoom.students &&
+                              currentRoom.students.map((student, index) => (
+                                <tr key={index}>
+                                  <td>
+                                    <input
+                                      type='checkbox'
+                                      name='checkbox'
+                                      index={student.id}
+                                      onChange={handleSelect}
+                                      checked={isChecked(student.id)}
+                                    />
+                                  </td>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    {student.firstName + ' ' + student.lastName}
+                                  </td>
+                                  <td>{student.studentId}</td>
+
+                                  <td>
+                                    {student.images &&
+                                    student.images.length > 0 &&
+                                    student.images.some(
+                                      (img) => img.type === 'face_data'
+                                    ) ? (
+                                      <span className='label label-success'>
+                                        Uploaded
+                                      </span>
+                                    ) : (
+                                      <span className='label label-danger'>
+                                        Not added yet
+                                      </span>
+                                    )}
+                                  </td>
+                                  {/* <td>
                                   {student.images &&
                                   student.images.length > 0 &&
                                   student.images.some(
@@ -1233,17 +1237,18 @@ function RoomDetail() {
                                     </span>
                                   )}
                                 </td> */}
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
         <ToastContainer />
       </div>
     )

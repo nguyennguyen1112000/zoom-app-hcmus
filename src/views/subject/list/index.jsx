@@ -7,9 +7,11 @@ import { authHeader } from '../../../helper/utils'
 import { getAllSubjects } from '../../../services/api/subject'
 import 'react-toastify/dist/ReactToastify.css'
 import { SpinnerCircularFixed } from 'spinners-react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 function SubjectList() {
+  const user = useSelector((state) => state.auth.currentUser)
+
   const dispatch = useDispatch()
   const subjects = useSelector((state) => state.subject.subjects)
   const [reload, setReload] = useState(false)
@@ -24,7 +26,6 @@ function SubjectList() {
   useEffect(() => {
     $('#datable_1').DataTable()
   }, [subjects, reload])
-  const user = useSelector((state) => state.auth.currentUser)
 
   const API_URL = process.env.REACT_APP_API_URL
   const downloadTemplate = (e) => {
@@ -35,6 +36,8 @@ function SubjectList() {
     a.click()
   }
   const [select, setSelect] = useState([])
+  if (user?.role !== 'admin') return <Redirect to='/room' />
+
   const handleSelect = (e) => {
     const index = e.currentTarget.getAttribute('index')
     const checked = e.target.checked

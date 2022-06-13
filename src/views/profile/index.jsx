@@ -137,10 +137,7 @@ function Profile() {
               <div className='panel-body  pa-0'>
                 <div className='profile-box'>
                   <div className='profile-cover-pic'>
-                    <div className='fileupload btn btn-default'>
-                      <span className='btn-text'>Edit</span>
-                      <input className='upload' type='file' />
-                    </div>
+                   
                     <div className='profile-image-overlay' />
                   </div>
                   <div className='profile-info text-center'>
@@ -155,10 +152,7 @@ function Profile() {
                       >
                         {getShortName(user?.firstName + ' ' + user?.lastName)}
                       </div>
-                      <div className='fileupload btn btn-default'>
-                        <span className='btn-text'>Edit</span>
-                        <input className='upload' type='file' />
-                      </div>
+                      
                     </div>
                     <h5 className='block mt-10 mb-5 weight-500 capitalize-font txt-danger'>
                       {user?.studentId}
@@ -179,14 +173,7 @@ function Profile() {
                         </span>
                       </button>
                     )}
-                    <button
-                      className='btn btn-default btn-block btn-outline btn-anim'
-                      data-toggle='modal'
-                      data-target='#myModal'
-                    >
-                      <i className='fa fa-pencil' />
-                      <span className='btn-text'>Edit profile</span>
-                    </button>
+
                   </div>
                 </div>
               </div>
@@ -204,7 +191,7 @@ function Profile() {
                         className='portfolio-wrap project-gallery'
                         style={{ width: '891px' }}
                       >
-                        {modeView === 'default' && user.role ==="admin" && (
+                        {modeView === 'default' && user.role === 'admin' && (
                           <div className='panel panel-default card-view'>
                             <div className='panel-heading'>
                               <div className='pull-left'>
@@ -271,7 +258,7 @@ function Profile() {
                             </div>
                           </div>
                         )}
-                        {modeView === 'connectMoodle' && user.role ==="admin" && (
+                        {modeView === 'connectMoodle' && user.role === 'admin' && (
                           <div className='panel panel-default card-view'>
                             <div className='panel-heading'>
                               <div className='pull-left'>
@@ -327,7 +314,7 @@ function Profile() {
                                             className='control-label mb-10'
                                             htmlFor='exampleInputpwd_1'
                                           >
-                                           Password
+                                            Password
                                           </label>
                                           <div className='input-group'>
                                             <div className='input-group-addon'>
@@ -369,6 +356,7 @@ function Profile() {
                             </div>
                           </div>
                         )}
+                      
                       </div>
                     </div>
                   </div>

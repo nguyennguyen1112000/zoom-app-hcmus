@@ -9,7 +9,6 @@ export const getRooms = () => {
       .get(`${API_URL}/rooms`, authHeader())
       .then((res) => {
         const roomList = res.data
-        console.log(roomList)
         const action = getAllRooms(roomList)
         dispatch(action)
       })

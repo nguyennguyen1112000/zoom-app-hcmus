@@ -11,7 +11,7 @@ function NavBar() {
     logOut()
     dispatch(action)
   }
-  const user = useSelector((state) => state.auth.currentUser);
+  const user = useSelector((state) => state.auth.currentUser)
 
   return (
     <nav className='navbar navbar-inverse navbar-fixed-top'>
@@ -72,7 +72,7 @@ function NavBar() {
       </div>
       <div id='mobile_only_nav' className='mobile-only-nav pull-right'>
         <ul className='nav navbar-right top-nav pull-right'>
-          <li className='dropdown app-drp'>
+          {/* <li className='dropdown app-drp'>
             <a href='/' className='dropdown-toggle' data-toggle='dropdown'>
               <i className='zmdi zmdi-apps top-nav-icon' />
             </a>
@@ -281,14 +281,14 @@ function NavBar() {
                 </div>
               </li>
             </ul>
-          </li>
+          </li> */}
           <li className='dropdown auth-drp'>
             <a href='/' className='dropdown-toggle pr-0' data-toggle='dropdown'>
               <span
                 className='user-auth-img'
-                style={{ background: '#eb4034' , padding: 5, color:"white"}}
+                style={{ background: '#eb4034', padding: 5, color: 'white' }}
               >
-               {user && getShortName(user?.firstName+" "+user?.lastName)}
+                {user && getShortName(user?.firstName + ' ' + user?.lastName)}
               </span>
               <span className='user-online-status' />
             </a>
@@ -297,13 +297,17 @@ function NavBar() {
               data-dropdown-in='flipInX'
               data-dropdown-out='flipOutX'
             >
-              <li>
-                <a href='/profile'>
-                  <i className='zmdi zmdi-account' />
-                  <span>Profile</span>
-                </a>
-              </li>
-              <li className='divider' />
+              {user?.role === 'admin' && (
+                <>
+                  <li>
+                    <a href='/profile'>
+                      <i className='zmdi zmdi-account' />
+                      <span>Profile</span>
+                    </a>
+                  </li>
+                  <li className='divider' />
+                </>
+              )}
               <li>
                 <a href='/signin' onClick={handleLogout}>
                   <i className='zmdi zmdi-power' />

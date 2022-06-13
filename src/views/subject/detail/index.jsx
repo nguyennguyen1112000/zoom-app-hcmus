@@ -11,11 +11,11 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Link } from 'react-router-dom'
 const API_URL = process.env.REACT_APP_API_URL
 function SubjectDetail() {
+  const user = useSelector((state) => state.auth.currentUser)
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [reload, setReload] = useState(false)
   let { id } = useParams()
-  const user = useSelector((state) => state.auth.currentUser)
   const currentSubject = useSelector((state) => state.subject.currentSubject)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchStudent, setSearchStudent] = useState(null)
@@ -218,13 +218,15 @@ function SubjectDetail() {
               <div className='pull-left'>
                 <h6 className='panel-title txt-dark'>Subject's information</h6>
               </div>
-              <div className='pull-right'>
-                <Link to={`/subject/update/${currentSubject?.id}`}>
-                  <button className='btn btn-default btn-icon-anim btn-square edit-button'>
-                    <i className='fa fa-pencil' />
-                  </button>
-                </Link>
-              </div>
+              {user?.role === 'admin' && (
+                <div className='pull-right'>
+                  <Link to={`/subject/update/${currentSubject?.id}`}>
+                    <button className='btn btn-default btn-icon-anim btn-square edit-button'>
+                      <i className='fa fa-pencil' />
+                    </button>
+                  </Link>
+                </div>
+              )}
               <div className='clearfix' />
             </div>
             <div className='panel-wrapper collapse in'>
@@ -297,205 +299,207 @@ function SubjectDetail() {
         </div>
       </div>
 
-      <div className='row'>
-        <div className='col-lg-12'>
-          <div className='panel panel-default card-view'>
-            <div className='panel-heading'>
-              <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>Students</h6>
-              </div>
-              <div></div>
-              <div className='pull-right button-list'>
-                {select.length > 0 && (
-                  <button class='btn btn-danger ' onClick={handleDelete}>
-                    <span class='btn-label'>
-                      <i class='fa fa-trash'></i>
-                    </span>
-                  </button>
-                )}
-                {currentSubject?.moodleId && (
+      {user?.role === 'admin' && (
+        <div className='row'>
+          <div className='col-lg-12'>
+            <div className='panel panel-default card-view'>
+              <div className='panel-heading'>
+                <div className='pull-left'>
+                  <h6 className='panel-title txt-dark'>Students</h6>
+                </div>
+                <div></div>
+                <div className='pull-right button-list'>
+                  {select.length > 0 && (
+                    <button class='btn btn-danger ' onClick={handleDelete}>
+                      <span class='btn-label'>
+                        <i class='fa fa-trash'></i>
+                      </span>
+                    </button>
+                  )}
+                  {currentSubject?.moodleId && (
+                    <button
+                      className='btn btn-default btn-lable-wrap left-label'
+                      onClick={handleSyncStudents}
+                    >
+                      <span class='btn-label'>
+                        <i class='fa fa-refresh'></i>
+                      </span>{' '}
+                      <span class='btn-text'>Sync Moodle</span>
+                    </button>
+                  )}
                   <button
-                    className='btn btn-default btn-lable-wrap left-label'
-                    onClick={handleSyncStudents}
+                    class='btn btn-success btn-square btn-outline'
+                    onClick={downloadTemplate}
                   >
                     <span class='btn-label'>
-                      <i class='fa fa-refresh'></i>
-                    </span>{' '}
-                    <span class='btn-text'>Sync Moodle</span>
+                      <i class='fa fa-download'></i>
+                    </span>
                   </button>
-                )}
-                <button
-                  class='btn btn-success btn-square btn-outline'
-                  onClick={downloadTemplate}
-                >
-                  <span class='btn-label'>
-                    <i class='fa fa-download'></i>
-                  </span>
-                </button>
-                <button class='btn btn-danger btn-square btn-outline fileupload'>
-                  <span class='btn-label'>
-                    <i class='fa fa-upload'></i>
-                  </span>
+                  <button class='btn btn-danger btn-square btn-outline fileupload'>
+                    <span class='btn-label'>
+                      <i class='fa fa-upload'></i>
+                    </span>
 
-                  <input
-                    id='file_upload'
-                    type='file'
-                    className='upload'
-                    onChange={uploadFile}
-                  />
-                </button>
-                <button
-                  type='button'
-                  className='btn btn-primary btn-square'
-                  data-toggle='modal'
-                  data-target='#myModal'
-                >
-                  <i className='fa fa-plus'></i>
-                </button>
-                <div className='modal' id='myModal'>
-                  <div className='modal-dialog'>
-                    <div className='modal-content'>
-                      <div className='modal-header'>
-                        <button
-                          type='button'
-                          className='close'
-                          data-dismiss='modal'
-                          aria-hidden='true'
-                          id='close-modal'
-                        >
-                          ×
-                        </button>
-                        <h5 className='modal-title'>
-                          Add students to {currentSubject?.name}
-                        </h5>
-                      </div>
-                      <div className='modal-body'>
-                        <form>
-                          <div className='form-group'>
-                            <label
-                              htmlFor='recipient-name'
-                              className='control-label mb-10'
-                            >
-                              Student ID
-                            </label>
-                            <input
-                              type='text'
-                              className='form-control'
-                              id='recipient-name'
-                              name='studentId'
-                              placeholder='Enter student id ...'
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            {!searchStudent && (
-                              <div className='help-block with-errors'>
-                                Not found student
-                              </div>
-                            )}
-                          </div>
-                          {searchStudent && (
+                    <input
+                      id='file_upload'
+                      type='file'
+                      className='upload'
+                      onChange={uploadFile}
+                    />
+                  </button>
+                  <button
+                    type='button'
+                    className='btn btn-primary btn-square'
+                    data-toggle='modal'
+                    data-target='#myModal'
+                  >
+                    <i className='fa fa-plus'></i>
+                  </button>
+                  <div className='modal' id='myModal'>
+                    <div className='modal-dialog'>
+                      <div className='modal-content'>
+                        <div className='modal-header'>
+                          <button
+                            type='button'
+                            className='close'
+                            data-dismiss='modal'
+                            aria-hidden='true'
+                            id='close-modal'
+                          >
+                            ×
+                          </button>
+                          <h5 className='modal-title'>
+                            Add students to {currentSubject?.name}
+                          </h5>
+                        </div>
+                        <div className='modal-body'>
+                          <form>
                             <div className='form-group'>
                               <label
-                                htmlFor='message-text'
+                                htmlFor='recipient-name'
                                 className='control-label mb-10'
                               >
-                                {searchStudent.firstName +
-                                  ' ' +
-                                  searchStudent.lastName}
+                                Student ID
                               </label>
+                              <input
+                                type='text'
+                                className='form-control'
+                                id='recipient-name'
+                                name='studentId'
+                                placeholder='Enter student id ...'
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                              />
+                              {!searchStudent && (
+                                <div className='help-block with-errors'>
+                                  Not found student
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </form>
-                      </div>
-                      <div className='modal-footer'>
-                        <button
-                          type='button'
-                          className='btn btn-default'
-                          data-dismiss='modal'
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type='button'
-                          className='btn btn-danger'
-                          onClick={handleAddStudent}
-                        >
-                          Add
-                        </button>
+                            {searchStudent && (
+                              <div className='form-group'>
+                                <label
+                                  htmlFor='message-text'
+                                  className='control-label mb-10'
+                                >
+                                  {searchStudent.firstName +
+                                    ' ' +
+                                    searchStudent.lastName}
+                                </label>
+                              </div>
+                            )}
+                          </form>
+                        </div>
+                        <div className='modal-footer'>
+                          <button
+                            type='button'
+                            className='btn btn-default'
+                            data-dismiss='modal'
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type='button'
+                            className='btn btn-danger'
+                            onClick={handleAddStudent}
+                          >
+                            Add
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                <div className='clearfix' />
               </div>
-              <div className='clearfix' />
-            </div>
-            <div className='panel-wrapper collapse in'>
-              <div className='panel-body'>
-                <div className='table-wrap'>
-                  <div className='table-responsive'>
-                    <table
-                      id='datable_1'
-                      className='table table-hover display  pb-30'
-                    >
-                      <thead>
-                        <tr>
-                          <th>
-                            {currentSubject?.students && (
-                              <input
-                                type='checkbox'
-                                name='checkbox'
-                                index='all'
-                                onChange={handleSelectAll}
-                              />
-                            )}
-                          </th>
-                          <th>#</th>
-                          <th>Họ và tên</th>
-                          <th>MSSV</th>
-                          <th>Email</th>
-                          <th>Import</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {currentSubject?.students?.map((student, index) => (
-                          <tr key={index}>
-                            <td>
-                              <input
-                                type='checkbox'
-                                name='checkbox'
-                                index={student.id}
-                                onChange={handleSelect}
-                                checked={isChecked(student.id)}
-                              />
-                            </td>
-                            <td>{index + 1}</td>
-                            <td>
-                              {student.firstName + ' ' + student.lastName}
-                            </td>
-                            <td>{student.studentId}</td>
-                            <td>{student.email}</td>
-                            <td>
-                              {student.moodleId ? (
-                                <span className='label label-primary'>
-                                  moodle
-                                </span>
-                              ) : (
-                                <span className='label label-success'>
-                                  file
-                                </span>
+              <div className='panel-wrapper collapse in'>
+                <div className='panel-body'>
+                  <div className='table-wrap'>
+                    <div className='table-responsive'>
+                      <table
+                        id='datable_1'
+                        className='table table-hover display  pb-30'
+                      >
+                        <thead>
+                          <tr>
+                            <th>
+                              {currentSubject?.students && (
+                                <input
+                                  type='checkbox'
+                                  name='checkbox'
+                                  index='all'
+                                  onChange={handleSelectAll}
+                                />
                               )}
-                            </td>
+                            </th>
+                            <th>#</th>
+                            <th>Họ và tên</th>
+                            <th>MSSV</th>
+                            <th>Email</th>
+                            <th>Import</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+
+                        <tbody>
+                          {currentSubject?.students?.map((student, index) => (
+                            <tr key={index}>
+                              <td>
+                                <input
+                                  type='checkbox'
+                                  name='checkbox'
+                                  index={student.id}
+                                  onChange={handleSelect}
+                                  checked={isChecked(student.id)}
+                                />
+                              </td>
+                              <td>{index + 1}</td>
+                              <td>
+                                {student.firstName + ' ' + student.lastName}
+                              </td>
+                              <td>{student.studentId}</td>
+                              <td>{student.email}</td>
+                              <td>
+                                {student.moodleId ? (
+                                  <span className='label label-primary'>
+                                    moodle
+                                  </span>
+                                ) : (
+                                  <span className='label label-success'>
+                                    file
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <ToastContainer />
       <div className='spinner-loading'>
         <SpinnerCircularFixed
