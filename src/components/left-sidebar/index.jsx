@@ -117,7 +117,7 @@ function LeftSideBar() {
             <span>General</span>
             <i className='zmdi zmdi-more' />
           </li>
-         
+
           <li>
             <NavLink to='/room' activeClassName='active'>
               <div className='pull-left'>
@@ -201,18 +201,14 @@ function LeftSideBar() {
           <li>
             <hr className='light-grey-hr mb-10' />
           </li>
-          <li className='navigation-header'>
-            <span>General</span>
-            <i className='zmdi zmdi-more' />
-          </li>
           <li>
-            <NavLink to='/profile' activeClassName='active'>
+            <a href='' onClick={handleLogout}>
               <div className='pull-left'>
-                <i className='zmdi zmdi-account mr-20' />
-                <span className='right-nav-text'>Profile</span>
+                <i className='fa fa-sign-out mr-20' />
+                <span className='right-nav-text'>Logout</span>
               </div>
               <div className='clearfix' />
-            </NavLink>
+            </a>
           </li>
         </ul>
       )}

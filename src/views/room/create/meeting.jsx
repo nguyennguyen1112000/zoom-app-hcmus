@@ -57,8 +57,6 @@ function CreateMeeting() {
   const [startDate, onChangeDate] = useState(roundToNearestHour(new Date()))
   const [duration, setDuration] = useState({ hours: 1, minutes: 0 })
   function handleChange(event) {
-    console.log('123');
-    
     switch (event.target.name) {
       case 'agenda':
         if (event.target.value.length <= 2000)
@@ -97,7 +95,7 @@ function CreateMeeting() {
       case 'host_video':
         setInput({
           ...input,
-          settings: { ...input.settings, host_video: !event.target.value }
+          settings: { ...input.settings, host_video: event.target.value }
         })
         break
       case 'mute_upon_entry':
@@ -124,14 +122,12 @@ function CreateMeeting() {
         })
         break
       case 'use_pmi':
-        console.log('pmi', event.target.value)
-
         setInput({
           ...input,
           settings: { ...input.settings, use_pmi: event.target.value }
         })
         break
-      case 'join_before_host':
+      case 'jbh_time':
         setInput({
           ...input,
           settings: {
@@ -158,8 +154,8 @@ function CreateMeeting() {
         })
         break
       case 'alternative_hosts':
-       console.log(event.target.value)
-       
+        console.log(event.target.value)
+
         break
 
       default:
@@ -231,49 +227,53 @@ function CreateMeeting() {
   }
   function handleSubmit(event) {
     event.preventDefault()
-    console.log(input)
-
-    // axios
-    //   .post(
-    //     `${API_URL}/zooms/meeting`,
-    //     input,
-    //     authHeader()
-    //   )
-    //   .then((res) => {
-    //     setInput({
-    //       agenda: '',
-    //       default_password: false,
-    //       duration: 60,
-    //       password: defaultPassword,
-    //       settings: {
-    //         host_video: false,
-    //         mute_upon_entry: false,
-    //         participant_video: false,
-    //         waiting_room: false,
-    //         use_pmi: false,
-    //         join_before_host: false,
-    //         jbh_time: 0,
-    //         auto_recording: ''
-    //         //alternative_hosts: ''
-    //       },
-    //       start_time: new Date().toUTCString(),
-    //       timezone: 'Asia/Vietnam',
-    //       topic: 'My Meeting',
-    //       type: 2
-    //     })
-    //     toast.success('Create Zoom Meeting successfully', {
-    //       position: 'top-right',
-    //       autoClose: 3000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined
-    //     })
-    //   })
-    //   .catch((err) => {
-    //     handleExpiredToken(err, swal)
-    //   })
+    console.log(input, startDate, startTime)
+    const date = new Date(startDate)
+    date.setHours(parseInt(startTime.split(':')[0]))
+    date.setMinutes(parseInt(startTime.split(':')[1]))
+    axios
+      .post(
+        `${API_URL}/zooms/meeting`,
+        input,
+        authHeader()
+      )
+      .then((res) => {
+        setInput({
+          agenda: '',
+          default_password: false,
+          duration: 60,
+          password: defaultPassword,
+          settings: {
+            host_video: false,
+            mute_upon_entry: false,
+            participant_video: false,
+            waiting_room: false,
+            use_pmi: false,
+            join_before_host: false,
+            jbh_time: 0,
+            auto_recording: ''
+            //alternative_hosts: ''
+          },
+          start_time: new Date(
+            date.toString().split('GMT')[0] + ' UTC'
+          ).toISOString(),
+          timezone: 'Asia/Vietnam',
+          topic: 'My Meeting',
+          type: 2
+        })
+        toast.success('Create Zoom Meeting successfully', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
+      })
+      .catch((err) => {
+        handleExpiredToken(err, swal)
+      })
   }
 
   return (
@@ -562,9 +562,9 @@ function CreateMeeting() {
                       <label className='control-label mb-10'>Option</label>
                       <div className='checkbox checkbox-primary'>
                         <input
-                          id='join_before_host'
+                          id='jbh_time'
                           type='checkbox'
-                          name='join_before_host'
+                          name='jbh_time'
                           checked={input.settings.join_before_host}
                           onChange={handleChange}
                         />
@@ -595,30 +595,6 @@ function CreateMeeting() {
                         <label htmlFor='auto_recording'>
                           Automatically record meeting on the local computer
                         </label>
-                      </div>
-                    </div>
-
-                    <div
-                      className={`form-group ${
-                        errors.alternative_hosts && 'has-error'
-                      }`}
-                    >
-                      <label className='control-label mb-10 text-left'>
-                        Alternative hosts
-                      </label>
-                      <div className='row'>
-                        <div className='col-sm-12'>
-                          <h5 className='box-title' />
-                          <select
-                            id='pre-selected-options'
-                            multiple='multiple'
-                            name='alternative_hosts'
-                            onClick={handleChange}
-                          >
-                            <option value='elem_1'>Nguyễn Bình Nguyên</option>
-                            <option value='elem_2'>Triệu Mai Ngọc Thức</option>
-                          </select>
-                        </div>
                       </div>
                     </div>
                   </form>

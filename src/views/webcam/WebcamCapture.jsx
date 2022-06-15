@@ -61,12 +61,9 @@ export const WebcamCapture = (props) => {
         axios
           .post(`${API_URL}/identity`, formData, authHeader())
           .then((res) => {
-            console.log(res)
-
             setLoading(false)
             const identifiedRes = res.data.record
             sendNotification(identifiedRes.roomId)
-            console.log('identifiedRes', identifiedRes)
 
             if (identifiedRes.faceStatus)
               history.push(

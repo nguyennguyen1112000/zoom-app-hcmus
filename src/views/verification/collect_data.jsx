@@ -51,10 +51,18 @@ function VerificationCollectData() {
               <div className='panel-body'>
                 <div className='col-sm-12'>
                   {!config?.openCollectData && (
-                    <h5 className='text-primary'>
-                      {' '}
-                      "It 's not time to collect data, please come back later!"
-                    </h5>
+                    <div className='auth-form  ml-auto mr-auto no-float'>
+                      <div className='row'>
+                        <div className='col-sm-12 col-xs-12'>
+                          <div className='mb-30'>
+                            <span className='text-center nonecase-font mb-20 block error-comment'>
+                              It's not time to collect data, please come back
+                              later!
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   )}
                   {config?.openCollectData && (
                     <div className='row'>
