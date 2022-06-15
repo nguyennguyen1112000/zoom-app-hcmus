@@ -62,7 +62,7 @@ export const WebcamCapture = (props) => {
           .post(`${API_URL}/identity`, formData, authHeader())
           .then((res) => {
             setLoading(false)
-            const identifiedRes = res.data.record
+            const identifiedRes = res.data
             sendNotification(identifiedRes.roomId)
 
             if (identifiedRes.faceStatus)
