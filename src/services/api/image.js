@@ -60,7 +60,6 @@ export const getMyImages = () => {
       .then((res) => {
         if (res.data) {
           const getImages = getAllImages(res.data)
-          console.log(123, res.data);
           dispatch(getImages)
         }
       })

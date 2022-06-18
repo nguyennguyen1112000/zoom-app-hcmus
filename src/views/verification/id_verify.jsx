@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useLocation } from 'react-router-dom'
 import { getRoom } from '../../services/api/room'
@@ -15,8 +15,7 @@ function StudentVerificationS2() {
   }, [dispatch, id])
   const currentRoom = useSelector((state) => state.room.currentRoom)
   const { search } = useLocation()
-  const recordId = new URLSearchParams(search).get('record_id')
-  console.log(recordId)
+  const [type, setType] = useState(0)
 
   return (
     <div className='container-fluid'>
@@ -46,50 +45,44 @@ function StudentVerificationS2() {
       <div className='row'>
         <div className='col-md-12'>
           <div className='panel panel-default card-view'>
-
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
                 <div className='col-sm-12'>
                   <div className='row'>
                     <div className='col-md-3'>
                       <div className='panel panel-default card-view'>
-                        <div className='panel-heading'>
-                          <div className='pull-left'>
-                            <h6 className='panel-title txt-primary'>
-                              Accepted document type
-                            </h6>
-                          </div>
-                          <div className='clearfix' />
+                        <div className='form-group mt-30 mb-30'>
+                          <label className='control-label mb-10 text-left'>
+                            Choose document type
+                          </label>
+                          <select
+                            className='form-control'
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                          >
+                            <option value={0}>
+                              Student ID (Thẻ sinh viên)
+                            </option>
+                            <option value={1}>Identity Card (CMTND)</option>
+                            <option value={3}>Citizen ID Card (CCCD)</option>
+                          </select>
                         </div>
-                        <div className='panel-wrapper collapse in'>
-                          <div className='panel-body'>
-                            <ul className='list-icons'>
-                              <li className='mb-10'>
-                                <i className='fa fa-angle-double-right text-info mr-5'></i>
-                                Citizen identity card
-                              </li>
-                              <li className='mb-10'>
-                                <i className='fa fa-angle-double-right text-info mr-5'></i>
-                                Identity card
-                              </li>
-                              <li>
-                                <i className='fa fa-angle-double-right text-info mr-5'></i>
-                                Student ID card
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
+                       
                       </div>
                       <div className='panel panel-default card-view'>
                         <div className='panel-heading'>
                           <div className='pull-left'>
-                            <h6 className='panel-title text-primary'>
+                            <h6 className='panel-title'>
                               Take a photo of your document type by the webcam.
                             </h6>
                           </div>
                           <div className='clearfix' />
                         </div>
-                        <img src="/img/id_verification_example.png" alt="" width={270}/>
+                        <img
+                          src='/img/id_verification_example.png'
+                          alt=''
+                          width={270}
+                        />
                         <div className='panel-wrapper collapse in'>
                           <div className='panel-body'>
                             <ul className='list-icons'>
@@ -137,6 +130,7 @@ function StudentVerificationS2() {
                       <WebcamID
                         roomId={currentRoom?.id}
                         studentId={user?.studentId}
+                        type={type}
                       />
                     </div>
                   </div>

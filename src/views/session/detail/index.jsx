@@ -304,7 +304,6 @@ function SessionRoomDetail() {
                             </td>
 
                             <td>
-                              {}
                               <div className='buttion-list'>
                                 <div className='buttion-list'>
                                   {session.accepted && (

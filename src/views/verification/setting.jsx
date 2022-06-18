@@ -1,13 +1,17 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { authHeader } from '../../helper/utils'
 import { getDefaultSetting } from '../../services/api/setting'
+import socketIOClient from 'socket.io-client'
 const API_URL = process.env.REACT_APP_API_URL
+
 function Setting() {
+  const socketRef = useRef()
+
   const setting = useSelector((state) => state.setting.setting)
   const [input, setInput] = useState({
     ekycUsername: '',
@@ -29,7 +33,15 @@ function Setting() {
       setInput(result)
     }
   }, [setting])
-
+  useEffect(() => {
+    socketRef.current = socketIOClient.connect(API_URL)
+    return () => {
+      socketRef.current.disconnect()
+    }
+  }, [])
+  const sendNotification = (data) => {
+    socketRef.current.emit('toServerCloseTerm', data)
+  }
   const [errors, setErrors] = useState({
     ekycUsername: null,
     ekycPassword: null
@@ -120,6 +132,7 @@ function Setting() {
                   ekycUsername: null,
                   ekycPassword: null
                 })
+                sendNotification(input.openCollectData)
                 toast.success('Update setting successfully', {
                   position: 'top-right',
                   autoClose: 3000,

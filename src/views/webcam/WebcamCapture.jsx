@@ -1,3 +1,4 @@
+/* eslint-disable no-const-assign */
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -11,6 +12,7 @@ import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
 import socketIOClient from 'socket.io-client'
 import { authHeader } from '../../helper/utils'
+import Swal from 'sweetalert2'
 const videoConstraints = {
   width: 680,
   height: 480,
@@ -22,7 +24,7 @@ export const WebcamCapture = (props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const webcamRef = useRef(null)
-  const canvasRef = React.useRef()
+  //const canvasRef = React.useRef()
   const videoHeight = 480
   const videoWidth = 640
   const API_URL = process.env.REACT_APP_API_URL
@@ -62,22 +64,49 @@ export const WebcamCapture = (props) => {
           .post(`${API_URL}/identity`, formData, authHeader())
           .then((res) => {
             setLoading(false)
-            const identifiedRes = res.data
-            sendNotification(identifiedRes.roomId)
+            const { record, errorMessage } = res.data
+            let error;
+            if (errorMessage) {
+              if (errorMessage.verifySuccess)
+                error = 'You checked-in successfully before for this room'
+              else if (!errorMessage.timeToVerify)
+                error = `It's not time for check-in`
+              else if (errorMessage.failExceed)
+                error = `You have exceeded the maximum amount of check-in time for this room`
+            }
+            if (record) sendNotification(record.roomId)
+            if (!errorMessage && record?.faceStatus === false)
+              error = 'Face not match with your reference face data'
+            console.log(error)
 
-            if (identifiedRes.faceStatus)
-              history.push(
-                `/room/${roomId}/verify/s2?record_id=${identifiedRes.id}`
-              )
+            if (record?.faceStatus === true)
+              history.push(`/room/${roomId}/verify/s2?record_id=${record.id}`)
             else
-              toast.error('Face recognition fail, please try again', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined
+              Swal.fire({
+                title: '<strong>Face recognition result</strong>',
+                icon: 'warning',
+                html: ` 
+        <div className="panel panel-default card-view">
+        <div className="panel-heading">
+            <div className="pull-left">
+              <h6 className="panel-title txt-dark">Reasons for failing recognition</h6>
+            </div>
+            <div className="clearfix" />
+          </div>
+          
+         
+          <div className="panel-wrapper collapse in">
+            <div className="panel-body">
+            ${`<p className='text-muted'>
+                ${error}
+              </p>`}
+
+            </div>
+          </div>
+        </div>
+      `,
+                showCloseButton: false,
+                showCancelButton: false
               })
           })
           .catch((err) => {
@@ -104,7 +133,7 @@ export const WebcamCapture = (props) => {
             padding: '10px'
           }}
         >
-          {image == '' ? (
+          {image === '' ? (
             <Webcam
               audio={false}
               height={videoHeight}
@@ -118,19 +147,19 @@ export const WebcamCapture = (props) => {
           ) : (
             <img src={image} />
           )}
-          <canvas ref={canvasRef} style={{ position: 'absolute' }} />
+          {/* <canvas ref={canvasRef} style={{ position: 'absolute' }} /> */}
         </div>
       </div>
       <div>
         <div className='spinner-loading'>
           <SpinnerCircularFixed
             size={100}
-            thickness={200}
+            thickness={100}
             color='#2986CC'
             enabled={loading}
           />
         </div>
-        {image != '' ? (
+        {image !== '' ? (
           <div className='form-group text-center'>
             <div className='button-list'>
               <button

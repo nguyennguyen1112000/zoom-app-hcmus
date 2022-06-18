@@ -1,13 +1,17 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { authHeader } from '../../helper/utils'
 import { WebcamData } from '../webcam/WebcamData'
 import { WebcamFacePrivate } from '../webcam/WebcamFacePrivate'
+import socketIOClient from 'socket.io-client'
 const API_URL = process.env.REACT_APP_API_URL
 function VerificationCollectData() {
+  const socketRef = useRef()
   const user = useSelector((state) => state.auth.currentUser)
   const [config, setConfig] = useState(null)
+  const [reload, setReload] = useState(false)
+
   useEffect(() => {
     axios
       .get(`${API_URL}/configuration`, authHeader())
@@ -19,7 +23,12 @@ function VerificationCollectData() {
       .catch((err) => {
         console.log(err)
       })
-  }, [])
+    socketRef.current = socketIOClient.connect(API_URL)
+
+    socketRef.current.on('toClientCloseTerm', (data) => {
+      setReload(!reload)
+    })
+  }, [reload])
   return (
     <div className='container-fluid'>
       {/* Title */}
@@ -70,7 +79,7 @@ function VerificationCollectData() {
                         <div className='panel panel-default card-view'>
                           <div className='panel-heading'>
                             <div className='pull-left'>
-                              <h6 className='panel-title txt-primary'>
+                              <h6 className='panel-title'>
                                 Center your face in the webcam
                               </h6>
                               <img
@@ -78,7 +87,7 @@ function VerificationCollectData() {
                                 alt='face_recognition_example'
                                 width={270}
                               />
-                              <h6 className='panel-title txt-primary mt-10'>
+                              <h6 className='panel-title mt-10'>
                                 Please follow the instructions below
                               </h6>
                               <img

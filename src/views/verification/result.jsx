@@ -24,7 +24,7 @@ function VerificationResult() {
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='index.html'>{user?.studentId}</a>
+              <a href={`/room/${id}`}>{user?.studentId}</a>
             </li>
             <li>
               <a href={`/room/${id}`}>
@@ -171,9 +171,7 @@ function VerificationResult() {
               </div>
               <div className='clearfix' />
             </div>
-            <div className='panel-wrapper collapse in'>
-            
-            </div>
+            <div className='panel-wrapper collapse in'></div>
           </div>
         </div>
       </div>

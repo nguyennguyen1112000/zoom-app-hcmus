@@ -12,13 +12,14 @@ import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
 import socketIOClient from 'socket.io-client'
 import { authHeader } from '../../helper/utils'
+import Swal from 'sweetalert2'
 const videoConstraints = {
   width: 680,
   height: 480,
   facingMode: 'user'
 }
 export const WebcamID = (props) => {
-  const { roomId, studentId } = props
+  const { roomId, studentId, type } = props
   const [image, setImage] = useState('')
   const dispatch = useDispatch()
   const history = useHistory()
@@ -60,19 +61,55 @@ export const WebcamID = (props) => {
         let formData = new FormData()
         formData.append('file', file)
         formData.append('recordId', recordId)
+        formData.append('type', type)
         setLoading(true)
         axios
           .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
             setLoading(false)
-            const identifiedRes = res.data.record
-            console.log(identifiedRes)
+            console.log("Data",res.data)
+            const { extractFields, errorMessages, record } = res.data
+            if (record) sendNotification(record.roomId)
+            if (record?.idStatus === true)
+              history.push(`/room/${roomId}/verify/result/${record.id}`)
+            else if (!record) {
+              let error
 
-            const errorMessages = res.data.errorMessages
-            sendNotification(identifiedRes.roomId)
-            if (identifiedRes.idStatus)
-              history.push(`/room/${roomId}/verify/result/${identifiedRes.id}`)
-            else {
+              if (errorMessages) {
+                if (errorMessages.verifySuccess)
+                  error = 'You checked-in successfully before for this room'
+                else if (!errorMessages.timeToVerify)
+                  error = `It's not time for check-in`
+                else if (errorMessages.failExceed)
+                  error = `You have exceeded the maximum amount of check-in time for this room`
+              }
+              Swal.fire({
+                title: '<strong>Id Document verification result</strong>',
+                icon: 'warning',
+                html: ` 
+        <div className="panel panel-default card-view">
+        <div className="panel-heading">
+            <div className="pull-left">
+              <h6 className="panel-title txt-dark">Reasons for failing verification</h6>
+            </div>
+            <div className="clearfix" />
+          </div>
+          
+         
+          <div className="panel-wrapper collapse in">
+            <div className="panel-body">
+            ${`<p className='text-muted'>
+                ${error}
+              </p>`}
+
+            </div>
+          </div>
+        </div>
+      `,
+                showCloseButton: false,
+                showCancelButton: false
+              })
+            } else {
               // toast.error('Student Id verification failed, please try again', {
               //   position: 'top-center',
               //   autoClose: 3000,
@@ -81,17 +118,92 @@ export const WebcamID = (props) => {
               //   pauseOnHover: true,
               //   draggable: true,
               //   progress: undefined
-              // })              
-              swal({
+              // })
+              // swal({
+              //   icon: 'warning',
+              //   title: 'Student Id verification failed. Considered reasons: ',
+              //   buttons: false,
+              //   //text: "fsdfsdf"
+              //   text: errorMessages.join('\n')
+              // })
+              Swal.fire({
+                title: '<strong>Identity result</strong>',
                 icon: 'warning',
-                title:
-                  'Student Id verification failed. Considered reasons: ',
-                buttons: false,
-                //text: "fsdfsdf"
-                text: errorMessages.join('\n')
+                html: ` 
+        <div className="panel panel-default card-view">
+        <div className="panel-heading">
+            <div className="pull-left">
+              <h6 className="panel-title txt-dark">${
+                record?.cardImage?.type === 'student_card'
+                  ? 'STUDENT ID'
+                  : 'IDENTITY CARD'
+              }</h6>
+            </div>
+            <div className="clearfix" />
+          </div>
+          <div className="panel-wrapper collapse in">
+            <div className="panel-body">
+              <p className="text-muted">${extractFields.name1} ->
+                ${
+                  extractFields.matchName
+                    ? extractFields.name2
+                    : `<mark>${extractFields.name2}</mark>`
+                }
+               
+              </p>
+              <p className="text-muted">${extractFields.dob1}->
+                ${
+                  extractFields.matchDob
+                    ? extractFields.dob2
+                    : `<mark>${extractFields.dob2}</mark>`
+                }
+               
+              </p>
+              ${
+                record?.cardImage?.type === 'student_card'
+                  ? `<p className="text-muted">${extractFields.studentId1}->
+                ${
+                  extractFields.matchStudentId
+                    ? extractFields.studentId2
+                    : `<mark>${extractFields.studentId2}</mark>`
+                }
+               
+              </p>`
+                  : ''
+              }
+            </div>
+          </div>
+          ${
+            errorMessages.length > 0 ? (
+              `<div className='panel-heading'>
+                <div className='pull-left'>
+                  <h6 className='panel-title txt-dark'>
+                    Reasons for failing verification
+                  </h6>
+                </div>
+                <div className='clearfix' />
+              </div>`
+            ) : (
+              ''
+            )
+          }
+          <div className="panel-wrapper collapse in">
+            <div className="panel-body">
+            ${errorMessages.map((err, index) => (
+              `<p className='text-muted'>
+                ${index+1}. ${err}
+              </p>`
+            ))}
+
+            </div>
+          </div>
+        </div>
+      `,
+                showCloseButton: false,
+                showCancelButton: false
               })
             }
-            console.log('err', errorMessages)
+            //console.log('err', errorMessages)
           })
           .catch((err) => {
             setLoading(false)
@@ -138,7 +250,7 @@ export const WebcamID = (props) => {
         <div className='spinner-loading'>
           <SpinnerCircularFixed
             size={100}
-            thickness={200}
+            thickness={100}
             color='#2986CC'
             enabled={loading}
           />

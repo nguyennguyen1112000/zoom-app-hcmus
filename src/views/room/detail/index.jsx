@@ -356,45 +356,8 @@ function RoomDetail() {
       })
   }
 
-  const downloadTemplate = (e) => {
-    e.preventDefault()
-    const downloadLink = `${API_URL}/rooms/template/add_students`
-    const a = document.createElement('a')
-    a.href = downloadLink
-    a.click()
-  }
-  /*************** Upload file ****************/
-  const uploadStudentFile = (e) => {
-    const formData = new FormData()
-    //console.log('e.target.value', e.target.file)
-
-    formData.append('file', e.target.files[0])
-    axios
-      .post(
-        `${API_URL}/rooms/upload/${currentSubject?.id}/students`,
-        formData,
-        authHeader()
-      )
-      .then((res) => {
-        e.target.value = null
-        toast.success('Upload successfully', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        })
-        setReload(!reload)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
 
   const handleCheckIn = (e) => {
-    // //href={`/room/${currentRoom?.id}/verify/s1`}
     e.preventDefault()
     axios
       .get(`${API_URL}/rooms/${currentRoom?.id}/canVerify`, authHeader())
@@ -582,7 +545,7 @@ function RoomDetail() {
             <div className='panel panel-default card-view'>
               <div className='panel-heading'>
                 <div className='pull-left'>
-                  <h6 className='panel-title txt-dark'>Verifying Results</h6>
+                  <h6 className='panel-title txt-dark'>Identity Results</h6>
                 </div>
               </div>
               <div className='panel-wrapper collapse in'>
@@ -595,11 +558,13 @@ function RoomDetail() {
                             <th> #</th>
                             <th>Code</th>
                             <th>Check-in Time</th>
+                            <th>Duration</th>
                             <th>Face recognition status</th>
                             <th>Id verification status</th>
                             <th>Face image</th>
-                            <th>Student ID/ID Card Image</th>
+                            <th>Student ID/Identity card</th>
                             <th>Image type</th>
+                            <th>Accepted</th>
                           </tr>
                         </thead>
 
@@ -612,6 +577,13 @@ function RoomDetail() {
                               <td>{index + 1}</td>
                               <td>{record.id}</td>
                               <td>{formatTime(new Date(record.created_at))}</td>
+                              <td>
+                                {record.duration}
+                                {record.duration
+                                  ? Math.round(record.duration / 60000) +
+                                    ' minutes'
+                                  : '--'}
+                              </td>
                               <td>
                                 {record.faceStatus ? (
                                   <span class='label label-success'>
@@ -631,16 +603,54 @@ function RoomDetail() {
                                 )}
                               </td>
                               <td>
-                                <a href={record.faceImage?.imageUrl}>
-                                  {record.faceImage?.imageUrl && 'View'}
-                                </a>
+                                {record?.faceImage && (
+                                  <a
+                                    href={`${record?.faceImage.imageUrl}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                  >
+                                    <img
+                                      src={record?.faceImage.fetchUrl}
+                                      alt='face_image'
+                                      width={80}
+                                      referrerpolicy='no-referrer'
+                                    />
+                                  </a>
+                                )}
                               </td>
                               <td>
-                                <a href={record.cardImage?.imageUrl}>
-                                  {record.cardImage?.imageUrl && 'View'}
-                                </a>
+                                {record?.cardImage && (
+                                  <a
+                                    href={`${record?.cardImage.imageUrl}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                  >
+                                    <img
+                                      src={record?.cardImage.fetchUrl}
+                                      alt='card_image'
+                                      width={80}
+                                      referrerpolicy='no-referrer'
+                                    />
+                                  </a>
+                                )}
                               </td>
                               <td>{record.cardImage?.type}</td>
+                              <td>
+                                <div className='buttion-list'>
+                                  <div className='buttion-list'>
+                                    {record?.accepted && (
+                                      <span className='label label-success'>
+                                        <i className='fa fa-check'></i>
+                                      </span>
+                                    )}
+                                    {record?.accepted === false && (
+                                      <span className='label label-danger'>
+                                        <i className='fa fa-times'></i>
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
