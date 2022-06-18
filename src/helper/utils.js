@@ -100,7 +100,6 @@ export const findDaysDifferent = (fromDate) => {
 }
 
 export const getShortName = (name) => {
-  console.log(name)
   const arrNames = name.split(' ')
   if (arrNames.length >= 2) {
     return (

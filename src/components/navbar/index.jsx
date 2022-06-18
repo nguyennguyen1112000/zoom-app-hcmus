@@ -79,7 +79,7 @@ function NavBar() {
                 className='user-auth-img'
                 style={{ background: '#eb4034', padding: 5, color: 'white' }}
               >
-                {user && getShortName(user?.firstName + ' ' + user?.lastName)}
+                {user && getShortName(user?.firstName  + user?.lastName)}
               </span>
               <span className='user-online-status' />
             </a>
