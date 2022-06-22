@@ -6,7 +6,6 @@ import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../authConfig'
-import { toast } from 'react-toastify'
 function Login() {
   const { instance } = useMsal()
   const API_URL = process.env.REACT_APP_API_URL

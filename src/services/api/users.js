@@ -22,22 +22,3 @@ export const getAllUsers= (type) => {
       })
   }
 }
-
-// export const getCurrentSubject = (id) => {
-//   return (dispatch) => {
-//     return axios
-//       .get(`${API_URL}/subjects/${id}`, authHeader())
-//       .then((res) => {
-//         const action = getSubject(res.data)
-//         dispatch(action)
-//       })
-//       .catch((err) => {
-//         if (err.response.status === 401) {
-//           const logoutAction = userLogout()
-//           logOut()
-//           dispatch(logoutAction)
-//         }
-//         console.log('Fail to get data')
-//       })
-//   }
-// }

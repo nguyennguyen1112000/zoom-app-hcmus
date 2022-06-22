@@ -1,5 +1,4 @@
 import React from "react";
-import CreateClass from "../../views/classes/create";
 
 function Footer() {
   return (

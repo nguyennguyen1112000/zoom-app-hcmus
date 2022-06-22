@@ -13,7 +13,7 @@ function VerificationResult() {
     if (resultId) dispatch(getIdentity(resultId))
   }, [dispatch, resultId])
   const identity = useSelector((state) => state.client.identityResult)
-  console.log(identity);
+  console.log(identity)
   const user = useSelector((state) => state.auth.currentUser)
   return (
     <div className='container-fluid'>
@@ -167,7 +167,14 @@ function VerificationResult() {
           <div className='panel panel-default card-view'>
             <div className='panel-heading'>
               <div className='pull-left'>
-                <h6 className='panel-title txt-dark'>QR Code</h6>
+                <a href={identity?.room?.url}>
+                  <button className='btn btn-default btn-lable-wrap left-label'>
+                    <span className='btn-label'>
+                      <img src='/img/icons8-zoom.svg' width={20} />
+                    </span>
+                    <span className='btn-text'>Return to Zoom meeting</span>
+                  </button>
+                </a>
               </div>
               <div className='clearfix' />
             </div>

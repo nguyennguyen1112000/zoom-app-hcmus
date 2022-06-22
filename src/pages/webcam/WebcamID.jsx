@@ -6,8 +6,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { SpinnerCircularFixed } from 'spinners-react'
-//import "./cameraStyles.css";
-//import "../style/home.css";
 import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
 import socketIOClient from 'socket.io-client'
@@ -19,7 +17,7 @@ const videoConstraints = {
   facingMode: 'user'
 }
 export const WebcamID = (props) => {
-  const { roomId, studentId, type } = props
+  const { roomId,  type } = props
   const [image, setImage] = useState('')
   const dispatch = useDispatch()
   const history = useHistory()
@@ -37,7 +35,7 @@ export const WebcamID = (props) => {
     setImage(imageSrc)
     const action = addCaptureImage(imageSrc)
     dispatch(action)
-  }, [webcamRef])
+  }, [webcamRef, dispatch])
   useEffect(() => {
     socketRef.current = socketIOClient.connect(API_URL)
     return () => {
@@ -67,7 +65,7 @@ export const WebcamID = (props) => {
           .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
             setLoading(false)
-            console.log("Data",res.data)
+            console.log('Data', res.data)
             const { extractFields, errorMessages, record } = res.data
             if (record) sendNotification(record.roomId)
             if (record?.idStatus === true)
@@ -110,22 +108,6 @@ export const WebcamID = (props) => {
                 showCancelButton: false
               })
             } else {
-              // toast.error('Student Id verification failed, please try again', {
-              //   position: 'top-center',
-              //   autoClose: 3000,
-              //   hideProgressBar: false,
-              //   closeOnClick: true,
-              //   pauseOnHover: true,
-              //   draggable: true,
-              //   progress: undefined
-              // })
-              // swal({
-              //   icon: 'warning',
-              //   title: 'Student Id verification failed. Considered reasons: ',
-              //   buttons: false,
-              //   //text: "fsdfsdf"
-              //   text: errorMessages.join('\n')
-              // })
               Swal.fire({
                 title: '<strong>Identity result</strong>',
                 icon: 'warning',
@@ -174,8 +156,8 @@ export const WebcamID = (props) => {
             </div>
           </div>
           ${
-            errorMessages.length > 0 ? (
-              `<div className='panel-heading'>
+            errorMessages.length > 0
+              ? `<div className='panel-heading'>
                 <div className='pull-left'>
                   <h6 className='panel-title txt-dark'>
                     Reasons for failing verification
@@ -183,17 +165,16 @@ export const WebcamID = (props) => {
                 </div>
                 <div className='clearfix' />
               </div>`
-            ) : (
-              ''
-            )
+              : ''
           }
           <div className="panel-wrapper collapse in">
             <div className="panel-body">
-            ${errorMessages.map((err, index) => (
-              `<p className='text-muted'>
-                ${index+1}. ${err}
+            ${errorMessages.map(
+              (err, index) =>
+                `<p className='text-muted'>
+                ${index + 1}. ${err}
               </p>`
-            ))}
+            )}
 
             </div>
           </div>
@@ -229,7 +210,7 @@ export const WebcamID = (props) => {
             padding: '10px'
           }}
         >
-          {image == '' ? (
+          {image === '' ? (
             <Webcam
               audio={false}
               height={videoHeight}
@@ -241,7 +222,7 @@ export const WebcamID = (props) => {
               //onPlay={handleVideoOnPlay}
             />
           ) : (
-            <img src={image} />
+            <img src={image} alt='capture_image' />
           )}
           <canvas ref={canvasRef} style={{ position: 'absolute' }} />
         </div>
@@ -255,7 +236,7 @@ export const WebcamID = (props) => {
             enabled={loading}
           />
         </div>
-        {image != '' ? (
+        {image !== '' ? (
           <div className='form-group text-center'>
             <div className='button-list'>
               <button
@@ -286,7 +267,7 @@ export const WebcamID = (props) => {
                 capture()
               }}
             >
-              <span>Take picture</span> <i className='fa fa-camera' />{' '}
+              <span>Take picture</span> <i className='fa fa-camera' />
             </button>
           </div>
         )}

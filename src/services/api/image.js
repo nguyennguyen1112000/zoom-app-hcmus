@@ -14,7 +14,6 @@ export const uploadImage = (file, student, type) => {
       .post(`${API_URL}/images/upload`, formData, authHeader())
       .then((res) => {
         if (res.data) {
-          //let newStudent = {...student};
           const addImage = addImageStudent(res.data)
           dispatch(addImage)
         }

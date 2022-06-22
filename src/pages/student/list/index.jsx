@@ -101,7 +101,7 @@ function StudentList() {
 
   const uploadFile = (e) => {
     const formData = new FormData()
-    formData.append('file', e.target.value)
+    formData.append('file', e.target.files[0])
     axios
       .post(`${API_URL}/students/upload`, formData, authHeader())
       .then((res) => {
@@ -117,6 +117,7 @@ function StudentList() {
         })
       })
       .catch((err) => {
+        e.target.value = null
         toast.error(err?.response?.data?.message, {
           position: 'top-right',
           autoClose: 1000,

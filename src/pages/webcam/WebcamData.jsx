@@ -86,7 +86,7 @@ export const WebcamData = (props) => {
             padding: '10px'
           }}
         >
-          {image == '' ? (
+          {image === '' ? (
             <Webcam
               audio={false}
               height={videoHeight}
@@ -104,7 +104,7 @@ export const WebcamData = (props) => {
         </div>
       </div>
       <div>
-        {image != '' ? (
+        {image !== '' ? (
           <div className='form-group text-center'>
             <div className='button-list'>
               <button

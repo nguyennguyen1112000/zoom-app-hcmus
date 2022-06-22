@@ -14,7 +14,6 @@ const API_URL = process.env.REACT_APP_API_URL
 function SessionRoomDetail() {
   const socketRef = useRef()
   const dispatch = useDispatch()
-  const [loading, setLoading] = useState(false)
   const [reload, setReload] = useState(false)
   let { id } = useParams()
   const sessions = useSelector((state) => state.session.identity)
@@ -44,7 +43,13 @@ function SessionRoomDetail() {
     }
   }, [sessions, reload])
 
-  
+  const getClassCredibility =(credibility)=>{
+    if (credibility >= .8) return 'progress-bar progress-bar-success'
+    else if (credibility >= 0.7) return 'progress-bar progress-bar-primary'
+    else if (credibility >= 0.6) return 'progress-bar progress-bar-warning'
+    else if (credibility >= 0.5) return 'progress-bar progress-bar-danger'
+    else return 'progress-bar progress-bar-default'
+  }
   return (
     <div className='container-fluid'>
       {/* Title */}
@@ -115,7 +120,7 @@ function SessionRoomDetail() {
                           Passed
                         </span>
                       </div>
-                      <div className='col-xs-6 text-center  pl-0 pr-0 data-wrap-right'>
+                      <div className='col-xs-6 text-center pl-0 pr-0 data-wrap-right '>
                         <i className='icon-control-rewind data-right-rep-icon txt-light-grey' />
                       </div>
                     </div>
@@ -177,25 +182,7 @@ function SessionRoomDetail() {
                         </span>
                       </div>
                       <div className='col-xs-6 text-center  pl-0 pr-0 pt-25  data-wrap-right'>
-                        <div
-                          id='sparkline_4'
-                          style={{
-                            width: '100px',
-                            overflow: 'hidden',
-                            margin: '0px auto'
-                          }}
-                        >
-                          <canvas
-                            width={115}
-                            height={50}
-                            style={{
-                              display: 'inline-block',
-                              width: '115px',
-                              height: '50px',
-                              verticalAlign: 'top'
-                            }}
-                          />
-                        </div>
+                        <i className='icon-layers data-right-rep-icon txt-light-grey' />
                       </div>
                     </div>
                   </div>
@@ -209,7 +196,6 @@ function SessionRoomDetail() {
       <div className='row'>
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
-           
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
                 <div className='table-wrap'>
@@ -220,7 +206,6 @@ function SessionRoomDetail() {
                     >
                       <thead>
                         <tr>
-                          
                           <th>#</th>
 
                           <th>Student</th>
@@ -237,7 +222,6 @@ function SessionRoomDetail() {
                       <tbody>
                         {sessions?.map((session, index) => (
                           <tr key={index}>
-                           
                             <td>{index + 1}</td>
 
                             <td>
@@ -263,7 +247,9 @@ function SessionRoomDetail() {
                               {session.credibility ? (
                                 <div className='progress progress-lg'>
                                   <div
-                                    className='progress-bar progress-bar-danger'
+                                    className={getClassCredibility(
+                                      session.credibility
+                                    )}
                                     style={{
                                       width: `${Math.round(
                                         session.credibility * 100

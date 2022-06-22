@@ -6,53 +6,48 @@ import { useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import PublicRoute from './router/publicRoute.jsx'
 import PrivateRoute from './router/privateRoute'
-import Header from './components/header/index.jsx'
 import VerticalNav from './components/left-sidebar'
 import Footer from './components/footer/index.jsx'
 import LeftSideBar from './components/left-sidebar'
-import StudentList from './views/student/list'
-import Login from './views/authentication/login'
+import StudentList from './pages/student/list'
+import Login from './pages/authentication/login'
 import NavBar from './components/navbar'
-import RoomList from './views/room/list'
-import StudentDetail from './views/student/detail'
+import RoomList from './pages/room/list'
+import StudentDetail from './pages/student/detail'
 
-import VerificationCollectData from './views/verification/collect_data'
-import RealtimeVerify from './views/verification/realtime_verify'
+import VerificationCollectData from './pages/verification/collect_data'
 import { Route } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
-import PageNotFound from './views/errorPage/pageNotFound'
+import PageNotFound from './pages/errorPage/pageNotFound'
 import { Switch } from 'react-router-dom'
-import FaceData from './views/data/FaceData'
-import StudentVerificationS1 from './views/verification/step2'
-import StudentVerificationResult from './views/verification/result'
-import Profile from './views/profile/index'
-import SubjectList from './views/subject/list'
-import CreateSubject from './views/subject/create'
-import EditSubject from './views/subject/edit'
-import SubjectDetail from './views/subject/detail'
-import CreateMeeting from './views/room/create/meeting.jsx'
-import ProctorList from './views/proctor/list'
-import RoomDetail from './views/room/detail'
-import StudentVerificationS2 from './views/verification/id_verify'
-import Setting from './views/verification/setting'
-import VerifySession from './views/session/list'
-import RoomSession from './views/session/list/room_session'
-import SessionRoomDetail from './views/session/detail'
-import CreateStudent from './views/student/create'
-import StudentSessionDetail from './views/session/list/student_session'
-import Privacy from './views/document/privacy'
-import TermOfUse from './views/document/term_of_use'
-import Contact from './views/document/contact'
-import Document from './views/document/doc'
-import CreateRoom from './views/room/create'
-import UpdateRoom from './views/room/update'
-//import VerificationClient from './views/verification'
+import FaceData from './pages/data/FaceData'
+import StudentVerificationS1 from './pages/verification/step2'
+import StudentVerificationResult from './pages/verification/result'
+import Profile from './pages/profile/index'
+import SubjectList from './pages/subject/list'
+import CreateSubject from './pages/subject/create'
+import EditSubject from './pages/subject/edit'
+import SubjectDetail from './pages/subject/detail'
+import CreateMeeting from './pages/room/create/meeting.jsx'
+import ProctorList from './pages/proctor/list'
+import RoomDetail from './pages/room/detail'
+import StudentVerificationS2 from './pages/verification/id_verify'
+import Setting from './pages/verification/setting'
+import VerifySession from './pages/session/list'
+import RoomSession from './pages/session/list/room_session'
+import SessionRoomDetail from './pages/session/detail'
+import CreateStudent from './pages/student/create'
+import StudentSessionDetail from './pages/session/list/student_session'
+import Privacy from './pages/document/privacy'
+import TermOfUse from './pages/document/term_of_use'
+import Contact from './pages/document/contact'
+import Document from './pages/document/doc'
+import CreateRoom from './pages/room/create'
+import UpdateRoom from './pages/room/update'
 
 function App() {
-  //const user = useSelector((state) => state.auth.currentUser);
   const logIn = useSelector((state) => state.auth.isLoggedIn)
-  // useEffect(() => {
-  // }, [])
+
   return (
     <Router>
       <Switch>
@@ -111,7 +106,7 @@ function App() {
         /> */}
 
         {logIn && (
-          <div className='page-wrapper' style={{ 'min-height': '722px' }}>
+          <div className='page-wrapper' style={{ 'min-height': '100vh' }}>
             {logIn && <NavBar />}
             {logIn && <VerticalNav />}
             <PrivateRoute component={StudentList} path='/' exact />
@@ -160,23 +155,14 @@ function App() {
               exact
             />
 
-            <PrivateRoute
-              component={RealtimeVerify}
-              path='/room/:id/verify/now'
-              exact
-            />
-            {/* <PrivateRoute component={RoomDetail} path='/room/:id' exact /> */}
+            
             <PrivateRoute
               component={StudentVerificationResult}
               path='/room/:id/verify/result/:resultId'
               exact
             />
             <PrivateRoute component={ProctorList} path='/proctor' exact />
-            <PrivateRoute
-              component={RealtimeVerify}
-              path='/verify/room/:id'
-              exact
-            />
+           
             <PrivateRoute
               component={VerificationCollectData}
               path='/verify/data'

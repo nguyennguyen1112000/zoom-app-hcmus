@@ -94,7 +94,7 @@ export const WebcamFacePrivate = (props) => {
               className='media-box'
             />
           ) : (
-            <img src={image} />
+            <img src={image} alt="capture_image" />
           )}
           <canvas ref={canvasRef} style={{ position: 'absolute' }} />
         </div>

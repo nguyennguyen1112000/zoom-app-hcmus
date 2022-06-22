@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { userLogout } from '../../actions/auth'
 import { getIdentitySession} from '../../actions/session'
-import { getSetting } from '../../actions/setting'
 import { authHeader, logOut } from '../../helper/utils'
 
 const API_URL = process.env.REACT_APP_API_URL
