@@ -11,7 +11,7 @@ const PrivateRoute = ({ component: Component,    ...rest }) => {
         logIn ? (
           <Component {...rest} {...props} />
         ) : (
-          <Redirect to={`/?redirectTo=${props.location.pathname+props.location.search}`} />
+          <Redirect to={`/signin`} />
         )
       }
     />
