@@ -99,8 +99,8 @@ function Login() {
   function handleLoginMoodle(event) {
     event.preventDefault()
     fetch('https://httpbin.org/get')
-      .catch(() => {
-        console.log('Fail zone')
+      .catch((err) => {
+        console.log(err, err?.message)
       })
       .then((res) => {
         console.log(res)
