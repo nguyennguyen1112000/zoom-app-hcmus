@@ -98,18 +98,12 @@ function Login() {
   }
   function handleLoginMoodle(event) {
     event.preventDefault()
-    fetch('https://httpbin.org/get', {
-      method: 'GET'
-    })
+    fetch('https://httpbin.org/get')
       .catch(() => {
         console.log('Fail zone')
       })
       .then((res) => {
-        if (res.ok) {
-          console.log(res)
-        } else {
-          console.log('error', res)
-        }
+        console.log(res)
       })
     if (validate()) {
       axios
