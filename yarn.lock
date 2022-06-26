@@ -2450,6 +2450,11 @@
   "resolved" "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   "version" "4.2.2"
 
+"@zoom/appssdk@^0.16.0":
+  "integrity" "sha512-/OwtS7XTN0yOPNxoe9pg0Ly2t5xE4q5EkQN5JShjgFQCezI1xdrwIhBxLfsS5ZtDN1bjXYM9KMeBeHlJqqm2MA=="
+  "resolved" "https://registry.npmjs.org/@zoom/appssdk/-/appssdk-0.16.0.tgz"
+  "version" "0.16.0"
+
 "abab@^2.0.3", "abab@^2.0.5":
   "integrity" "sha512-9IK9EadsbHo6jLWIpxpR6pL0sazTXV6+SQv25ZB+F7Bj9mJNaOc4nCRabwd5M/JwmUa8idz6Eci6eKfJryPs6Q=="
   "resolved" "https://registry.npmjs.org/abab/-/abab-2.0.5.tgz"

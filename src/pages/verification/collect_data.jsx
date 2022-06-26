@@ -27,27 +27,7 @@ function VerificationCollectData() {
         const configResponse = await zoomSdk.config({
           capabilities: [
             'getMeetingContext',
-            'getRunningContext',
-            'getSupportedJsApis',
-            'onSendAppInvitation',
-            'onShareApp',
-            'openUrl',
-            'setVirtualBackground',
-            'showNotification',
-            'removeVirtualBackground',
-            'sendAppInvitation',
-            'getMeetingParticipants',
-            'connect',
-            'onConnect',
-            'onMeeting',
-            'postMessage',
-            'onMessage',
-            'onActiveSpeakerChange',
-            'authorize',
-            'onAuthorized',
-            'promptAuthorize',
-            'getUserContext',
-            'onMyUserContextChange'
+            
           ],
           version: '0.16.0'
         })
@@ -89,13 +69,13 @@ function VerificationCollectData() {
         console.log(e)
       })
   }, [])
-  getMeetingContext()
   return (
     <div className='container-fluid'>
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
           <h5 className='txt-dark'>Face Data</h5>
+          <button onClick={getMeetingContext}>fdfdf</button>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
