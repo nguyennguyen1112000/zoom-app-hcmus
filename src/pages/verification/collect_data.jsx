@@ -6,7 +6,7 @@ import { authHeader } from '../../helper/utils'
 import { WebcamData } from '../webcam/WebcamData'
 import { WebcamFacePrivate } from '../webcam/WebcamFacePrivate'
 import socketIOClient from 'socket.io-client'
-import zoomSdk from  '@zoom/appssdk'
+import zoomSdk from '@zoom/appssdk'
 const API_URL = process.env.REACT_APP_API_URL
 function VerificationCollectData() {
   const socketRef = useRef()
@@ -26,10 +26,7 @@ function VerificationCollectData() {
         // Configure the JS SDK, required to call JS APIs in the Zoom App
         // These items must be selected in the Features -> Zoom App SDK -> Add APIs tool in Marketplace
         const configResponse = await zoomSdk.config({
-          capabilities: [
-            'getMeetingContext',
-            
-          ],
+          capabilities: ['getMeetingContext'],
           version: '0.16.0'
         })
         console.log('App configured', configResponse)
@@ -70,13 +67,25 @@ function VerificationCollectData() {
         console.log(e)
       })
   }, [])
+  const getCameraList = useCallback(() => {
+    zoomSdk
+      .listCameras()
+      .then((ctx) => {
+        console.log('CameraList', ctx)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  }, [])
+
   return (
     <div className='container-fluid'>
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
           <h5 className='txt-dark'>Face Data</h5>
-          <button onClick={getMeetingContext}>fdfdf</button>
+          <button onClick={getCameraList}>Camera list</button>
+          
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
