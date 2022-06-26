@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { authHeader } from '../../helper/utils'
 import { WebcamData } from '../webcam/WebcamData'
