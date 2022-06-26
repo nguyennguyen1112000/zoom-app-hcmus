@@ -98,6 +98,19 @@ function Login() {
   }
   function handleLoginMoodle(event) {
     event.preventDefault()
+    fetch('https://httpbin.org/get', {
+      method: 'GET'
+    })
+      .catch(() => {
+        console.log('Fail zone')
+      })
+      .then((res) => {
+        if (res.ok) {
+          console.log(res)
+        } else {
+          console.log('error', res)
+        }
+      })
     if (validate()) {
       axios
         .post(`${API_URL}/auth/login/moodle`, input)
