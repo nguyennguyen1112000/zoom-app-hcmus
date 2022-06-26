@@ -98,13 +98,6 @@ function Login() {
   }
   function handleLoginMoodle(event) {
     event.preventDefault()
-    fetch('https://httpbin.org/get')
-      .catch((err) => {
-        console.log(err, err?.message)
-      })
-      .then((res) => {
-        console.log(res)
-      })
     if (validate()) {
       axios
         .post(`${API_URL}/auth/login/moodle`, input)
@@ -124,7 +117,7 @@ function Login() {
         .catch((err) => {
           setErrors({
             ...errors,
-            invalidAccount: err.message
+            invalidAccount: 'Invalid username or password'
           })
         })
     }

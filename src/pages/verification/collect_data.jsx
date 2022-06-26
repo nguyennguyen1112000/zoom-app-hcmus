@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -11,6 +12,55 @@ function VerificationCollectData() {
   const user = useSelector((state) => state.auth.currentUser)
   const [config, setConfig] = useState(null)
   const [reload, setReload] = useState(false)
+  const [counter, setCounter] = useState(0)
+
+  useEffect(() => {
+    async function configureSdk() {
+      // to account for the 2 hour timeout for config
+      const configTimer = setTimeout(() => {
+        setCounter(counter + 1)
+      }, 120 * 60 * 1000)
+
+      try {
+        // Configure the JS SDK, required to call JS APIs in the Zoom App
+        // These items must be selected in the Features -> Zoom App SDK -> Add APIs tool in Marketplace
+        const configResponse = await zoomSdk.config({
+          capabilities: [
+            'getMeetingContext',
+            'getRunningContext',
+            'getSupportedJsApis',
+            'onSendAppInvitation',
+            'onShareApp',
+            'openUrl',
+            'setVirtualBackground',
+            'showNotification',
+            'removeVirtualBackground',
+            'sendAppInvitation',
+            'getMeetingParticipants',
+            'connect',
+            'onConnect',
+            'onMeeting',
+            'postMessage',
+            'onMessage',
+            'onActiveSpeakerChange',
+            'authorize',
+            'onAuthorized',
+            'promptAuthorize',
+            'getUserContext',
+            'onMyUserContextChange'
+          ],
+          version: '0.16.0'
+        })
+        console.log('App configured', configResponse)
+      } catch (error) {
+        console.log(error)
+      }
+      return () => {
+        clearTimeout(configTimer)
+      }
+    }
+    configureSdk()
+  }, [counter])
 
   useEffect(() => {
     axios
@@ -29,6 +79,17 @@ function VerificationCollectData() {
       setReload(!reload)
     })
   }, [reload])
+  const getMeetingContext = useCallback(() => {
+    zoomSdk
+      .getMeetingContext()
+      .then((ctx) => {
+        console.log('Meeting Context', ctx)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  }, [])
+  getMeetingContext()
   return (
     <div className='container-fluid'>
       {/* Title */}
