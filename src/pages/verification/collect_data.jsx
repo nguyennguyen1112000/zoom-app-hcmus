@@ -6,6 +6,7 @@ import { authHeader } from '../../helper/utils'
 import { WebcamData } from '../webcam/WebcamData'
 import { WebcamFacePrivate } from '../webcam/WebcamFacePrivate'
 import socketIOClient from 'socket.io-client'
+import zoomSdk from  '@zoom/appssdk'
 const API_URL = process.env.REACT_APP_API_URL
 function VerificationCollectData() {
   const socketRef = useRef()
