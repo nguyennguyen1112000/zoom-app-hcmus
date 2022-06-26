@@ -117,7 +117,7 @@ function Login() {
         .catch((err) => {
           setErrors({
             ...errors,
-            invalidAccount: 'Invalid username or password'
+            invalidAccount: err.message
           })
         })
     }

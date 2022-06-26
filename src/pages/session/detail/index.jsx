@@ -43,8 +43,8 @@ function SessionRoomDetail() {
     }
   }, [sessions, reload])
 
-  const getClassCredibility =(credibility)=>{
-    if (credibility >= .8) return 'progress-bar progress-bar-success'
+  const getClassCredibility = (credibility) => {
+    if (credibility >= 0.8) return 'progress-bar progress-bar-success'
     else if (credibility >= 0.7) return 'progress-bar progress-bar-primary'
     else if (credibility >= 0.6) return 'progress-bar progress-bar-warning'
     else if (credibility >= 0.5) return 'progress-bar progress-bar-danger'
@@ -214,6 +214,8 @@ function SessionRoomDetail() {
                           <th>Duration</th>
                           <th>Credibility</th>
                           <th>Status</th>
+                          <th>Document type</th>
+                          <th>Failed times</th>
                           <th>Flag</th>
                           <th>Session Detail</th>
                         </tr>
@@ -288,7 +290,8 @@ function SessionRoomDetail() {
                                 </span>
                               )}
                             </td>
-
+                            <td>{session.cardImage?.type}</td>
+                            <td>{session.failTimes}</td>
                             <td>
                               <div className='buttion-list'>
                                 <div className='buttion-list'>
