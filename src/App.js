@@ -44,6 +44,7 @@ import Contact from './pages/document/contact'
 import Document from './pages/document/doc'
 import CreateRoom from './pages/room/create'
 import UpdateRoom from './pages/room/update'
+import Home from './pages/authentication/home'
 
 function App() {
   const logIn = useSelector((state) => state.auth.isLoggedIn)
@@ -55,6 +56,7 @@ function App() {
       <LeftSideBar /> */}
         <PublicRoute restricted={true} component={Login} path='/' exact />
         <PublicRoute restricted={true} component={Login} path='/signin' exact />
+        <PublicRoute restricted={true} component={Home} path='/home' exact />
         {/* <PublicRoute
         restricted={false}
         component={VerificationStep1}
@@ -155,14 +157,13 @@ function App() {
               exact
             />
 
-            
             <PrivateRoute
               component={StudentVerificationResult}
               path='/room/:id/verify/result/:resultId'
               exact
             />
             <PrivateRoute component={ProctorList} path='/proctor' exact />
-           
+
             <PrivateRoute
               component={VerificationCollectData}
               path='/verify/data'

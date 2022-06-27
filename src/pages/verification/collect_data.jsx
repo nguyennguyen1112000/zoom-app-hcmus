@@ -151,16 +151,8 @@ function VerificationCollectData() {
                         </div>
                       </div>
                       <div className='col-md-9'>
-                        {/* <WebcamFacePrivate studentId={user?.studentId} /> */}
-                        <iframe
-                          width='640'
-                          height='480'
-                          src='https://www.youtube.com/embed/6fIj4UwdSYo?list=RDGatNL0mmQGc'
-                          title='CHƯA QUÊN NGƯỜI YÊU CŨ | HÀ NHI x HỨA KIM TUYỀN | Official Live Performance'
-                          frameborder='0'
-                          allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-                          allowfullscreen
-                        ></iframe>
+                        <WebcamFacePrivate studentId={user?.studentId} />
+                       
                       </div>
                     </div>
                   )}
