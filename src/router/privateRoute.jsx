@@ -6,6 +6,7 @@ import { isEmbedded } from '../helper/utils'
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const logIn = useSelector((state) => state.auth.isLoggedIn)
   const embedded = isEmbedded()
+  console.log('embedded', embedded)
   return (
     <Route
       {...rest}
