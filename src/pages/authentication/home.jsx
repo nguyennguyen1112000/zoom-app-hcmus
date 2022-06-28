@@ -201,19 +201,19 @@ function Home() {
         '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
       )
 
-      // axios
-      //   .post(`${API_URL}/zooms/onauthorized`, {
-      //     code,
-      //     state,
-      //     href: window.location.href
-      //   })
-      //   .then((res) => {
-      //     console.log('Res', res)
-      //     console.log(
-      //       '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
-      //     )
-      //   })
-      //   .catch((err) => console.log(err.message))
+      axios
+        .post(`${API_URL}/zooms/onauthorized`, {
+          code,
+          state,
+          href: window.location.href
+        })
+        .then((res) => {
+          console.log('Res', res)
+          console.log(
+            '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
+          )
+        })
+        .catch((err) => console.log(err.message))
     })
   }, [])
   if (redirect) return <Redirect to='/room' />
