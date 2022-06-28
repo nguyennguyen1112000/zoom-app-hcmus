@@ -210,7 +210,8 @@ function Home() {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(() => {
+      }).then((res) => {
+        console.log('res', res)
         console.log(
           '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
         )
