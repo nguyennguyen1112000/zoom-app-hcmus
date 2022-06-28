@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
 import zoomSdk from '@zoom/appssdk'
+import { SpinnerCircularFixed } from 'spinners-react'
 function Home() {
   const API_URL = process.env.REACT_APP_API_URL
   const dispatch = useDispatch()
@@ -24,7 +25,7 @@ function Home() {
     invalidAccount: null
   })
   const [counter, setCounter] = useState(0)
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     async function configureSdk() {
       // to account for the 2 hour timeout for config
@@ -188,7 +189,7 @@ function Home() {
     // this is not the best way to make sure > 1 instances are not registered
     console.log('In-Client OAuth flow: onAuthorized event listener added')
     zoomSdk.addEventListener('onAuthorized', (event) => {
-      const { code} = event
+      const { code } = event
       console.log('event', event)
       console.log('3. onAuthorized event fired.')
       console.log(
@@ -198,6 +199,7 @@ function Home() {
       console.log(
         '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
       )
+      setLoading(false)
       axios
         .post(`${API_URL}/zooms/onauthorized`, {
           code,
@@ -205,7 +207,7 @@ function Home() {
           href: window.location.href
         })
         .then((res) => {
-          localStorage.setItem("codeVerifier", null)
+          localStorage.setItem('codeVerifier', null)
           const { access_token, user } = res.data
           localStorage.setItem('user', JSON.stringify(user))
           localStorage.setItem('token', JSON.stringify(access_token))
@@ -215,6 +217,7 @@ function Home() {
           console.log(
             '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
           )
+          setLoading(true)
         })
         .catch((err) => console.log(err.message))
     })
@@ -291,6 +294,14 @@ function Home() {
               </div>
             </div>
           </div>
+        </div>
+        <div className='spinner-loading'>
+          <SpinnerCircularFixed
+            size={100}
+            thickness={100}
+            color='#2986CC'
+            enabled={loading}
+          />
         </div>
       </div>
       <style

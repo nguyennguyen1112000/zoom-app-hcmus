@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { refreshToken } from '../actions/auth'
 
 const API_URL = process.env.REACT_APP_API_URL
 export function authHeader() {
@@ -9,6 +8,9 @@ export function authHeader() {
       Authorization: `Bearer ${token}`
     }
   }
+}
+export function isEmbedded() {
+  return JSON.parse(localStorage.getItem('embedded') || 'false')
 }
 export function getClient() {
   return JSON.parse(localStorage.getItem('client'))
