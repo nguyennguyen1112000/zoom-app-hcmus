@@ -212,6 +212,7 @@ function Home() {
             '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
           )
         })
+        .catch((err) => console.log(err.message))
     })
   }, [])
   if (redirect) return <Redirect to='/room' />
