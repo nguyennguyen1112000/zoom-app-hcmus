@@ -184,7 +184,37 @@ function Home() {
         })
     }
   }, [code, logIn, redirect])
+useEffect(() => {
+  // this is not the best way to make sure > 1 instances are not registered
+  console.log('In-Client OAuth flow: onAuthorized event listener added')
+  zoomSdk.addEventListener('onAuthorized', (event) => {
+    const { code, state } = event
+    console.log('3. onAuthorized event fired.')
+    console.log(
+      '3a. Here is the event passed to event listener callback, with code and state: ',
+      event
+    )
+    console.log(
+      '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
+    )
 
+    fetch(`${API_URL}/zooms/onauthorized`, {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        state,
+        href: window.location.href
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => {
+      console.log(
+        '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
+      )
+    })
+  })
+}, [])
   if (redirect) return <Redirect to='/room' />
   return (
     <>
