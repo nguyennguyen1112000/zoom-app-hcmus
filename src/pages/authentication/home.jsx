@@ -49,6 +49,8 @@ function Home() {
         })
         console.log('App configured', configResponse)
       } catch (error) {
+        console.log(123)
+        localStorage.setItem('isEmbedded', 'true')
         console.log(error)
       }
       return () => {
