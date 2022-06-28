@@ -43,7 +43,9 @@ function Home() {
             'getMeetingContext',
             'getSupportedJsApis',
             'showNotification',
-            'openUrl'
+            'openUrl',
+            'authorize',
+            'onAuthorized'
           ],
           version: '0.16.0'
         })
@@ -89,7 +91,7 @@ function Home() {
     zoomSdk
       .callZoomApi('authorize', authorizeOptions)
       .then((response) => {
-        console.log(response)
+        console.log('Response', response)
       })
       .catch((e) => {
         console.log(e)
@@ -184,37 +186,37 @@ function Home() {
         })
     }
   }, [code, logIn, redirect])
-useEffect(() => {
-  // this is not the best way to make sure > 1 instances are not registered
-  console.log('In-Client OAuth flow: onAuthorized event listener added')
-  zoomSdk.addEventListener('onAuthorized', (event) => {
-    const { code, state } = event
-    console.log('3. onAuthorized event fired.')
-    console.log(
-      '3a. Here is the event passed to event listener callback, with code and state: ',
-      event
-    )
-    console.log(
-      '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
-    )
-
-    fetch(`${API_URL}/zooms/onauthorized`, {
-      method: 'POST',
-      body: JSON.stringify({
-        code,
-        state,
-        href: window.location.href
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(() => {
+  useEffect(() => {
+    // this is not the best way to make sure > 1 instances are not registered
+    console.log('In-Client OAuth flow: onAuthorized event listener added')
+    zoomSdk.addEventListener('onAuthorized', (event) => {
+      const { code, state } = event
+      console.log('3. onAuthorized event fired.')
       console.log(
-        '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
+        '3a. Here is the event passed to event listener callback, with code and state: ',
+        event
       )
+      console.log(
+        '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
+      )
+
+      fetch(`${API_URL}/zooms/onauthorized`, {
+        method: 'POST',
+        body: JSON.stringify({
+          code,
+          state,
+          href: window.location.href
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(() => {
+        console.log(
+          '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
+        )
+      })
     })
-  })
-}, [])
+  }, [])
   if (redirect) return <Redirect to='/room' />
   return (
     <>
@@ -222,7 +224,9 @@ useEffect(() => {
         <div className='container' id='container'>
           <div className='form-container sign-in-container'>
             <div className='form'>
-              <h4 className='mb-20' style={{ color: 'Highlight' }}>Sign in HCMUSID</h4>
+              <h4 className='mb-20' style={{ color: 'Highlight' }}>
+                Sign in HCMUSID
+              </h4>
               <button className='btn btn-primary btn-block' onClick={authorize}>
                 <i className='fa fa-video-camera'></i> Sign in with Zoom
               </button>
