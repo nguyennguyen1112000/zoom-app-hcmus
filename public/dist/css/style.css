@@ -25395,4 +25395,6 @@ ul.inbox-nav li a:focus {
 .input-error{
   border: 1px solid #ff3333;
 }
-
+.text-white{
+  color: #fff !important;
+}

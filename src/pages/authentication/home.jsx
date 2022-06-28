@@ -5,11 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
 import zoomSdk from '@zoom/appssdk'
-import { SpinnerCircularFixed } from 'spinners-react'
+import { SpinnerDotted } from 'spinners-react'
 function Home() {
   const API_URL = process.env.REACT_APP_API_URL
   const dispatch = useDispatch()
-
   const logIn = useSelector((state) => state.auth.isLoggedIn)
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
@@ -200,7 +199,7 @@ function Home() {
       console.log(
         '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
       )
-      setLoading(false)
+      setLoading(true)
       axios
         .post(`${API_URL}/zooms/onauthorized`, {
           code,
@@ -218,9 +217,12 @@ function Home() {
           console.log(
             '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
           )
-          setLoading(true)
+          setLoading(false)
         })
-        .catch((err) => console.log(err.message))
+        .catch((err) => {
+          console.log(err.message)
+          setLoading(false)
+        })
     })
   }, [])
   if (redirect) return <Redirect to='/room' />
@@ -297,12 +299,13 @@ function Home() {
           </div>
         </div>
         <div className='spinner-loading'>
-          <SpinnerCircularFixed
-            size={100}
+          <SpinnerDotted
+            size={50}
             thickness={100}
             color='#2986CC'
             enabled={loading}
           />
+          {loading && "Loading..."}
         </div>
       </div>
       <style

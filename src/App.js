@@ -16,9 +16,7 @@ import RoomList from './pages/room/list'
 import StudentDetail from './pages/student/detail'
 
 import VerificationCollectData from './pages/verification/collect_data'
-import { Route } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
-import PageNotFound from './pages/errorPage/pageNotFound'
 import { Switch } from 'react-router-dom'
 import FaceData from './pages/data/FaceData'
 import StudentVerificationS1 from './pages/verification/step2'
@@ -45,10 +43,11 @@ import Document from './pages/document/doc'
 import CreateRoom from './pages/room/create'
 import UpdateRoom from './pages/room/update'
 import Home from './pages/authentication/home'
+import { isEmbedded } from './helper/utils'
 
 function App() {
   const logIn = useSelector((state) => state.auth.isLoggedIn)
-
+  const embedded = isEmbedded()
   return (
     <Router>
       <Switch>
@@ -109,8 +108,8 @@ function App() {
 
         {logIn && (
           <div className='page-wrapper' style={{ 'min-height': '100vh' }}>
-            {logIn && <NavBar />}
-            {logIn && <VerticalNav />}
+            <NavBar />
+            <VerticalNav />
             <PrivateRoute component={StudentList} path='/' exact />
             <PrivateRoute component={StudentList} path='/student' exact />
             <PrivateRoute component={StudentDetail} path='/student/:id' exact />
@@ -196,8 +195,8 @@ function App() {
             <ToastContainer />
           </div>
         )}
-        <Route path='/404' restricted={false} component={PageNotFound} />
-        <Redirect to='/404' />
+        {/* <Route path='/404' restricted={false} component={PageNotFound} />*/}
+        {embedded ? <Redirect to='/home' /> : <Redirect to='/' />}
       </Switch>
     </Router>
   )

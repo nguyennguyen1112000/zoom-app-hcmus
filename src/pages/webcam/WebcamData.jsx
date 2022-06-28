@@ -98,7 +98,7 @@ export const WebcamData = (props) => {
               //onPlay={handleVideoOnPlay}
             />
           ) : (
-            <img src={image} />
+            <img src={image} alt="face_image"/>
           )}
           <canvas ref={canvasRef} style={{ position: 'absolute' }} />
         </div>

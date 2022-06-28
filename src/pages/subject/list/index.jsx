@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { authHeader } from '../../../helper/utils'
 import { getAllSubjects } from '../../../services/api/subject'
 import 'react-toastify/dist/ReactToastify.css'
-import { SpinnerCircularFixed } from 'spinners-react'
+import { SpinnerDotted } from 'spinners-react'
 import { Link, Redirect } from 'react-router-dom'
 
 function SubjectList() {
@@ -318,12 +318,13 @@ function SubjectList() {
         </div>
       </div>
       <div className='spinner-loading'>
-        <SpinnerCircularFixed
-          size={100}
-          thickness={200}
+        <SpinnerDotted
+          size={50}
+          thickness={150}
           color='#2986CC'
           enabled={loading}
         />
+        {loading && 'Syncing...'}
       </div>
       <ToastContainer />
     </div>

@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { authHeader } from '../../../helper/utils'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useLocation, Redirect } from 'react-router-dom'
 import { getCurrentSubject } from '../../../services/api/subject'
 function EditSubject() {
   const API_URL = process.env.REACT_APP_API_URL
@@ -27,16 +27,19 @@ function EditSubject() {
     schoolYear: ''
   })
   const currentSubject = useSelector((state) => state.subject.currentSubject)
-  const [startTime, onChangeTime] = useState('10:00')
-  const [examDate, setExamDate] = useState(new Date())
+  const { search } = useLocation()
+  const redirectTo = new URLSearchParams(search).get('redirectTo')
+  const [redirect, setRedirect] = useState(false)
+  //const [startTime, onChangeTime] = useState('10:00')
+  //const [examDate, setExamDate] = useState(new Date())
   useEffect(() => {
     if (id) dispatch(getCurrentSubject(id))
   }, [dispatch])
   useEffect(() => {
     if (currentSubject) {
       setInput({ ...input, ...currentSubject })
-      setExamDate(currentSubject.examDate)
-      onChangeTime(currentSubject.startTime)
+      //setExamDate(currentSubject.examDate)
+      //onChangeTime(currentSubject.startTime)
     }
   }, [currentSubject])
 
@@ -54,10 +57,11 @@ function EditSubject() {
   function handleChange(event) {
     switch (event.target.name) {
       case 'subjectCode':
-        setInput({
-          ...input,
-          subjectCode: event.target.value
-        })
+        if (event.target.value.length < 20)
+          setInput({
+            ...input,
+            subjectCode: event.target.value
+          })
         break
       case 'term':
         setInput({
@@ -66,137 +70,87 @@ function EditSubject() {
         })
         break
       case 'teacher':
-        setInput({
-          ...input,
-          teacher: event.target.value
-        })
+        if (event.target.value.length < 100)
+          setInput({
+            ...input,
+            teacher: event.target.value
+          })
         break
       case 'classCode':
-        setInput({
-          ...input,
-          classCode: event.target.value
-        })
+        if (event.target.value.length < 20)
+          setInput({
+            ...input,
+            classCode: event.target.value
+          })
         break
       case 'studentYear':
-        setInput({
-          ...input,
-          studentYear: event.target.value
-        })
+        if (event.target.value.length < 4)
+          setInput({
+            ...input,
+            studentYear: event.target.value
+          })
         break
       case 'educationLevel':
-        setInput({
-          ...input,
-          educationLevel: event.target.value
-        })
+        if (event.target.value.length < 20)
+          setInput({
+            ...input,
+            educationLevel: event.target.value
+          })
         break
       case 'examCode':
-        setInput({
-          ...input,
-          examCode: event.target.value
-        })
+        if (event.target.value.length < 20)
+          setInput({
+            ...input,
+            examCode: event.target.value
+          })
         break
-      case 'startTime':
-        setInput({
-          ...input,
-          startTime: event.target.value
-        })
-        break
-      case 'examTime':
-        setInput({
-          ...input,
-          examTime: event.target.value
-        })
-        break
+
       case 'name':
-        setInput({
-          ...input,
-          name: event.target.value
-        })
+        if (event.target.value.length < 100)
+          setInput({
+            ...input,
+            name: event.target.value
+          })
         break
       case 'schoolYear':
-        setInput({
-          ...input,
-          schoolYear: event.target.value
-        })
+        if (event.target.value.length < 50)
+          setInput({
+            ...input,
+            schoolYear: event.target.value
+          })
         break
-      case 'examDate':
-        setInput({
-          ...input,
-          examDate: event.target.value
-        })
-        break
+
       default:
         break
     }
-    console.log('input', input)
   }
   function validate() {
     let isValid = true
     var errs = {}
     if (!input.subjectCode) {
       isValid = false
-      errs.subjectCode = 'Không được để trống'
+      errs.subjectCode = 'This field is required'
     }
-    if (input.subjectCode) {
-      if (input.subjectCode.length > 20) {
-        isValid = false
-        errs.subjectCode = 'Phải ít hơn 20 kí tự'
-      }
-    }
+
     if (!input.teacher) {
       isValid = false
-      errs.teacher = 'Không được để trống'
-    }
-    if (input.teacher) {
-      if (input.teacher.length > 50) {
-        isValid = false
-        errs.teacher = 'Không được quá 50 kí tự'
-      }
+      errs.teacher = 'This field is required'
     }
     if (!input.classCode) {
       isValid = false
-      errs.classCode = 'Không được để trống'
+      errs.classCode = 'This field is required'
     }
-    if (input.classCode) {
-      if (input.classCode.length > 20) {
-        isValid = false
-        errs.classCode = 'Phải ít hơn 20 kí tự'
-      }
-    }
-    // if (input.examDate < new Date()) {
-    //   isValid = false
-    //   errs.examDate = 'Ngày thi không được nhỏ hơn ngày hiện tại'
-    // }
+
     if (!input.name) {
       isValid = false
-      errs.name = 'Không được để trống'
+      errs.name = 'This field is required'
     }
-    if (input.name) {
-      if (input.name.length > 100) {
-        isValid = false
-        errs.name = 'Phải ít hơn 100 kí tự'
-      }
-    }
+
     if (!input.schoolYear) {
       isValid = false
-      errs.schoolYear = 'Không được để trống'
-    }
-    if (input.schoolYear) {
-      if (input.schoolYear.length > 50) {
-        isValid = false
-        errs.schooYear = 'Phải ít hơn 50 kí tự'
-      }
-    }
-    if (!startTime) {
-      isValid = false
-      errs.startTime = 'Thời gian không hợp lệ'
-    }
-    if (!examDate) {
-      isValid = false
-      errs.examDate = 'Ngày thi không hợp lệ'
+      errs.schoolYear = 'This field is required'
     }
     setErrors(errs)
-
     return isValid
   }
   function handleSubmit(event) {
@@ -206,11 +160,7 @@ function EditSubject() {
 
     if (validate()) {
       axios
-        .put(
-          `${API_URL}/subjects/${id}`,
-          { ...input, startTime, examDate },
-          authHeader()
-        )
+        .put(`${API_URL}/subjects/${id}`, input, authHeader())
         .then((res) => {
           setInput({
             subjectCode: '',
@@ -220,12 +170,10 @@ function EditSubject() {
             studentYear: '',
             educationLevel: '',
             examCode: '',
-            examTime: 0,
             name: '',
-            schoolYear: '',
-            examDate: new Date()
+            schoolYear: ''
           })
-          toast.success('Cập nhật thành công', {
+          toast.success('Update successfully', {
             position: 'top-right',
             autoClose: 3000,
             hideProgressBar: false,
@@ -234,18 +182,24 @@ function EditSubject() {
             draggable: true,
             progress: undefined
           })
-          history.push('/subject')
+          setRedirect(true)
         })
         .catch((err) => {})
     }
   }
+  if (redirect)
+    return redirectTo ? (
+      <Redirect to={redirectTo} />
+    ) : (
+      <Redirect to='/subject' />
+    )
 
   return (
     <div className='container-fluid'>
       {/* Title */}
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
-          <h5 className='txt-dark'>Tạo môn học</h5>
+          <h5 className='txt-dark'>Update subject</h5>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
@@ -257,7 +211,7 @@ function EditSubject() {
               <a href='/subject'>Subjects</a>
             </li>
             <li className='active'>
-              <span>Update subject</span>
+              <span>{currentSubject?.name}</span>
             </li>
           </ol>
         </div>
@@ -271,14 +225,14 @@ function EditSubject() {
                   <form>
                     <div className={`form-group ${errors.name && 'has-error'}`}>
                       <label className='control-label mb-10 text-left'>
-                        Tên môn học (*)
+                        Subject name (*)
                       </label>
                       <input
                         type='text'
                         className='form-control'
                         name='name'
                         onChange={handleChange}
-                        placeholder='Nhập tên môn học'
+                        placeholder='Enter name'
                         value={input.name}
                       />
                       {errors.name && (
@@ -293,7 +247,7 @@ function EditSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Mã môn học (*)
+                        Subject code (*)
                       </label>
                       <input
                         type='text'
@@ -301,7 +255,7 @@ function EditSubject() {
                         name='subjectCode'
                         onChange={handleChange}
                         value={input.subjectCode}
-                        placeholder='Nhập mã môn học'
+                        placeholder='Enter subject code'
                       />
                       {errors.subjectCode && (
                         <div className='help-block with-errors'>
@@ -315,7 +269,7 @@ function EditSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Khóa
+                        Student year
                       </label>
                       <input
                         type='text'
@@ -323,7 +277,7 @@ function EditSubject() {
                         name='studentYear'
                         onChange={handleChange}
                         value={input.studentYear}
-                        placeholder='Nhập khóa sinh viên'
+                        placeholder='Enter student year'
                       />
                       {errors.studentYear && (
                         <div className='help-block with-errors'>
@@ -332,7 +286,7 @@ function EditSubject() {
                       )}
                     </div>
                     <div className='form-group'>
-                      <label className='control-label mb-10'>Học kì</label>
+                      <label className='control-label mb-10'>Tẻm</label>
                       <select
                         className='form-control'
                         data-placeholder='Choose a Category'
@@ -351,7 +305,7 @@ function EditSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Năm học
+                        Academic year
                       </label>
                       <input
                         type='text'
@@ -359,7 +313,7 @@ function EditSubject() {
                         name='schoolYear'
                         onChange={handleChange}
                         value={input.schoolYear}
-                        placeholder='Nhập năm học'
+                        placeholder='Enter school year'
                       />
                       {errors.schoolYear && (
                         <div className='help-block with-errors'>
@@ -373,7 +327,7 @@ function EditSubject() {
                       }`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Lớp học
+                        Class
                       </label>
                       <input
                         type='text'
@@ -381,7 +335,7 @@ function EditSubject() {
                         name='classCode'
                         onChange={handleChange}
                         value={input.classCode}
-                        placeholder='Nhập lớp học'
+                        placeholder='Enter class code'
                       />
                       {errors.classCode && (
                         <div className='help-block with-errors'>
@@ -402,7 +356,7 @@ function EditSubject() {
                         placeholder='Enter exam code'
                       />
                     </div>
-                    <div
+                    {/* <div
                       className={`form-group ${errors.examDate && 'has-error'}`}
                     >
                       <label className='control-label mb-10 text-left'>
@@ -450,12 +404,12 @@ function EditSubject() {
                         value={input.examTime}
                         placeholder='Nhập thời gian thi'
                       />
-                    </div>
+                    </div> */}
                     <div
                       className={`form-group ${errors.teacher && 'has-error'}`}
                     >
                       <label className='control-label mb-10 text-left'>
-                        Tên Giảng viên
+                        Teacher
                       </label>
                       <input
                         type='text'
@@ -463,13 +417,13 @@ function EditSubject() {
                         name='teacher'
                         onChange={handleChange}
                         value={input.teacher}
-                        placeholder='Nhập tên giảng viên'
+                        placeholder='Enter teacher name'
                       />
                     </div>
                     <div className='form-group'>
                       <label className='control-label mb-10 text-left'>
-                        Loại lớp
-                        <span className='help'> (Ví dụ: ĐHCQ, CLC)</span>
+                        Class type
+                        <span className='help'> (Example: ĐHCQ, CLC)</span>
                       </label>
                       <input
                         type='text'
@@ -477,7 +431,7 @@ function EditSubject() {
                         name='educationLevel'
                         onChange={handleChange}
                         value={input.educationLevel}
-                        placeholder='Nhập loại lớp học'
+                        placeholder='Enter class type'
                       />
                     </div>
                   </form>
@@ -486,11 +440,9 @@ function EditSubject() {
                       className='btn btn-success  mr-10'
                       onClick={handleSubmit}
                     >
-                      Cập nhập
+                      Update
                     </button>
-                    <a href={`/subject/${id}`} className='btn btn-default'>
-                      Thoát
-                    </a>
+                    <button className='btn btn-default' onClick={() => setRedirect(true)}>Cancel</button>
                   </div>
                 </div>
               </div>

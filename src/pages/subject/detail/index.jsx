@@ -3,7 +3,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { SpinnerCircularFixed } from 'spinners-react'
+import { SpinnerCircularFixed, SpinnerDotted } from 'spinners-react'
 import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
 import { getCurrentSubject } from '../../../services/api/subject'
 import { toast, ToastContainer } from 'react-toastify'
@@ -154,7 +154,13 @@ function SubjectDetail() {
   }
   const handleDelete = (e) => {
     e.preventDefault()
-
+swal({
+  title: 'Are you sure?',
+  text: 'This record and it`s details will be permanantly deleted!',
+  icon: 'warning',
+  buttons: ['Cancel', 'Yes']
+}).then(function (value) {
+  if (value) {
     axios
       .delete(`${API_URL}/subjects/${currentSubject.id}/students`, {
         data: select,
@@ -173,6 +179,7 @@ function SubjectDetail() {
           progress: undefined
         })
         setReload(!reload)
+        setSelect([])
       })
       .catch((err) => {
         toast.error(err.response.data.message, {
@@ -186,6 +193,9 @@ function SubjectDetail() {
         })
         console.log(err.response.data.message)
       })
+  }
+})
+   
   }
   return (
     <div className='container-fluid'>
@@ -307,11 +317,14 @@ function SubjectDetail() {
                 <div className='pull-left'>
                   <h6 className='panel-title txt-dark'>Students</h6>
                 </div>
-                <div></div>
+
                 <div className='pull-right button-list'>
                   {select.length > 0 && (
-                    <button class='btn btn-danger ' onClick={handleDelete}>
-                      <span class='btn-label'>
+                    <button
+                      className='btn btn-danger btn-square text-white '
+                      onClick={handleDelete}
+                    >
+                      <span className='btn-label text-white'>
                         <i class='fa fa-trash'></i>
                       </span>
                     </button>
@@ -502,12 +515,13 @@ function SubjectDetail() {
       )}
       <ToastContainer />
       <div className='spinner-loading'>
-        <SpinnerCircularFixed
-          size={100}
-          thickness={200}
+        <SpinnerDotted
+          size={50}
+          thickness={150}
           color='#2986CC'
           enabled={loading}
         />
+        {loading && 'Syncing...'}
       </div>
     </div>
   )

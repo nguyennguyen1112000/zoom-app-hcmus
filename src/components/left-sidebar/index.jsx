@@ -1,15 +1,22 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Redirect } from 'react-router-dom'
 import { userLogout } from '../../actions/auth'
-import { logOut } from '../../helper/utils'
+import { isEmbedded, logOut } from '../../helper/utils'
 function LeftSideBar() {
+  const embedded = isEmbedded()
   const user = useSelector((state) => state.auth.currentUser)
+  const dispatch = useDispatch()
+  const [redirect, setRedirect] = useState(false)
   function handleLogout() {
     const action = userLogout()
     logOut()
-    dispatchEvent(action)
+    dispatch(action)
+    setRedirect(true)
   }
+  if (redirect)
+    return embedded ? <Redirect to='/home' /> : <Redirect to='/signin' />
   return (
     <div className='fixed-sidebar-left'>
       {user.role === 'admin' && (

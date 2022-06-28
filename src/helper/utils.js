@@ -10,7 +10,7 @@ export function authHeader() {
   }
 }
 export function isEmbedded() {
-  return JSON.parse(localStorage.getItem('embedded') || 'false')
+  return localStorage.getItem('isEmbedded') ? true : false
 }
 export function getClient() {
   return JSON.parse(localStorage.getItem('client'))
