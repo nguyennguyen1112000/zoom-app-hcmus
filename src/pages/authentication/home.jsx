@@ -48,9 +48,8 @@ function Home() {
           version: '0.16.0'
         })
         console.log('App configured', configResponse)
-      } catch (error) {
-        console.log(123)
         localStorage.setItem('isEmbedded', 'true')
+      } catch (error) {
         console.log(error)
       }
       return () => {
