@@ -17,7 +17,6 @@ function Home() {
     username: '',
     password: ''
   })
-  const [codeVerifier, setCodeVerifier] = useState('')
   const [moodleLogin, setMoodleLogin] = useState(false)
   const [errors, setErrors] = useState({
     username: null,
@@ -189,7 +188,7 @@ function Home() {
     // this is not the best way to make sure > 1 instances are not registered
     console.log('In-Client OAuth flow: onAuthorized event listener added')
     zoomSdk.addEventListener('onAuthorized', (event) => {
-      const { code, state } = event
+      const { code} = event
       console.log('event', event)
       console.log('3. onAuthorized event fired.')
       console.log(
@@ -199,19 +198,20 @@ function Home() {
       console.log(
         '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
       )
-      console.log({
-        code,
-        codeVerifier: localStorage.getItem('codeVerifier'),
-        href: window.location.href
-      })
       axios
         .post(`${API_URL}/zooms/onauthorized`, {
           code,
-          codeVerifier,
+          codeVerifier: localStorage.getItem('codeVerifier'),
           href: window.location.href
         })
         .then((res) => {
-          console.log('Res', res.data)
+          localStorage.setItem("codeVerifier", null)
+          const { access_token, user } = res.data
+          localStorage.setItem('user', JSON.stringify(user))
+          localStorage.setItem('token', JSON.stringify(access_token))
+          const action = userLoginSuccess(user)
+          dispatch(action)
+          setRedirect(true)
           console.log(
             '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
           )
