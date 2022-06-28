@@ -82,7 +82,7 @@ function Home() {
       codeChallenge: codeChallenge,
       state: state
     }
-    localStorage.set('codeVerifier', codeChallenge)
+    localStorage.setItem('codeVerifier', codeChallenge)
 
     console.log(
       '2. Invoke authorize, eg zoomSdk.callZoomApi("authorize", authorizeOptions)'
@@ -201,7 +201,7 @@ function Home() {
       )
       console.log({
         code,
-        codeVerifier: localStorage.get('codeVerifier'),
+        codeVerifier: localStorage.getItem('codeVerifier'),
         href: window.location.href
       })
       axios
