@@ -82,7 +82,7 @@ function Home() {
       codeChallenge: codeChallenge,
       state: state
     }
-    setCodeVerifier(codeChallenge)
+    localStorage.set('codeVerifier', codeChallenge)
 
     console.log(
       '2. Invoke authorize, eg zoomSdk.callZoomApi("authorize", authorizeOptions)'
@@ -190,7 +190,7 @@ function Home() {
     console.log('In-Client OAuth flow: onAuthorized event listener added')
     zoomSdk.addEventListener('onAuthorized', (event) => {
       const { code, state } = event
-      console.log('code', code)
+      console.log('event', event)
       console.log('3. onAuthorized event fired.')
       console.log(
         '3a. Here is the event passed to event listener callback, with code and state: ',
@@ -201,7 +201,7 @@ function Home() {
       )
       console.log({
         code,
-        codeVerifier,
+        codeVerifier: localStorage.get('codeVerifier'),
         href: window.location.href
       })
       axios
