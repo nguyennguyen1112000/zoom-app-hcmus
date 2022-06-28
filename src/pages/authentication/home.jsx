@@ -7,9 +7,6 @@ import { Redirect } from 'react-router-dom'
 import zoomSdk from '@zoom/appssdk'
 function Home() {
   const API_URL = process.env.REACT_APP_API_URL
-  const CLIENT_ID = process.env.REACT_APP_ZOOM_CLIENT_ID
-  const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL
-
   const dispatch = useDispatch()
 
   const logIn = useSelector((state) => state.auth.isLoggedIn)
@@ -20,6 +17,7 @@ function Home() {
     username: '',
     password: ''
   })
+  const [codeVerifier, setCodeVerifier] = useState('')
   const [moodleLogin, setMoodleLogin] = useState(false)
   const [errors, setErrors] = useState({
     username: null,
@@ -84,6 +82,7 @@ function Home() {
       codeChallenge: codeChallenge,
       state: state
     }
+    setCodeVerifier(codeChallenge)
 
     console.log(
       '2. Invoke authorize, eg zoomSdk.callZoomApi("authorize", authorizeOptions)'
@@ -191,7 +190,7 @@ function Home() {
     console.log('In-Client OAuth flow: onAuthorized event listener added')
     zoomSdk.addEventListener('onAuthorized', (event) => {
       const { code, state } = event
-      console.log("code", code)
+      console.log('code', code)
       console.log('3. onAuthorized event fired.')
       console.log(
         '3a. Here is the event passed to event listener callback, with code and state: ',
@@ -200,15 +199,19 @@ function Home() {
       console.log(
         '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
       )
-
+      console.log({
+        code,
+        codeVerifier,
+        href: window.location.href
+      })
       axios
         .post(`${API_URL}/zooms/onauthorized`, {
           code,
-          state,
+          codeVerifier,
           href: window.location.href
         })
         .then((res) => {
-          console.log('Res', res)
+          console.log('Res', res.data)
           console.log(
             '4. Backend returns succesfully after exchanging code for auth token.  Go ahead and update the UI'
           )
