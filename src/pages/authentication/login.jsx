@@ -219,6 +219,18 @@ function Login() {
                   </button>
                 </>
               )}
+              <h4 className='mt-20' style={{ color: 'Highlight' }}>Install App in Zoom</h4>
+              <a
+                href='https://zoom.us/oauth/authorize?client_id=EWr_VYNfQgG6gSSPvahxqw&response_type=code&redirect_uri=https%3A%2F%2Fapi.examidentity.online%2Fzooms%2Finstall'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <img
+                  src='https://marketplacecontent.zoom.us/zoom_marketplace/img/add_to_zoom.png'
+                  height='32'
+                  alt='Add to ZOOM'
+                />
+              </a>
             </div>
           </div>
           <div className='overlay-container'>

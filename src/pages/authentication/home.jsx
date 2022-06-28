@@ -4,8 +4,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
-import { useMsal } from '@azure/msal-react'
-import { loginRequest } from '../../authConfig'
+import zoomSdk from '@zoom/appssdk'
 function Home() {
   const API_URL = process.env.REACT_APP_API_URL
   const CLIENT_ID = process.env.REACT_APP_ZOOM_CLIENT_ID
@@ -27,7 +26,75 @@ function Home() {
     password: null,
     invalidAccount: null
   })
+  const [counter, setCounter] = useState(0)
 
+  useEffect(() => {
+    async function configureSdk() {
+      // to account for the 2 hour timeout for config
+      const configTimer = setTimeout(() => {
+        setCounter(counter + 1)
+      }, 120 * 60 * 1000)
+
+      try {
+        // Configure the JS SDK, required to call JS APIs in the Zoom App
+        // These items must be selected in the Features -> Zoom App SDK -> Add APIs tool in Marketplace
+        const configResponse = await zoomSdk.config({
+          capabilities: [
+            'getMeetingContext',
+            'getSupportedJsApis',
+            'showNotification',
+            'openUrl'
+          ],
+          version: '0.16.0'
+        })
+        console.log('App configured', configResponse)
+      } catch (error) {
+        console.log(error)
+      }
+      return () => {
+        clearTimeout(configTimer)
+      }
+    }
+    configureSdk()
+  }, [counter])
+  const authorize = async () => {
+    console.log('Authorize flow begins here')
+    console.log('1. Get code challenge and state from backend . . .')
+    const resp = await fetch(`${API_URL}/zooms/authorize`)
+      .then((r) => r.json())
+      .catch((e) => {
+        console.log(e)
+      })
+
+    if (!resp || !resp.codeChallenge) {
+      console.log(
+        'Error in the authorize flow - likely an outdated user session.  Please refresh the app'
+      )
+      return
+    }
+
+    const { codeChallenge, state } = resp
+
+    console.log('1a. Code challenge from backend: ', codeChallenge)
+    console.log('1b. State from backend: ', state)
+
+    const authorizeOptions = {
+      codeChallenge: codeChallenge,
+      state: state
+    }
+
+    console.log(
+      '2. Invoke authorize, eg zoomSdk.callZoomApi("authorize", authorizeOptions)'
+    )
+    zoomSdk
+      .callZoomApi('authorize', authorizeOptions)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  }
   function handleChange(event) {
     switch (event.target.name) {
       case 'username':
@@ -106,7 +173,6 @@ function Home() {
         })
         .catch((err) => {
           // eslint-disable-next-line no-undef
-
           if (err?.response?.status === 401)
             swal(
               'Your account doest not exist. Please contact your system administrator',
@@ -126,16 +192,11 @@ function Home() {
         <div className='container' id='container'>
           <div className='form-container sign-in-container'>
             <div className='form'>
-              <h4 className='mb-20' style={{ color: 'Highlight' }}>
-                Sign in HCMUSID
-              </h4>
-              <a
-                className='btn btn-primary btn-block'
-                href={`https://zoom.us/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URL}`}
-              >
+              <h4 style={{ color: 'Highlight' }}>Sign in HCMUSID</h4>
+              <button className='btn btn-primary btn-block' onClick={authorize}>
                 <i className='fa fa-video-camera'></i> Sign in with Zoom
-              </a>
-             
+              </button>
+
               <button
                 className='btn btn-default btn-block'
                 onClick={() => setMoodleLogin(true)}

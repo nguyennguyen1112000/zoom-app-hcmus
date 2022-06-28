@@ -26,7 +26,13 @@ function VerificationCollectData() {
         // Configure the JS SDK, required to call JS APIs in the Zoom App
         // These items must be selected in the Features -> Zoom App SDK -> Add APIs tool in Marketplace
         const configResponse = await zoomSdk.config({
-          capabilities: ['getMeetingContext'],
+          capabilities: [
+            'getMeetingContext',
+            'getSupportedJsApis',
+            'showNotification',
+            'openUrl',
+
+          ],
           version: '0.16.0'
         })
         console.log('App configured', configResponse)
@@ -77,6 +83,7 @@ function VerificationCollectData() {
         console.log(e)
       })
   }, [])
+   
 
   return (
     <div className='container-fluid'>
@@ -84,7 +91,6 @@ function VerificationCollectData() {
       <div className='row heading-bg'>
         <div className='col-lg-3 col-md-4 col-sm-4 col-xs-12'>
           <h5 className='txt-dark'>Face Data</h5>
-          <button onClick={getCameraList}>Camera list</button>
         </div>
         {/* Breadcrumb */}
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
