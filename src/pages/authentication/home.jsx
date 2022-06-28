@@ -192,7 +192,7 @@ function Home() {
         <div className='container' id='container'>
           <div className='form-container sign-in-container'>
             <div className='form'>
-              <h4 style={{ color: 'Highlight' }}>Sign in HCMUSID</h4>
+              <h4 className='mb-20' style={{ color: 'Highlight' }}>Sign in HCMUSID</h4>
               <button className='btn btn-primary btn-block' onClick={authorize}>
                 <i className='fa fa-video-camera'></i> Sign in with Zoom
               </button>

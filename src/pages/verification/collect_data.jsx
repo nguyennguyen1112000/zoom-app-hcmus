@@ -31,6 +31,8 @@ function VerificationCollectData() {
             'getSupportedJsApis',
             'showNotification',
             'openUrl',
+            'authorize',
+            'onAuthorized'
 
           ],
           version: '0.16.0'
