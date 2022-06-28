@@ -57,7 +57,7 @@ function StudentVerificationS1() {
                               <h6 className='panel-title'>
                                 Your reference face image
                               </h6>
-                              {images.map((img) => (
+                              {images.slice(0,2).map((img) => (
                                 <img
                                   src={img?.fetchUrl}
                                   alt='face_recognition_image'

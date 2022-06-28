@@ -6,9 +6,9 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import axios from 'axios'
 import swal from 'sweetalert'
-import { authHeader, handleExpiredToken, tConv24 } from '../../../helper/utils'
+import { authHeader, handleExpiredToken } from '../../../helper/utils'
 import { Link } from 'react-router-dom'
-import { SpinnerCircularFixed } from 'spinners-react'
+import { SpinnerDotted } from 'spinners-react'
 
 const API_URL = process.env.REACT_APP_API_URL
 function RoomList() {
@@ -301,7 +301,7 @@ function RoomList() {
                               </td>
                               <td>{room.subject?.name}</td>
                               <td>{room.subject?.classCode}</td>
-                             
+
                               <td>{room.students?.length}</td>
                             </tr>
                           ))}
@@ -314,7 +314,15 @@ function RoomList() {
             </div>
           </div>
         </div>
-        {/* /Row */}
+        <div className='spinner-loading'>
+          <SpinnerDotted
+            size={50}
+            thickness={150}
+            color='#2986CC'
+            enabled={loading}
+          />
+          {loading && 'Importing...'}
+        </div>
       </div>
     )
   }
@@ -340,7 +348,6 @@ function RoomList() {
         <div className='row'>
           <div className='col-lg-12'>
             <div className='panel panel-default card-view'>
-             
               <div className='panel-wrapper collapse in'>
                 <div className='panel-body'>
                   <div className='table-wrap mb-0'>
@@ -351,7 +358,6 @@ function RoomList() {
                       >
                         <thead>
                           <tr>
-                            
                             <th>#</th>
 
                             <th>Room name</th>
@@ -368,7 +374,6 @@ function RoomList() {
                         <tbody>
                           {roomList?.map((room, index) => (
                             <tr>
-                              
                               <td>{index + 1}</td>
                               <td>
                                 <a href={`/room/${room.id}`}>{room.name}</a>
@@ -413,8 +418,8 @@ function RoomList() {
     )
   }
 
-  if (user.role ==="admin") return renderAdminRooms()
-  else if(user.role ==="proctor") return renderProctorRooms()
+  if (user.role === 'admin') return renderAdminRooms()
+  else if (user.role === 'proctor') return renderProctorRooms()
   else
     return (
       <div className='container-fluid'>
@@ -490,14 +495,7 @@ function RoomList() {
             </div>
           </div>
         </div>
-        <div className='spinner-loading'>
-          <SpinnerCircularFixed
-            size={100}
-            thickness={200}
-            color='#2986CC'
-            enabled={loading}
-          />
-        </div>
+
         <ToastContainer />
       </div>
     )
