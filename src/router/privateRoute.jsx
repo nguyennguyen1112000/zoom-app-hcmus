@@ -5,18 +5,11 @@ import { isEmbedded } from '../helper/utils'
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const logIn = useSelector((state) => state.auth.isLoggedIn)
-  const embedded = isEmbedded()
   return (
     <Route
       {...rest}
       render={(props) =>
-        logIn ? (
-          <Component {...rest} {...props} />
-        ) : embedded ? (
-          <Redirect to={`/home`} />
-        ) : (
-          <Redirect to={`/signin`} />
-        )
+        logIn ? <Component {...rest} {...props} /> : <Redirect to={`/home`} />
       }
     />
   )

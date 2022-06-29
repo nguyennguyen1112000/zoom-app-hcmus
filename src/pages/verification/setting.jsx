@@ -332,7 +332,7 @@ function Setting() {
                               onChange={handleChange}
                               checked={input.openCollectData}
                             />
-                            <label htmlFor='refreshToken'>
+                            <label htmlFor='openCollectData'>
                               Open collect data term
                             </label>
                           </div>
