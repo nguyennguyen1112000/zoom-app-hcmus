@@ -44,10 +44,44 @@ import CreateRoom from './pages/room/create'
 import UpdateRoom from './pages/room/update'
 import Home from './pages/authentication/home'
 import { isEmbedded } from './helper/utils'
-
+import zoomSdk from '@zoom/appssdk'
+import { useEffect, useState } from 'react'
 function App() {
   const logIn = useSelector((state) => state.auth.isLoggedIn)
+  const [counter, setCounter] = useState(0)
   const embedded = isEmbedded()
+  useEffect(() => {
+    async function configureSdk() {
+      // to account for the 2 hour timeout for config
+      const configTimer = setTimeout(() => {
+        setCounter(counter + 1)
+      }, 120 * 60 * 1000)
+
+      try {
+        // Configure the JS SDK, required to call JS APIs in the Zoom App
+        // These items must be selected in the Features -> Zoom App SDK -> Add APIs tool in Marketplace
+        const configResponse = await zoomSdk.config({
+          capabilities: [
+            'getMeetingContext',
+            'getSupportedJsApis',
+            'showNotification',
+            'openUrl',
+            'authorize',
+            'onAuthorized'
+          ],
+          version: '0.16.0'
+        })
+        console.log('App configured', configResponse)
+        localStorage.setItem('isEmbedded', 'true')
+      } catch (error) {
+        console.log(error)
+      }
+      return () => {
+        clearTimeout(configTimer)
+      }
+    }
+    configureSdk()
+  }, [counter])
   return (
     <Router>
       <Switch>
@@ -55,7 +89,12 @@ function App() {
       <LeftSideBar /> */}
         <PublicRoute restricted={true} component={Login} path='/' exact />
         <PublicRoute restricted={true} component={Login} path='/signin' exact />
-        <PublicRoute restricted={true} component={Home} path='/home' exact />
+        <PublicRoute
+          restricted={true}
+          component={() => <Home zoomSdk={zoomSdk} />}
+          path='/home'
+          exact
+        />
         {/* <PublicRoute
         restricted={false}
         component={VerificationStep1}
@@ -174,7 +213,7 @@ function App() {
               exact
             />
             <PrivateRoute
-              component={RoomSession}
+              component={() => <RoomSession zoomSdk={zoomSdk} />}
               path='/identity/sessions-room'
               exact
             />

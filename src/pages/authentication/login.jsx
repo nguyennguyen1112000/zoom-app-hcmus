@@ -6,6 +6,7 @@ import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../authConfig'
+import { SpinnerDotted } from 'spinners-react'
 function Login() {
   const { instance } = useMsal()
   const API_URL = process.env.REACT_APP_API_URL
@@ -13,7 +14,7 @@ function Login() {
   const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL
 
   const dispatch = useDispatch()
-
+  const [loading, setLoading] = useState(false)
   const logIn = useSelector((state) => state.auth.isLoggedIn)
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
@@ -32,11 +33,13 @@ function Login() {
     instance
       .loginPopup(loginRequest)
       .then((result) => {
+        setLoading(true)
         axios
           .post(`${API_URL}/auth/login/microsoft`, {
             accessToken: result.accessToken
           })
           .then((res) => {
+            setLoading(false)
             const { access_token, user } = res.data
             localStorage.setItem('user', JSON.stringify(user))
             localStorage.setItem('token', JSON.stringify(access_token))
@@ -45,6 +48,7 @@ function Login() {
             setRedirect(true)
           })
           .catch((err) => {
+            setLoading(false)
             console.log(err)
             if (err?.response?.status === 401)
               swal(
@@ -99,9 +103,11 @@ function Login() {
   function handleLoginMoodle(event) {
     event.preventDefault()
     if (validate()) {
+      setLoading(true)
       axios
         .post(`${API_URL}/auth/login/moodle`, input)
         .then((res) => {
+          setLoading(false)
           setInput({
             username: '',
             password: ''
@@ -115,6 +121,7 @@ function Login() {
           setRedirect(true)
         })
         .catch((err) => {
+          setLoading(false)
           setErrors({
             ...errors,
             invalidAccount: 'Invalid username or password'
@@ -246,6 +253,15 @@ function Login() {
               </div>
             </div>
           </div>
+        </div>
+        <div className='spinner-loading'>
+          <SpinnerDotted
+            size={50}
+            thickness={100}
+            color='#2986CC'
+            enabled={loading}
+          />
+          {loading && 'Loading...'}
         </div>
       </div>
       <style

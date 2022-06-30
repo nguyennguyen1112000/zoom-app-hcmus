@@ -23,7 +23,6 @@ function StudentList() {
   useEffect(() => {
     $('#datable_1').DataTable()
   }, [studentList, reload])
-
   const API_URL = process.env.REACT_APP_API_URL
   if (user?.role !== 'admin') return <Redirect to='/room' />
   /********************** Handle delete students *********************/
@@ -115,6 +114,7 @@ function StudentList() {
           draggable: true,
           progress: undefined
         })
+        setReload(true)
       })
       .catch((err) => {
         e.target.value = null
@@ -265,7 +265,7 @@ function StudentList() {
                               {student.firstName + ' ' + student.lastName}
                             </td>
                             <td>{student.email}</td>
-                            <td>
+                            <td>{student.gender}
                               {student.gender === true && 'Male'}
                               {student.gender === false && 'Female'}
                               {student.gender === null && '--'}

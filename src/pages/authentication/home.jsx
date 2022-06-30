@@ -4,9 +4,9 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
-import zoomSdk from '@zoom/appssdk'
 import { SpinnerDotted } from 'spinners-react'
-function Home() {
+function Home({ zoomSdk }) {
+  console.log("ZoomSdk", zoomSdk)
   const API_URL = process.env.REACT_APP_API_URL
   const dispatch = useDispatch()
   const logIn = useSelector((state) => state.auth.isLoggedIn)
@@ -23,40 +23,7 @@ function Home() {
     password: null,
     invalidAccount: null
   })
-  const [counter, setCounter] = useState(0)
   const [loading, setLoading] = useState(false)
-  useEffect(() => {
-    async function configureSdk() {
-      // to account for the 2 hour timeout for config
-      const configTimer = setTimeout(() => {
-        setCounter(counter + 1)
-      }, 120 * 60 * 1000)
-
-      try {
-        // Configure the JS SDK, required to call JS APIs in the Zoom App
-        // These items must be selected in the Features -> Zoom App SDK -> Add APIs tool in Marketplace
-        const configResponse = await zoomSdk.config({
-          capabilities: [
-            'getMeetingContext',
-            'getSupportedJsApis',
-            'showNotification',
-            'openUrl',
-            'authorize',
-            'onAuthorized'
-          ],
-          version: '0.16.0'
-        })
-        console.log('App configured', configResponse)
-        localStorage.setItem('isEmbedded', 'true')
-      } catch (error) {
-        console.log(error)
-      }
-      return () => {
-        clearTimeout(configTimer)
-      }
-    }
-    configureSdk()
-  }, [counter])
   const authorize = async () => {
     console.log('Authorize flow begins here')
     console.log('1. Get code challenge and state from backend . . .')
@@ -134,9 +101,11 @@ function Home() {
   function handleLoginMoodle(event) {
     event.preventDefault()
     if (validate()) {
+      setLoading(true)
       axios
         .post(`${API_URL}/auth/login/moodle`, input)
         .then((res) => {
+          setLoading(false)
           setInput({
             username: '',
             password: ''
@@ -150,6 +119,7 @@ function Home() {
           setRedirect(true)
         })
         .catch((err) => {
+          setLoading(false)
           setErrors({
             ...errors,
             invalidAccount: 'Invalid username or password'
@@ -189,6 +159,7 @@ function Home() {
     // this is not the best way to make sure > 1 instances are not registered
     console.log('In-Client OAuth flow: onAuthorized event listener added')
     zoomSdk.addEventListener('onAuthorized', (event) => {
+      setLoading(true)
       const { code } = event
       console.log('event', event)
       console.log('3. onAuthorized event fired.')
@@ -199,7 +170,6 @@ function Home() {
       console.log(
         '4. POST the code, state to backend to exchange server-side for a token.  Refer to backend logs now . . .'
       )
-      setLoading(true)
       axios
         .post(`${API_URL}/zooms/onauthorized`, {
           code,
@@ -305,7 +275,7 @@ function Home() {
             color='#2986CC'
             enabled={loading}
           />
-          {loading && "Loading..."}
+          {loading && 'Loading...'}
         </div>
       </div>
       <style

@@ -3,18 +3,13 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
-import {
-  authHeader,
-  formatDate,
-  formatTime,
-  tConv24
-} from '../../../helper/utils'
+import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
 import 'react-toastify/dist/ReactToastify.css'
 
 import { getRooms } from '../../../services/api/room'
 import { SpinnerCircularFixed } from 'spinners-react'
 
-function RoomSession() {
+function RoomSession({ zoomSdk }) {
   const dispatch = useDispatch()
   const roomList = useSelector((state) => state.room.roomList)
 
@@ -73,6 +68,10 @@ function RoomSession() {
         })
         setLoading(false)
       })
+  }
+  const trackParticipants = async () => {
+    const runningContext = await zoomSdk.getRunningContext()
+    console.log(runningContext)
   }
   return (
     <div className='container-fluid'>
@@ -218,6 +217,14 @@ function RoomSession() {
       <div className='row'>
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
+            <div className='panel-heading'>
+              <div className='pull-right button-list'>
+                <button class='btn btn-primary' onClick={trackParticipants}>
+                  Track join status of participants
+                </button>
+              </div>
+              <div className='clearfix' />
+            </div>
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
                 <div className='table-wrap'>

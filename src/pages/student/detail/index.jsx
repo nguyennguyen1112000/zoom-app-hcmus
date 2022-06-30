@@ -463,7 +463,7 @@ function StudentDetail() {
                                   <i className='zmdi zmdi-folder' /> Student ID
                                 </a>
                               </li>
-                              <li
+                              {/* <li
                                 className={
                                   currentFolder === 'id_card' ? 'active' : ''
                                 }
@@ -475,7 +475,7 @@ function StudentDetail() {
                                 >
                                   <i className='zmdi zmdi-folder' /> CMND/ CCCD
                                 </a>
-                              </li>
+                              </li> */}
                             </ul>
 
                             <div className='clearfix' />
@@ -521,7 +521,7 @@ function StudentDetail() {
                                             onClick={handleDeleteImage}
                                           >
                                             <i className='fa fa-trash'></i>
-                                            Delete image{' '}
+                                            Delete
                                           </button>
                                         </div>
                                       </a>
