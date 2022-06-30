@@ -15,8 +15,9 @@ function LeftSideBar() {
     dispatch(action)
     setRedirect(true)
   }
+  console.log("1111",embedded)
   if (redirect)
-    return embedded ? <Redirect to='/home' /> : <Redirect to='/signin' />
+    return isEmbedded() ? <Redirect to='/home' /> : <Redirect to='/signin' />
   return (
     <div className='fixed-sidebar-left'>
       {user.role === 'admin' && (

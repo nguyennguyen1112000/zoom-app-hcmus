@@ -25398,3 +25398,7 @@ ul.inbox-nav li a:focus {
 .text-white{
   color: #fff !important;
 }
+
+.dark-row{
+  background-color: rgba(224, 224, 224, 0.5) !important;
+}

@@ -6,7 +6,6 @@ import { userLoginSuccess } from '../../actions/auth'
 import { Redirect } from 'react-router-dom'
 import { SpinnerDotted } from 'spinners-react'
 function Home({ zoomSdk }) {
-  console.log("ZoomSdk", zoomSdk)
   const API_URL = process.env.REACT_APP_API_URL
   const dispatch = useDispatch()
   const logIn = useSelector((state) => state.auth.isLoggedIn)

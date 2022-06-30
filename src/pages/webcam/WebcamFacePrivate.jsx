@@ -7,6 +7,7 @@ import Webcam from 'react-webcam'
 import { addCaptureImage } from '../../actions/client'
 import { authHeader } from '../../helper/utils'
 import { SpinnerCircularFixed } from 'spinners-react'
+import Spinner from '../../components/spinner/dotted'
 const videoConstraints = {
   width: 640,
   height: 480,
@@ -139,12 +140,7 @@ export const WebcamFacePrivate = (props) => {
         )}
       </div>
       <div className='spinner-loading'>
-        <SpinnerCircularFixed
-          size={100}
-          thickness={200}
-          color='#2986CC'
-          enabled={loading}
-        />
+       <Spinner loading={loading} text={"Uploading..."}/>
       </div>
       <ToastContainer />
     </>

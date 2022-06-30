@@ -4,14 +4,14 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { SpinnerCircularFixed } from 'spinners-react'
-import { authHeader, formatTime } from '../../../helper/utils'
+import { authHeader, formatTime, formatTimeWithoutDate } from '../../../helper/utils'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getRoomIdentitySession } from '../../../services/api/session'
 import { getRoom } from '../../../services/api/room'
 import socketIOClient from 'socket.io-client'
 const API_URL = process.env.REACT_APP_API_URL
-function SessionRoomDetail() {
+function SessionRoomDetail({zoomSdk}) {
   const socketRef = useRef()
   const dispatch = useDispatch()
   const [reload, setReload] = useState(false)
@@ -209,11 +209,11 @@ function SessionRoomDetail() {
                           <th>#</th>
 
                           <th>Student</th>
-
-                          <th>Started at</th>
+                          <th>Checked-in at</th>
+                          <th>Joined room at</th>
                           <th>Duration</th>
                           <th>Credibility</th>
-                          <th>Status</th>
+                          <th>Check-in status</th>
                           <th>Document type</th>
                           <th>Failed times</th>
                           <th>Flag</th>
@@ -223,7 +223,10 @@ function SessionRoomDetail() {
 
                       <tbody>
                         {sessions?.map((session, index) => (
-                          <tr key={index}>
+                          <tr
+                            key={index}
+                            className={!session.joinedRoom ? 'dark-row' : ''}
+                          >
                             <td>{index + 1}</td>
 
                             <td>
@@ -237,6 +240,11 @@ function SessionRoomDetail() {
                             <td>
                               {session.created_at
                                 ? formatTime(new Date(session.created_at))
+                                : '--'}
+                            </td>
+                            <td>
+                              {session.joinedRoomTime
+                                ? formatTimeWithoutDate(new Date(session.joinedRoomTime))
                                 : '--'}
                             </td>
                             <td>

@@ -251,8 +251,9 @@ function SubjectList() {
                             <th>Name </th>
                             <th>Term/School year</th>
                             <th>Import type</th>
-
                             <th>Student year</th>
+                            <th>Number of rooms</th>
+                            <th>Number of students</th>
                           </tr>
                         </thead>
 
@@ -305,6 +306,8 @@ function SubjectList() {
                               </td>
                               <td>{subject.examTime}</td> */}
                               <td>{subject.studentYear}</td>
+                              <td>{subject.numGroups}</td>
+                              <td>{subject.students?.length}</td>
                             </tr>
                           ))}
                         </tbody>

@@ -497,7 +497,11 @@ function StudentDetail() {
                                     key={index}
                                   >
                                     <div className='file'>
-                                      <a href={image.imageUrl}>
+                                      <a
+                                        href={image.imageUrl}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                      >
                                         <div
                                           className='image'
                                           style={{
@@ -520,7 +524,7 @@ function StudentDetail() {
                                             className='btn btn-danger'
                                             onClick={handleDeleteImage}
                                           >
-                                            <i className='fa fa-trash'></i>
+                                            <i className='fa fa-trash'></i>{' '}
                                             Delete
                                           </button>
                                         </div>

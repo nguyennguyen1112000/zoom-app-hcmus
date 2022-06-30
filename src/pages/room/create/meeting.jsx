@@ -1,7 +1,7 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import TimePicker from 'react-time-picker'
 import DatePicker from 'react-date-picker'
 import swal from 'sweetalert'
@@ -13,9 +13,11 @@ import {
   handleExpiredToken,
   roundToNearestHour
 } from '../../../helper/utils'
+import { getAllSubjects } from '../../../services/api/subject'
 function CreateMeeting() {
   const API_URL = process.env.REACT_APP_API_URL
   const defaultPassword = generatePassword()
+  const dispatch = useDispatch()
   const [input, setInput] = useState({
     agenda: '',
     default_password: false,
@@ -55,7 +57,11 @@ function CreateMeeting() {
       roundToNearestHour(new Date()).getMinutes()
   )
   const [startDate, onChangeDate] = useState(roundToNearestHour(new Date()))
-  const [duration, setDuration] = useState({ hours: 1, minutes: 0 })
+  const [duration, setDuration] = useState({ hours: 0, minutes: 30 })
+  useEffect(() => {
+    dispatch(getAllSubjects())
+  }, [dispatch])
+  const subjects = useSelector((state) => state.subject.subjects)
   function handleChange(event) {
     switch (event.target.name) {
       case 'agenda':
@@ -114,11 +120,15 @@ function CreateMeeting() {
         })
         break
       case 'waiting_room':
-        console.log('event.target.checked', event.target.checked)
-
         setInput({
           ...input,
           settings: { ...input.settings, waiting_room: event.target.checked }
+        })
+        break
+      case 'subjectId':
+        setInput({
+          ...input,
+          subjectId: { ...input, subjectId: event.target.value }
         })
         break
       case 'use_pmi':
@@ -196,10 +206,7 @@ function CreateMeeting() {
         errs.classCode = 'Phải ít hơn 20 kí tự'
       }
     }
-    // if (input.examDate < new Date()) {
-    //   isValid = false
-    //   errs.examDate = 'Ngày thi không được nhỏ hơn ngày hiện tại'
-    // }
+
     if (!input.name) {
       isValid = false
       errs.name = 'Không được để trống'
@@ -227,14 +234,18 @@ function CreateMeeting() {
   }
   function handleSubmit(event) {
     event.preventDefault()
-    console.log(input, startDate, startTime)
     const date = new Date(startDate)
     date.setHours(parseInt(startTime.split(':')[0]))
     date.setMinutes(parseInt(startTime.split(':')[1]))
     axios
       .post(
         `${API_URL}/zooms/meeting`,
-        input,
+        {
+          ...input,
+          start_time: new Date(
+            date.toString().split('GMT')[0] + ' UTC'
+          ).toISOString()
+        },
         authHeader()
       )
       .then((res) => {
@@ -254,9 +265,7 @@ function CreateMeeting() {
             auto_recording: ''
             //alternative_hosts: ''
           },
-          start_time: new Date(
-            date.toString().split('GMT')[0] + ' UTC'
-          ).toISOString(),
+          start_time: new Date(),
           timezone: 'Asia/Vietnam',
           topic: 'My Meeting',
           type: 2
@@ -446,6 +455,23 @@ function CreateMeeting() {
                           <label htmlFor='pmi'>Personal Meeting </label>
                         </div>
                       </div>
+                    </div>
+                    <div className='form-group'>
+                      <label className='control-label mb-10'>Subject</label>
+                      <select
+                        className='form-control'
+                        data-placeholder='Choose a subject'
+                        name='subjectId'
+                        onChange={handleChange}
+                        value={input.subjectId}
+                      >
+                        <option value={null}>----Select subject ----</option>
+                        {subjects?.map((subject, index) => (
+                          <option key={index} value={subject.id}>
+                            {subject.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className='form-group mb-30'>

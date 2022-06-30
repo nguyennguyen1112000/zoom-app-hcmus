@@ -36,7 +36,7 @@ export const getStudent = (studentId) => {
         dispatch(action)
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)
@@ -52,12 +52,12 @@ export const getIdentityResults = (roomId) => {
       .get(`${API_URL}/identity-record/room/${roomId}/me`, authHeader())
       .then((res) => {
         const records = res.data
-        console.log("!!!",records);
+        console.log('!!!', records)
         const action = getMyIdentityResults(records)
         dispatch(action)
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)

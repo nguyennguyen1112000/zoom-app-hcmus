@@ -1,19 +1,15 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import DatePicker from 'react-date-picker'
-
-import TimePicker from 'react-time-picker'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { authHeader } from '../../../helper/utils'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useHistory, useLocation, Redirect } from 'react-router-dom'
+import { useParams, useLocation, Redirect } from 'react-router-dom'
 import { getCurrentSubject } from '../../../services/api/subject'
 function EditSubject() {
   const API_URL = process.env.REACT_APP_API_URL
   const dispatch = useDispatch()
   let { id } = useParams()
-  const history = useHistory()
   const [input, setInput] = useState({
     subjectCode: '',
     term: 1,
@@ -24,7 +20,8 @@ function EditSubject() {
     examCode: '',
     examTime: 0,
     name: '',
-    schoolYear: ''
+    schoolYear: '',
+    numGroups: 1
   })
   const currentSubject = useSelector((state) => state.subject.currentSubject)
   const { search } = useLocation()
@@ -42,7 +39,6 @@ function EditSubject() {
       //onChangeTime(currentSubject.startTime)
     }
   }, [currentSubject])
-
   const [errors, setErrors] = useState({
     subjectCode: null,
     term: null,
@@ -119,7 +115,11 @@ function EditSubject() {
             schoolYear: event.target.value
           })
         break
-
+      case 'numGroups':
+        setInput({
+          ...input,
+          numGroups: event.target.value
+        })
       default:
         break
     }
@@ -171,7 +171,8 @@ function EditSubject() {
             educationLevel: '',
             examCode: '',
             name: '',
-            schoolYear: ''
+            schoolYear: '',
+            numGroups: 1
           })
           toast.success('Update successfully', {
             position: 'top-right',
@@ -286,7 +287,7 @@ function EditSubject() {
                       )}
                     </div>
                     <div className='form-group'>
-                      <label className='control-label mb-10'>Tẻm</label>
+                      <label className='control-label mb-10'>Term</label>
                       <select
                         className='form-control'
                         data-placeholder='Choose a Category'
@@ -354,6 +355,19 @@ function EditSubject() {
                         onChange={handleChange}
                         value={input.examCode}
                         placeholder='Enter exam code'
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <label className='control-label mb-10'>
+                        Number of rooms
+                      </label>
+                      <input
+                        className='form-control'
+                        value={input.numGroups}
+                        name='numGroups'
+                        onChange={handleChange}
+                        type='number'
+                        min={1}
                       />
                     </div>
                     {/* <div
@@ -442,7 +456,12 @@ function EditSubject() {
                     >
                       Update
                     </button>
-                    <button className='btn btn-default' onClick={() => setRedirect(true)}>Cancel</button>
+                    <button
+                      className='btn btn-default'
+                      onClick={() => setRedirect(true)}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
               </div>

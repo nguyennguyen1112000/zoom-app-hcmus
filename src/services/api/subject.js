@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { userLogout } from '../../actions/auth'
 import { getSubject, getSubjects } from '../../actions/subject'
-import { authHeader, logOut } from '../../helper/utils';
+import { authHeader, logOut } from '../../helper/utils'
 
 const API_URL = process.env.REACT_APP_API_URL
 export const getAllSubjects = () => {
@@ -13,7 +13,7 @@ export const getAllSubjects = () => {
         dispatch(action)
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)
@@ -32,7 +32,7 @@ export const getCurrentSubject = (id) => {
         dispatch(action)
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)

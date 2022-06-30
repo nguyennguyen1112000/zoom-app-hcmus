@@ -69,7 +69,12 @@ export function formatTime(date) {
     (date.getMonth() + 1)
   ).slice(-2)}/${date.getFullYear()} `
 }
-
+export function formatTimeWithoutDate(date) {
+  const time = `${('0' + date.getHours()).slice(-2)}:${(
+    '0' + date.getMinutes()
+  ).slice(-2)}`
+  return tConv24(time)
+}
 export const findDaysDifferent = (fromDate) => {
   let CreatedDate = new Date(fromDate)
   let today = new Date()

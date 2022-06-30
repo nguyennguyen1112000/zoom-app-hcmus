@@ -43,22 +43,22 @@ export const getMyRooms = () => {
 }
 export const getRoom = (roomId, role) => {
   return (dispatch) => {
-    if(role !== "student")
-    return axios
-      .get(`${API_URL}/rooms/${roomId}`, authHeader())
-      .then((res) => {
-        const room = res.data
-        const action = getOneRoom(room)
-        dispatch(action)
-      })
-      .catch((err) => {
-        if (err?.response?.status === 401) {
-          const logoutAction = userLogout()
-          logOut()
-          dispatch(logoutAction)
-        }
-        console.log('Fail to get data')
-      })
+    if (role !== 'student')
+      return axios
+        .get(`${API_URL}/rooms/${roomId}`, authHeader())
+        .then((res) => {
+          const room = res.data
+          const action = getOneRoom(room)
+          dispatch(action)
+        })
+        .catch((err) => {
+          if (err?.response?.status === 401) {
+            const logoutAction = userLogout()
+            logOut()
+            dispatch(logoutAction)
+          }
+          console.log('Fail to get data')
+        })
   }
 }
 
@@ -72,7 +72,7 @@ export const getRoom = (roomId, role) => {
 //         dispatch(action)
 //       })
 //       .catch((err) => {
-//         if (err.response.status === 401) {
+//         if (err?.response?.status === 401) {
 //           const logoutAction = userLogout()
 //           logOut()
 //           dispatch(logoutAction)
@@ -90,7 +90,7 @@ export const getRoom = (roomId, role) => {
 //         console.log('Add user to class successfully')
 //       })
 //       .catch((err) => {
-//         if (err.response.status === 401) {
+//         if (err?.response?.status === 401) {
 //           const logoutAction = userLogout()
 //           logOut()
 //           dispatch(logoutAction)
@@ -110,7 +110,7 @@ export const getRoom = (roomId, role) => {
 //         dispatch(action)
 //       })
 //       .catch((err) => {
-//         if (err.response.status === 401) {
+//         if (err?.response?.status === 401) {
 //           const logoutAction = userLogout()
 //           logOut()
 //           dispatch(logoutAction)

@@ -3,12 +3,12 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { SpinnerCircularFixed, SpinnerDotted } from 'spinners-react'
 import { authHeader, formatDate, tConv24 } from '../../../helper/utils'
 import { getCurrentSubject } from '../../../services/api/subject'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Link } from 'react-router-dom'
+import Spinner from '../../../components/spinner/dotted'
 const API_URL = process.env.REACT_APP_API_URL
 function SubjectDetail() {
   const user = useSelector((state) => state.auth.currentUser)
@@ -19,6 +19,7 @@ function SubjectDetail() {
   const currentSubject = useSelector((state) => state.subject.currentSubject)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchStudent, setSearchStudent] = useState(null)
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm)
@@ -182,7 +183,7 @@ swal({
         setSelect([])
       })
       .catch((err) => {
-        toast.error(err.response.data.message, {
+        toast.error(err?.response?.data?.message, {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
@@ -191,7 +192,6 @@ swal({
           draggable: true,
           progress: undefined
         })
-        console.log(err.response.data.message)
       })
   }
 })
@@ -283,6 +283,10 @@ swal({
                       <tr>
                         <td className='table-title-cell'>Exam code</td>
                         <td colSpan={7}> {currentSubject?.examCode}</td>
+                      </tr>
+                      <tr>
+                        <td className='table-title-cell'>Number of rooms</td>
+                        <td colSpan={7}> {currentSubject?.numGroups}</td>
                       </tr>
                       {/* <tr>
                         <td className='table-title-cell'>Giờ thi</td>
@@ -514,15 +518,7 @@ swal({
         </div>
       )}
       <ToastContainer />
-      <div className='spinner-loading'>
-        <SpinnerDotted
-          size={50}
-          thickness={150}
-          color='#2986CC'
-          enabled={loading}
-        />
-        {loading && 'Syncing...'}
-      </div>
+      <Spinner loading={loading} text={'Syncing...'} />
     </div>
   )
 }

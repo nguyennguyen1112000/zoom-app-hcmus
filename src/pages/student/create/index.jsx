@@ -181,10 +181,10 @@ function CreateStudent() {
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='index.html'>HCMUSID</a>
+              <a href='/'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>Students</a>
+              <a href='/student'>Students</a>
             </li>
             <li className='active'>
               <span>Create new student</span>

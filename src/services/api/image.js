@@ -19,7 +19,7 @@ export const uploadImage = (file, student, type) => {
         }
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)
@@ -42,7 +42,7 @@ export const deleteImage = (imageId) => {
         }
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)
@@ -63,7 +63,7 @@ export const getMyImages = () => {
         }
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           const logoutAction = userLogout()
           logOut()
           dispatch(logoutAction)

@@ -34,6 +34,7 @@ function RoomDetail() {
   const [examDate, setExamDate] = useState(new Date())
   const [searchTerm, setSearchTerm] = useState('')
   const [searchProctor, setSearchProctor] = useState(null)
+  const [group, setGroup] = useState(null)
   const [input, setInput] = useState({
     checkInConfigType: 'manual',
     checkInStartTime: startTime,
@@ -63,7 +64,6 @@ function RoomDetail() {
       })
       setStudentChoice(students)
     }
-    
   }, [currentSubject])
   useEffect(() => {
     if (currentRoom) {
@@ -136,10 +136,34 @@ function RoomDetail() {
 
   /*************Handle add students ********** */
   const handleAddStudents = () => {
+    if (!group) {
+      toast.error('Please choose group of student', {
+        position: 'top-right',
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      })
+      return
+    }
+    const numGroups = currentRoom?.subject?.numGroups
+    
+    const students = currentRoom?.subject?.students
+    let studentIds = []
+    if (students) studentIds = students.map((s) => s.id).sort((x, y) => x - y)
+    Array.prototype.chunk = function (n) {
+      if (!this.length) {
+        return []
+      }
+      return [this.slice(0, n)].concat(this.slice(n).chunk(n))
+    }
+    const R = studentIds.chunk(students.length / numGroups)
     axios
       .post(
         `${API_URL}/rooms/${currentRoom?.id}/students`,
-        { studentIds: selectStudents },
+        { studentIds: R[group] },
         authHeader()
       )
       .then((res) => {
@@ -356,6 +380,48 @@ function RoomDetail() {
       })
   }
 
+  const renderOptionStudent = () => {
+    const numGroups = currentRoom?.subject?.numGroups
+    const students = currentRoom?.subject?.students
+    let studentIds = []
+    if (students)
+      studentIds = students.map((s) => s.studentId).sort((x, y) => x - y)
+    var R = []
+    let chunkSize = 0
+    Array.prototype.chunk = function (n) {
+      if (!this.length) {
+        return []
+      }
+      return [this.slice(0, n)].concat(this.slice(n).chunk(n))
+    }
+
+    if (students && numGroups) {
+      chunkSize = students.length / numGroups
+      R = studentIds.chunk(chunkSize)
+    }
+    let options = []
+    for (let i = 0; i < numGroups; i++) {
+      options.push(
+        <option key={i} value={i}>
+          Group {i + 1}{' '}
+          {R.length > 0 ? `(${R[i][0]} - ${R[i][R[i].length - 1]})` : ''}
+        </option>
+      )
+    }
+    return (
+      <div className='form-group'>
+        <select
+          className='form-control'
+          data-placeholder='Choose a subject'
+          onChange={(e) => setGroup(e.target.value)}
+          value={group}
+        >
+          <option value={null}>----Select group of student ----</option>
+          {numGroups > 1 ? options : ''}
+        </select>
+      </div>
+    )
+  }
 
   const handleCheckIn = (e) => {
     e.preventDefault()
@@ -698,17 +764,19 @@ function RoomDetail() {
                 <div className='pull-left'>
                   <h6 className='panel-title txt-dark'>Room Information </h6>
                 </div>
-                {user?.role ==="admin" &&<div className='pull-right'>
-                  <Link
-                    to={`/room/update/${
-                      currentRoom?.id
-                    }?redirectTo=${`/room/${currentRoom?.id}`}`}
-                  >
-                    <button className='btn btn-default btn-icon-anim btn-square edit-button'>
-                      <i className='fa fa-pencil' />
-                    </button>
-                  </Link>
-                </div>}
+                {user?.role === 'admin' && (
+                  <div className='pull-right'>
+                    <Link
+                      to={`/room/update/${
+                        currentRoom?.id
+                      }?redirectTo=${`/room/${currentRoom?.id}`}`}
+                    >
+                      <button className='btn btn-default btn-icon-anim btn-square edit-button'>
+                        <i className='fa fa-pencil' />
+                      </button>
+                    </Link>
+                  </div>
+                )}
               </div>
               <div className='panel-wrapper collapse in'>
                 <div className='panel-body'>
@@ -1082,7 +1150,7 @@ function RoomDetail() {
                     </button>
                     <div className='modal' id='addStudentModal'>
                       <div className='modal-dialog modal-dialog-custom'>
-                        <div className='modal-content modal-content-custom'>
+                        <div className='modal-content'>
                           <div className='modal-header'>
                             <button
                               type='button'
@@ -1097,8 +1165,8 @@ function RoomDetail() {
                               Choose students from {currentSubject?.name}
                             </h5>
                           </div>
-                          <div className='modal-body modal-body-custom'>
-                            <div className='table-wrap'>
+                          <div className='modal-body'>
+                            {/* <div className='table-wrap'>
                               <div className='table-responsive'>
                                 <table className='table table-hover display  pb-30'>
                                   <thead>
@@ -1145,7 +1213,8 @@ function RoomDetail() {
                                   </tbody>
                                 </table>
                               </div>
-                            </div>
+                            </div> */}
+                            {renderOptionStudent()}
                           </div>
                           <div className='modal-footer'>
                             <button
