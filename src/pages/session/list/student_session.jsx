@@ -398,7 +398,7 @@ function StudentSessionDetail({ zoomSdk }) {
                               )}
                             </td>
                             <td>
-                              {session.faceImage && (
+                              {session.faceImage && !embedded && (
                                 <a
                                   href={`${session?.faceImage.imageUrl}`}
                                   target='_blank'
@@ -406,6 +406,24 @@ function StudentSessionDetail({ zoomSdk }) {
                                 >
                                   <img
                                     src={session?.faceImage.fetchUrl}
+                                    alt='face_recognition_image'
+                                    width={80}
+                                    referrerpolicy='no-referrer'
+                                  />
+                                </a>
+                              )}
+                              {session?.cardImage && embedded && (
+                                <a
+                                  href={`${session?.faceImage?.imageUrl}`}
+                                  onClick={async (e) => {
+                                    e.preventDefault()
+                                    await zoomSdk.openUrl({
+                                      url: session?.faceImage?.imageUrl
+                                    })
+                                  }}
+                                >
+                                  <img
+                                    src={session?.faceImage?.fetchUrl}
                                     alt='face_recognition_image'
                                     width={80}
                                     referrerpolicy='no-referrer'
@@ -422,7 +440,7 @@ function StudentSessionDetail({ zoomSdk }) {
                                 >
                                   <img
                                     src={session?.cardImage.fetchUrl}
-                                    alt='face_recognition_image'
+                                    alt='card_image'
                                     width={80}
                                     referrerpolicy='no-referrer'
                                   />
@@ -440,7 +458,7 @@ function StudentSessionDetail({ zoomSdk }) {
                                 >
                                   <img
                                     src={session?.cardImage?.fetchUrl}
-                                    alt='face_recognition_image'
+                                    alt='card_image'
                                     width={80}
                                     referrerpolicy='no-referrer'
                                   />

@@ -46,6 +46,7 @@ import Home from './pages/authentication/home'
 import { isEmbedded } from './helper/utils'
 import zoomSdk from '@zoom/appssdk'
 import { useEffect, useState } from 'react'
+import SessionVerify from './pages/authentication/session'
 function App() {
   const logIn = useSelector((state) => state.auth.isLoggedIn)
   const [counter, setCounter] = useState(0)
@@ -90,6 +91,7 @@ function App() {
       <LeftSideBar /> */}
         <PublicRoute restricted={true} component={Login} path='/' exact />
         <PublicRoute restricted={true} component={Login} path='/signin' exact />
+        <PublicRoute restricted={false} component={SessionVerify} path='/auth/verify' exact />
         <PublicRoute
           restricted={true}
           component={() => <Home zoomSdk={zoomSdk} />}
@@ -204,7 +206,7 @@ function App() {
             <PrivateRoute component={ProctorList} path='/proctor' exact />
 
             <PrivateRoute
-              component={VerificationCollectData}
+              component={() => <VerificationCollectData zoomSdk={zoomSdk}/>}
               path='/verify/data'
               exact
             />

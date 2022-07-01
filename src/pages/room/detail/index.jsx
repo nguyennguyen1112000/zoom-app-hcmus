@@ -2,7 +2,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { authHeader, formatDate, formatTime } from '../../../helper/utils'
+import {
+  authHeader,
+  formatDate,
+  formatTime,
+  isEmbedded
+} from '../../../helper/utils'
 import { getRoom } from '../../../services/api/room'
 import { getIdentityResults } from '../../../services/api/student'
 import { toast, ToastContainer } from 'react-toastify'
@@ -19,6 +24,7 @@ import { Link } from 'react-router-dom'
 const API_URL = process.env.REACT_APP_API_URL
 function RoomDetail() {
   const dispatch = useDispatch()
+  const embedded = isEmbedded()
   const [mode, setMode] = useState({ checkInConfig: false })
   let { id } = useParams()
   const user = useSelector((state) => state.auth.currentUser)
@@ -149,7 +155,7 @@ function RoomDetail() {
       return
     }
     const numGroups = currentRoom?.subject?.numGroups
-    
+
     const students = currentRoom?.subject?.students
     let studentIds = []
     if (students) studentIds = students.map((s) => s.id).sort((x, y) => x - y)
