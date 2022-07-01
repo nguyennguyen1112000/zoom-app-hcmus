@@ -3,19 +3,15 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
-import {
-  authHeader,
-  formatTime,
-} from '../../../helper/utils'
+import { authHeader, formatTime, isEmbedded } from '../../../helper/utils'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { getRoom} from '../../../services/api/room'
+import { getRoom } from '../../../services/api/room'
 import { useParams } from 'react-router-dom'
 import { getStudentdentitySession } from '../../../services/api/session'
 import { Redirect } from 'react-router-dom'
 
-
-function StudentSessionDetail() {
+function StudentSessionDetail({ zoomSdk }) {
   const dispatch = useDispatch()
   const sessions = useSelector((state) => state.session.identity)
   const room = useSelector((state) => state.room.currentRoom)
@@ -25,6 +21,7 @@ function StudentSessionDetail() {
   const [redirect, setRedirect] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [accepted, setAccept] = useState(true)
+  const embedded = isEmbedded()
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -43,7 +40,7 @@ function StudentSessionDetail() {
       }
     }
   }, [reload, sessions])
- const [select, setSelect] = useState([])
+  const [select, setSelect] = useState([])
   const API_URL = process.env.REACT_APP_API_URL
   const handleAccept = (e) => {
     e.preventDefault()
@@ -417,7 +414,7 @@ function StudentSessionDetail() {
                               )}
                             </td>
                             <td>
-                              {session?.cardImage && (
+                              {session?.cardImage && !embedded && (
                                 <a
                                   href={`${session?.cardImage.imageUrl}`}
                                   target='_blank'
@@ -425,6 +422,24 @@ function StudentSessionDetail() {
                                 >
                                   <img
                                     src={session?.cardImage.fetchUrl}
+                                    alt='face_recognition_image'
+                                    width={80}
+                                    referrerpolicy='no-referrer'
+                                  />
+                                </a>
+                              )}
+                              {session?.cardImage && embedded && (
+                                <a
+                                  href={`${session?.cardImage?.imageUrl}`}
+                                  onClick={async (e) => {
+                                    e.preventDefault()
+                                    await zoomSdk.openUrl({
+                                      url: session?.cardImage?.imageUrl
+                                    })
+                                  }}
+                                >
+                                  <img
+                                    src={session?.cardImage?.fetchUrl}
                                     alt='face_recognition_image'
                                     width={80}
                                     referrerpolicy='no-referrer'

@@ -67,7 +67,8 @@ function App() {
             'showNotification',
             'openUrl',
             'authorize',
-            'onAuthorized'
+            'onAuthorized',
+            'openUrl'
           ],
           version: '0.16.0'
         })
@@ -223,7 +224,7 @@ function App() {
               exact
             />
             <PrivateRoute
-              component={StudentSessionDetail}
+              component={() => <StudentSessionDetail zoomSdk={zoomSdk} />}
               path='/identity/sessions-room/:id/:studentId'
               exact
             />

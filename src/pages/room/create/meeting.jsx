@@ -37,7 +37,8 @@ function CreateMeeting() {
     start_time: new Date().toUTCString(),
     timezone: 'Asia/Vietnam',
     topic: 'My Meeting',
-    type: 2
+    type: 2,
+    subjectId: null
   })
 
   const [errors, setErrors] = useState({
@@ -128,7 +129,7 @@ function CreateMeeting() {
       case 'subjectId':
         setInput({
           ...input,
-          subjectId: { ...input, subjectId: event.target.value }
+          subjectId: event.target.value 
         })
         break
       case 'use_pmi':
