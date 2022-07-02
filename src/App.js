@@ -83,7 +83,7 @@ function App() {
       }
     }
     configureSdk()
-  }, [counter])
+  }, [counter, embedded])
   return (
     <Router>
       <Switch>
@@ -91,7 +91,12 @@ function App() {
       <LeftSideBar /> */}
         <PublicRoute restricted={true} component={Login} path='/' exact />
         <PublicRoute restricted={true} component={Login} path='/signin' exact />
-        <PublicRoute restricted={false} component={SessionVerify} path='/auth/verify' exact />
+        <PublicRoute
+          restricted={false}
+          component={SessionVerify}
+          path='/auth/verify'
+          exact
+        />
         <PublicRoute
           restricted={true}
           component={() => <Home zoomSdk={zoomSdk} />}
@@ -166,7 +171,11 @@ function App() {
               path='/room/0/create_meeting'
               exact
             />
-            <PrivateRoute component={RoomDetail} path='/room/:id' exact />
+            <PrivateRoute
+              component={() => <RoomDetail zoomSdk={zoomSdk} />}
+              path='/room/:id'
+              exact
+            />
             <PrivateRoute component={CreateRoom} path='/room/0/create' exact />
             <PrivateRoute
               component={UpdateRoom}
@@ -206,7 +215,7 @@ function App() {
             <PrivateRoute component={ProctorList} path='/proctor' exact />
 
             <PrivateRoute
-              component={() => <VerificationCollectData zoomSdk={zoomSdk}/>}
+              component={() => <VerificationCollectData zoomSdk={zoomSdk} />}
               path='/verify/data'
               exact
             />

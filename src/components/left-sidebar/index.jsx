@@ -5,7 +5,6 @@ import { NavLink, Redirect } from 'react-router-dom'
 import { userLogout } from '../../actions/auth'
 import { isEmbedded, logOut } from '../../helper/utils'
 function LeftSideBar() {
-  const embedded = isEmbedded()
   const user = useSelector((state) => state.auth.currentUser)
   const dispatch = useDispatch()
   const [redirect, setRedirect] = useState(false)
@@ -15,7 +14,6 @@ function LeftSideBar() {
     dispatch(action)
     setRedirect(true)
   }
-  console.log("1111",embedded)
   if (redirect)
     return isEmbedded() ? <Redirect to='/home' /> : <Redirect to='/signin' />
   return (

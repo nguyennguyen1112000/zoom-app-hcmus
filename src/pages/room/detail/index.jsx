@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   authHeader,
-  formatDate,
   formatTime,
   isEmbedded
 } from '../../../helper/utils'
@@ -22,9 +21,8 @@ import DatePicker from 'react-date-picker'
 import { getAllUsers } from '../../../services/api/users'
 import { Link } from 'react-router-dom'
 const API_URL = process.env.REACT_APP_API_URL
-function RoomDetail() {
+function RoomDetail({zoomSdk}) {
   const dispatch = useDispatch()
-  const embedded = isEmbedded()
   const [mode, setMode] = useState({ checkInConfig: false })
   let { id } = useParams()
   const user = useSelector((state) => state.auth.currentUser)
@@ -166,6 +164,7 @@ function RoomDetail() {
       return [this.slice(0, n)].concat(this.slice(n).chunk(n))
     }
     const R = studentIds.chunk(students.length / numGroups)
+    console.log('Group', R[group])
     axios
       .post(
         `${API_URL}/rooms/${currentRoom?.id}/students`,
@@ -236,6 +235,7 @@ function RoomDetail() {
           progress: undefined
         })
         setReload(!reload)
+        setSelect([])
       })
       .catch((err) => {
         toast.error(err?.response?.data?.message, {
@@ -429,7 +429,15 @@ function RoomDetail() {
     )
   }
 
-  const handleCheckIn = (e) => {
+  const handleCheckIn = async (e) => {
+    if (isEmbedded())
+      await zoomSdk.openUrl({
+        url: `${
+          process.env.REACT_APP_HOST_URL
+        }/auth/verify?session=${JSON.parse(
+          localStorage.getItem('token')
+        )}&page=check-in&roomId=${currentRoom?.id}`
+      })
     e.preventDefault()
     axios
       .get(`${API_URL}/rooms/${currentRoom?.id}/canVerify`, authHeader())

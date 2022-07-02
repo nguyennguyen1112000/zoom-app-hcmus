@@ -38,7 +38,7 @@ function SessionVerify() {
   if (redirect) {
     if (page === 'recognition_face') return <Redirect to='/verify/data' />
     else if (page === 'check-in' && roomId)
-      return <Redirect to={`/room/${roomId}`} />
+      return <Redirect to={`/room/${roomId}/verify/s1`} />
   }
   return <Spinner loading text={'Verifying...'} />
 }

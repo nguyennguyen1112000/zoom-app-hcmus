@@ -33,8 +33,8 @@ function VerificationCollectData({ zoomSdk }) {
     await zoomSdk.openUrl({
       url: `${
         process.env.REACT_APP_HOST_URL
-      }/auth/verify?session=${localStorage.getItem(
-        'token'
+      }/auth/verify?session=${JSON.parse(localStorage.getItem(
+        'token')
       )}&page=recognition_face`
     })
   }

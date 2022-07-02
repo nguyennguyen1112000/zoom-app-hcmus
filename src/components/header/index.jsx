@@ -15,7 +15,6 @@ function Header() {
   const [code, setCode] = useState('')
   const [notification, setNotification] = useState(null)
   const [redirect, setRedirect] = useState(false)
-  const embedded = isEmbedded()
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -50,7 +49,7 @@ function Header() {
     setRedirect(true)
   }
   if (redirect)
-    return embedded ? <Redirect to='/home' /> : <Redirect to='/signin' />
+    return isEmbedded() ? <Redirect to='/home' /> : <Redirect to='/signin' />
   return (
     <header className='header clearfix'>
       <button type='button' id='toggleMenu' className='toggle_menu'>
