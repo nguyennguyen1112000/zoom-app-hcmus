@@ -31,7 +31,9 @@ function VerificationCollectData({ zoomSdk }) {
   }, [reload])
   const openInBrowser = async () => {
     await zoomSdk.openUrl({
-      url: `${window.location.hostname}/auth/verify?session=${localStorage.getItem(
+      url: `${
+        process.env.REACT_APP_HOST_URL
+      }/auth/verify?session=${localStorage.getItem(
         'token'
       )}&page=recognition_face`
     })
