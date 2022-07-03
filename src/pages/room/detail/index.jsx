@@ -2,11 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  authHeader,
-  formatTime,
-  isEmbedded
-} from '../../../helper/utils'
+import { authHeader, formatTime, isEmbedded } from '../../../helper/utils'
 import { getRoom } from '../../../services/api/room'
 import { getIdentityResults } from '../../../services/api/student'
 import { toast, ToastContainer } from 'react-toastify'
@@ -21,8 +17,9 @@ import DatePicker from 'react-date-picker'
 import { getAllUsers } from '../../../services/api/users'
 import { Link } from 'react-router-dom'
 const API_URL = process.env.REACT_APP_API_URL
-function RoomDetail({zoomSdk}) {
+function RoomDetail({ zoomSdk }) {
   const dispatch = useDispatch()
+  const embedded = isEmbedded()
   const [mode, setMode] = useState({ checkInConfig: false })
   let { id } = useParams()
   const user = useSelector((state) => state.auth.currentUser)
@@ -72,7 +69,8 @@ function RoomDetail({zoomSdk}) {
   useEffect(() => {
     if (currentRoom) {
       setInput({ ...input, checkInConfigType: currentRoom.checkInConfigType })
-      setExamDate(new Date(currentRoom?.checkInStartTime))
+     if (currentRoom?.checkInStartTime)
+       setExamDate(new Date(currentRoom?.checkInStartTime))
       if (currentRoom.checkInConfigType === 'automation')
         setStartTime(
           new Date(currentRoom?.checkInStartTime).getHours() +
@@ -139,8 +137,8 @@ function RoomDetail({zoomSdk}) {
   }
 
   /*************Handle add students ********** */
-  const handleAddStudents = () => {
-    if (!group) {
+  const handleAddStudents = () => {    
+    if (!group || group === undefined) {
       toast.error('Please choose group of student', {
         position: 'top-right',
         autoClose: 1000,
@@ -154,9 +152,9 @@ function RoomDetail({zoomSdk}) {
     }
     const numGroups = currentRoom?.subject?.numGroups
 
-    const students = currentRoom?.subject?.students
+    const students = currentRoom?.subject?.students.sort((x, y) => x.studentId - y.studentId)
     let studentIds = []
-    if (students) studentIds = students.map((s) => s.id).sort((x, y) => x - y)
+    if (students) studentIds = students.map((s) => s.id)
     Array.prototype.chunk = function (n) {
       if (!this.length) {
         return []
@@ -341,6 +339,7 @@ function RoomDetail({zoomSdk}) {
       })
   }
   const handleUpdateConfig = () => {
+    console.log("Exam date", examDate)
     let checkInStartTime = examDate
     let checkInEndTime = new Date(examDate.getTime())
 
@@ -683,7 +682,7 @@ function RoomDetail({zoomSdk}) {
                                 )}
                               </td>
                               <td>
-                                {record?.faceImage && (
+                                {record?.faceImage && !embedded && (
                                   <a
                                     href={`${record?.faceImage.imageUrl}`}
                                     target='_blank'
@@ -697,9 +696,27 @@ function RoomDetail({zoomSdk}) {
                                     />
                                   </a>
                                 )}
+                                {record?.faceImage && embedded && (
+                                  <a
+                                    href={`${record?.faceImage.imageUrl}`}
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      zoomSdk.openUrl({
+                                        url: record?.faceImage?.imageUrl
+                                      })
+                                    }}
+                                  >
+                                    <img
+                                      src={record?.faceImage.fetchUrl}
+                                      alt='face_image'
+                                      width={80}
+                                      referrerpolicy='no-referrer'
+                                    />
+                                  </a>
+                                )}
                               </td>
                               <td>
-                                {record?.cardImage && (
+                                {record?.cardImage && embedded && (
                                   <a
                                     href={`${record?.cardImage.imageUrl}`}
                                     target='_blank'
@@ -708,6 +725,24 @@ function RoomDetail({zoomSdk}) {
                                     <img
                                       src={record?.cardImage.fetchUrl}
                                       alt='card_image'
+                                      width={80}
+                                      referrerpolicy='no-referrer'
+                                    />
+                                  </a>
+                                )}
+                                {record?.faceImage && embedded && (
+                                  <a
+                                    href={`${record?.cardImage?.imageUrl}`}
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      zoomSdk.openUrl({
+                                        url: record?.cardImage?.imageUrl
+                                      })
+                                    }}
+                                  >
+                                    <img
+                                      src={record?.cardImage?.fetchUrl}
+                                      alt='face_image'
                                       width={80}
                                       referrerpolicy='no-referrer'
                                     />
@@ -1273,8 +1308,8 @@ function RoomDetail({zoomSdk}) {
                                 )}
                               </th>
                               <th>#</th>
-                              <th>Full name</th>
                               <th>Id</th>
+                              <th>Full name</th>
 
                               <th>Face Data</th>
                             </tr>
@@ -1295,10 +1330,10 @@ function RoomDetail({zoomSdk}) {
                                     />
                                   </td>
                                   <td>{index + 1}</td>
+                                  <td>{student.studentId}</td>
                                   <td>
                                     {student.firstName + ' ' + student.lastName}
                                   </td>
-                                  <td>{student.studentId}</td>
 
                                   <td>
                                     {student.images &&

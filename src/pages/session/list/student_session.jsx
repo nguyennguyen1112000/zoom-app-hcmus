@@ -151,7 +151,13 @@ function StudentSessionDetail({ zoomSdk }) {
       }
     })
   }
-
+  const getClassCredibility = (credibility) => {
+    if (credibility >= 0.8) return 'progress-bar progress-bar-success'
+    else if (credibility >= 0.7) return 'progress-bar progress-bar-primary'
+    else if (credibility >= 0.6) return 'progress-bar progress-bar-warning'
+    else if (credibility >= 0.5) return 'progress-bar progress-bar-danger'
+    else return 'progress-bar progress-bar-default'
+  }
   const renderViewMode = () => {
     if (accepted === null)
       return (
@@ -470,7 +476,9 @@ function StudentSessionDetail({ zoomSdk }) {
                               {session.credibility ? (
                                 <div className='progress progress-lg'>
                                   <div
-                                    className='progress-bar progress-bar-danger'
+                                    className={getClassCredibility(
+                                      session.credibility
+                                    )}
                                     style={{
                                       width: `${Math.round(
                                         session.credibility * 100

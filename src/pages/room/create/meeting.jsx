@@ -297,10 +297,10 @@ function CreateMeeting() {
         <div className='col-lg-9 col-sm-8 col-md-8 col-xs-12'>
           <ol className='breadcrumb'>
             <li>
-              <a href='index.html'>HCMUSID</a>
+              <a href='/'>HCMUSID</a>
             </li>
             <li>
-              <a href='/subject'>Room List</a>
+              <a href='/room'>Room List</a>
             </li>
             <li className='active'>
               <span>Create Zoom meeting</span>
@@ -389,6 +389,7 @@ function CreateMeeting() {
                             onChange={handleChange}
                             name='duration_hours'
                           >
+                            <option value='0'>0</option>
                             <option value='1'>1</option>
                             <option value='2'>2</option>
                             <option value='3'>3</option>

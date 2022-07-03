@@ -170,7 +170,7 @@ function VerificationResult() {
                 <a href={identity?.room?.url}>
                   <button className='btn btn-default btn-lable-wrap left-label'>
                     <span className='btn-label'>
-                      <img src='/img/icons8-zoom.svg' width={20} />
+                      <img src='/img/icons8-zoom.svg' width={20} alt="zoom_logo"/>
                     </span>
                     <span className='btn-text'>Return to Zoom meeting</span>
                   </button>

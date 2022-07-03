@@ -119,7 +119,16 @@ function SubjectList() {
         setReload(!reload)
       })
       .catch((err) => {
-        console.log(err)
+        e.target.value = null
+        toast.error(err?.response?.data?.message, {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
       })
   }
   const handleSync = (e) => {
