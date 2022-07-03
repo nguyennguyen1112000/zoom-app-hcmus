@@ -10,6 +10,7 @@ import { getRoom } from '../../../services/api/room'
 import { useParams } from 'react-router-dom'
 import { getStudentdentitySession } from '../../../services/api/session'
 import { Redirect } from 'react-router-dom'
+import { getMyImages } from '../../../services/api/image'
 
 function StudentSessionDetail({ zoomSdk }) {
   const dispatch = useDispatch()
@@ -21,6 +22,8 @@ function StudentSessionDetail({ zoomSdk }) {
   const [redirect, setRedirect] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [accepted, setAccept] = useState(true)
+  const [extractData, setExtractData] = useState(null)
+  const [images, setImages] = useState([])
   const embedded = isEmbedded()
   useEffect(() => {
     setTimeout(() => {
@@ -28,6 +31,19 @@ function StudentSessionDetail({ zoomSdk }) {
       if (id && studentId) {
         dispatch(getStudentdentitySession(id, studentId))
         dispatch(getRoom(id))
+        return axios
+          .get(`${API_URL}/images/face/${studentId}`, authHeader())
+          .then((res) => {
+            setImages(res.data)
+          })
+          .catch((err) => {
+            if (err?.response?.status === 401) {
+              const logoutAction = userLogout()
+              logOut()
+              dispatch(logoutAction)
+            }
+            console.log('Error', err)
+          })
       }
     }, 2000)
   }, [reload])
@@ -37,9 +53,11 @@ function StudentSessionDetail({ zoomSdk }) {
       if (sessions.length > 0) {
         setNote(sessions[0].note)
         setAccept(sessions[0].accepted)
+        setExtractData(sessions[0].extractData)
       }
     }
   }, [reload, sessions])
+
   const [select, setSelect] = useState([])
   const API_URL = process.env.REACT_APP_API_URL
   const handleAccept = (e) => {
@@ -315,6 +333,76 @@ function StudentSessionDetail({ zoomSdk }) {
         </div>
       </div>
       <div className='row'>
+        <div className='col-md-12'>
+          <div className='panel panel-default card-view'>
+            <div className='panel-heading'>
+              <div className='pull-left'>
+                <h6 className='panel-title txt-dark'>Extract data</h6>
+              </div>
+              <div className='clearfix' />
+            </div>
+            <div className='panel-wrapper collapse in'>
+              <div className='panel-body'>
+                <div className='table-responsive'>
+                  <table
+                    className='table display responsive product-overview mb-30'
+                    id='myTable'
+                  >
+                    <thead>
+                      <tr>
+                        <th>Compare data</th>
+                        <th>Extracted data</th>
+                        <th>Reference data</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Full Name</td>
+                        <td>
+                          {extractData?.extractName ===
+                          extractData?.referenceName ? (
+                            extractData?.referenceName?.toUpperCase()
+                          ) : (
+                            <mark>
+                              {extractData?.referenceName?.toUpperCase()}
+                            </mark>
+                          )}
+                        </td>
+                        <td>{extractData?.referenceName?.toUpperCase()}</td>
+                      </tr>
+                      <tr>
+                        <td>Date of birth</td>
+                        <td>
+                          {extractData?.extractDob ===
+                          extractData?.referenceDob ? (
+                            extractData?.extractDob
+                          ) : (
+                            <mark>{extractData?.extractDob}</mark>
+                          )}
+                        </td>
+                        <td>{extractData?.referenceDob}</td>
+                      </tr>
+                      <tr>
+                        <td>Student ID</td>
+                        <td>
+                          {extractData?.extractStudentId ===
+                          extractData?.referenceStudentId ? (
+                            extractData?.extractStudentId
+                          ) : (
+                            <mark> {extractData?.extractStudentId}</mark>
+                          )}
+                        </td>
+                        <td>{extractData?.referenceStudentId}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='row'>
         <div className='col-sm-12'>
           <div className='panel panel-default card-view'>
             <div className='panel-heading'>
@@ -359,8 +447,9 @@ function StudentSessionDetail({ zoomSdk }) {
                           <th>Id</th>
                           <th>Face recognition</th>
                           <th>Id verification</th>
-                          <th>Face image</th>
-                          <th>Id image</th>
+                          <th>Face result image</th>
+                          <th>Reference image</th>
+                          <th>Id result image</th>
                           <th>Id image type</th>
                           <th width='15%'>Credibility</th>
                           <th>Start time</th>
@@ -418,7 +507,7 @@ function StudentSessionDetail({ zoomSdk }) {
                                   />
                                 </a>
                               )}
-                              {session?.cardImage && embedded && (
+                              {session?.faceImage && embedded && (
                                 <a
                                   href={`${session?.faceImage?.imageUrl}`}
                                   onClick={async (e) => {
@@ -436,6 +525,23 @@ function StudentSessionDetail({ zoomSdk }) {
                                   />
                                 </a>
                               )}
+                            </td>
+                            <td>
+                              {images.slice(0, 2).map((img) => (
+                                <a
+                                  href={`${img.imageUrl}`}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                >
+                                  <img
+                                    src={img.fetchUrl}
+                                    alt='face_recognition_image'
+                                    width={80}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                  />
+                                </a>
+                              ))}
                             </td>
                             <td>
                               {session?.cardImage && !embedded && (

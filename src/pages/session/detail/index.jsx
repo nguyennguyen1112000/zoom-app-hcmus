@@ -211,7 +211,6 @@ function SessionRoomDetail({ zoomSdk }) {
                       <thead>
                         <tr>
                           <th>#</th>
-
                           <th>Student</th>
                           <th>Checked-in at</th>
                           <th>Duration</th>
@@ -226,7 +225,7 @@ function SessionRoomDetail({ zoomSdk }) {
 
                       <tbody>
                         {sessions?.map((session, index) => (
-                          <tr key={index}>
+                          <tr key={index} className="dart-row">
                             <td>{index + 1}</td>
 
                             <td>
@@ -239,7 +238,7 @@ function SessionRoomDetail({ zoomSdk }) {
 
                             <td>
                               {session.created_at
-                                ? formatTime(new Date(session.created_at))
+                                ? formatTimeWithoutDate(new Date(session.created_at))
                                 : '--'}
                             </td>
 

@@ -69,10 +69,7 @@ function RoomSession({ zoomSdk }) {
         setLoading(false)
       })
   }
-  const trackParticipants = async () => {
-    const runningContext = await zoomSdk.getRunningContext()
-    console.log(runningContext)
-  }
+
   return (
     <div className='container-fluid'>
       {/* Title */}
@@ -217,14 +214,7 @@ function RoomSession({ zoomSdk }) {
       <div className='row'>
         <div className='col-lg-12'>
           <div className='panel panel-default card-view'>
-            <div className='panel-heading'>
-              <div className='pull-right button-list'>
-                <button class='btn btn-primary' onClick={trackParticipants}>
-                  Track join status of participants
-                </button>
-              </div>
-              <div className='clearfix' />
-            </div>
+           
             <div className='panel-wrapper collapse in'>
               <div className='panel-body'>
                 <div className='table-wrap'>

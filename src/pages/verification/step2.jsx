@@ -11,7 +11,6 @@ function StudentVerificationS1() {
   let { id } = useParams()
   const user = useSelector((state) => state.auth.currentUser)
   const images = useSelector((state) => state.image.imageList)
-  console.log(images);
   useEffect(() => {
     if (id) dispatch(getRoom(id))
     dispatch(getMyImages())
