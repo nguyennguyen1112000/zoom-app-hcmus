@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useLocation } from 'react-router-dom'
 import { getRoom } from '../../services/api/room'
 
-import { WebcamCapture } from '../webcam/WebcamCapture'
 import { WebcamID } from '../webcam/WebcamID'
 
 function StudentVerificationS2() {

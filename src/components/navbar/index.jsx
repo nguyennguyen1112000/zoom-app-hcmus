@@ -72,14 +72,18 @@ function NavBar() {
       </div>
       <div id='mobile_only_nav' className='mobile-only-nav pull-right'>
         <ul className='nav navbar-right top-nav pull-right'>
-         
           <li className='dropdown auth-drp'>
             <a href='/' className='dropdown-toggle pr-0' data-toggle='dropdown'>
               <span
                 className='user-auth-img'
                 style={{ background: '#eb4034', padding: 5, color: 'white' }}
               >
-                {user && getShortName(user?.firstName  + user?.lastName)}
+                {user &&
+                  user.role !== 'proctor' &&
+                  getShortName(user?.firstName + user?.lastName)}
+                {user &&
+                  user.role === 'proctor' &&
+                  user.staffCode}
               </span>
               <span className='user-online-status' />
             </a>

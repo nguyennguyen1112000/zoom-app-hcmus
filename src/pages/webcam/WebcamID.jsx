@@ -65,14 +65,12 @@ export const WebcamID = (props) => {
           .post(`${API_URL}/identity/id`, formData, authHeader())
           .then((res) => {
             setLoading(false)
-            console.log('Data', res.data)
             const { extractFields, errorMessages, record } = res.data
             if (record) sendNotification(record.roomId)
             if (record?.idStatus === true)
               history.push(`/room/${roomId}/verify/result/${record.id}`)
             else if (!record) {
               let error
-
               if (errorMessages) {
                 if (errorMessages.verifySuccess)
                   error = 'You checked-in successfully before for this room'
