@@ -4,11 +4,11 @@ import DatePicker from 'react-date-picker'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
-import { authHeader, formatDate } from '../../../helper/utils'
+import { authHeader, formatDate, isEmbedded } from '../../../helper/utils'
 import { deleteImage, uploadImage } from '../../../services/api/image'
 import { getStudent } from '../../../services/api/student'
 const API_URL = process.env.REACT_APP_API_URL
-function StudentDetail() {
+function StudentDetail({ zoomSdk }) {
   const user = useSelector((state) => state.auth.currentUser)
   const [currentFolder, setCurrentFolder] = useState('face_data')
   const dispatch = useDispatch()
@@ -27,7 +27,7 @@ function StudentDetail() {
     email: ''
   })
   const [birthday, setBirthday] = useState(new Date())
-
+  const embedded = isEmbedded()
   const [errors, setErrors] = useState({
     firstName: null,
     lastName: null
@@ -489,6 +489,7 @@ function StudentDetail() {
                           <div className='row'>
                             {currentStudent &&
                               currentStudent.images &&
+                              !embedded &&
                               currentStudent.images
                                 .filter((x) => x.type === currentFolder)
                                 .map((image, index) => (
@@ -501,6 +502,58 @@ function StudentDetail() {
                                         href={image.imageUrl}
                                         target='_blank'
                                         rel='noopener noreferrer'
+                                      >
+                                        <div
+                                          className='image'
+                                          style={{
+                                            backgroundImage: `url(https://drive.google.com/thumbnail?id=${image.imageId})`
+                                          }}
+                                        ></div>
+                                        <div className='file-name'>
+                                          {image.originFileName}
+                                          <br />
+                                          <span>
+                                            Created date:{' '}
+                                            {formatDate(
+                                              new Date(image.created_at)
+                                            )}
+                                          </span>
+                                        </div>
+                                        <div className='file-name'>
+                                          <button
+                                            id={image.id}
+                                            className='btn btn-danger'
+                                            onClick={handleDeleteImage}
+                                          >
+                                            <i className='fa fa-trash'></i>{' '}
+                                            Delete
+                                          </button>
+                                        </div>
+                                      </a>
+                                    </div>
+                                  </div>
+                                ))}
+                            {currentStudent &&
+                              currentStudent.images &&
+                              embedded &&
+                              currentStudent.images
+                                .filter((x) => x.type === currentFolder)
+                                .map((image, index) => (
+                                  <div
+                                    className='col-lg-4 col-md-4 col-sm-6 col-xs-12  file-box'
+                                    key={index}
+                                  >
+                                    <div className='file'>
+                                      <a
+                                        href={image.imageUrl}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          zoomSdk.openUrl({
+                                            url: image.imageUrl
+                                          })
+                                        }}
                                       >
                                         <div
                                           className='image'

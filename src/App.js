@@ -159,7 +159,11 @@ function App() {
             <VerticalNav />
             <PrivateRoute component={StudentList} path='/' exact />
             <PrivateRoute component={StudentList} path='/student' exact />
-            <PrivateRoute component={StudentDetail} path='/student/:id' exact />
+            <PrivateRoute
+              component={() => <StudentDetail zoomSdk={zoomSdk} />}
+              path='/student/:id'
+              exact
+            />
             <PrivateRoute
               component={CreateStudent}
               path='/student/0/create'
