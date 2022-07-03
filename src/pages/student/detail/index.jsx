@@ -548,9 +548,9 @@ function StudentDetail({ zoomSdk }) {
                                         href={image.imageUrl}
                                         target='_blank'
                                         rel='noopener noreferrer'
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                           e.preventDefault()
-                                          zoomSdk.openUrl({
+                                          await zoomSdk.openUrl({
                                             url: image.imageUrl
                                           })
                                         }}
