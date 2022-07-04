@@ -39,7 +39,11 @@ export function handleExpiredToken(error, swal) {
     }).then((willLoginAgain) => {
       if (willLoginAgain) {
         axios
-          .post(`${API_URL}/zooms/refresh_token`, null, authHeader())
+          .post(
+            `${API_URL}/zooms/refresh_token`,
+            { isEmbedded: isEmbedded() },
+            authHeader()
+          )
           .then((res) => {
             localStorage.setItem('token', `"${res.data}"`)
             swal('Login successfully', {
