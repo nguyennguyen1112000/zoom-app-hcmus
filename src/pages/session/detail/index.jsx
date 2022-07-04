@@ -3,17 +3,13 @@ import axios from 'axios'
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { SpinnerCircularFixed } from 'spinners-react'
-import {
-  authHeader,
-  formatTime,
-  formatTimeWithoutDate
-} from '../../../helper/utils'
-import { toast, ToastContainer } from 'react-toastify'
+import { formatTimeWithoutDate } from '../../../helper/utils'
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getRoomIdentitySession } from '../../../services/api/session'
 import { getRoom } from '../../../services/api/room'
 import socketIOClient from 'socket.io-client'
+import { getDefaultSetting } from '../../../services/api/setting'
 const API_URL = process.env.REACT_APP_API_URL
 function SessionRoomDetail({ zoomSdk }) {
   const socketRef = useRef()
@@ -22,6 +18,7 @@ function SessionRoomDetail({ zoomSdk }) {
   let { id } = useParams()
   const sessions = useSelector((state) => state.session.identity)
   const room = useSelector((state) => state.room.currentRoom)
+  const setting = useSelector((state) => state.setting.setting)
   useEffect(() => {
     setTimeout(() => {
       $('#datable_1').DataTable().destroy()
@@ -33,6 +30,7 @@ function SessionRoomDetail({ zoomSdk }) {
   }, [id, reload])
   useEffect(() => {
     $('#datable_1').DataTable()
+    dispatch(getDefaultSetting())
     socketRef.current = socketIOClient.connect(API_URL)
 
     socketRef.current.on('msgToClient', (data) => {
@@ -49,10 +47,10 @@ function SessionRoomDetail({ zoomSdk }) {
 
   const getClassCredibility = (credibility) => {
     if (credibility >= 0.8) return 'progress-bar progress-bar-success'
-    else if (credibility >= 0.7) return 'progress-bar progress-bar-primary'
-    else if (credibility >= 0.6) return 'progress-bar progress-bar-warning'
-    else if (credibility >= 0.5) return 'progress-bar progress-bar-danger'
-    else return 'progress-bar progress-bar-default'
+    else if (credibility >= 0.7) return 'progress-bar progress-bar-default'
+    else if (credibility >= 0.6) return 'progress-bar progress-bar-primary'
+    else if (credibility >= 0.5) return 'progress-bar progress-bar-warning'
+    else return 'progress-bar progress-bar-danger'
   }
   return (
     <div className='container-fluid'>
@@ -225,9 +223,17 @@ function SessionRoomDetail({ zoomSdk }) {
 
                       <tbody>
                         {sessions?.map((session, index) => (
-                          <tr key={index} className="dart-row">
+                          <tr
+                            key={index}
+                            className={
+                              session.failTimes &&
+                              setting &&
+                              session?.failTimes > setting.maxFailAttempt
+                                ? 'dark-row'
+                                : ''
+                            }
+                          >
                             <td>{index + 1}</td>
-
                             <td>
                               <a href={`/student/${session.studentId}`}>
                                 {' '}
@@ -235,10 +241,11 @@ function SessionRoomDetail({ zoomSdk }) {
                                 {session.studentId}
                               </a>
                             </td>
-
                             <td>
                               {session.created_at
-                                ? formatTimeWithoutDate(new Date(session.created_at))
+                                ? formatTimeWithoutDate(
+                                    new Date(session.created_at)
+                                  )
                                 : '--'}
                             </td>
 
