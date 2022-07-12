@@ -80,14 +80,14 @@ function StudentVerificationS1() {
                         </div>
                       </div>
                       <div className='col-md-9'>
-                        {/* <WebcamCapture
-                          roomId={currentRoom?.id}
-                          studentId={user?.studentId}
-                        /> */}
-                        <RealtimeWebcam
+                        <WebcamCapture
                           roomId={currentRoom?.id}
                           studentId={user?.studentId}
                         />
+                        {/* <RealtimeWebcam
+                          roomId={currentRoom?.id}
+                          studentId={user?.studentId}
+                        /> */}
                       </div>
                     </div>
                   ) : (
