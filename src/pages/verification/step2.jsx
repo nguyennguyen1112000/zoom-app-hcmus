@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { getMyImages } from '../../services/api/image'
 import { getRoom } from '../../services/api/room'
+import { RealtimeWebcam } from '../webcam/RealtimeWebcam'
 
 import { WebcamCapture } from '../webcam/WebcamCapture'
 
@@ -56,7 +57,7 @@ function StudentVerificationS1() {
                               <h6 className='panel-title'>
                                 Your reference face image
                               </h6>
-                              {images.slice(0,2).map((img) => (
+                              {images.slice(0, 2).map((img) => (
                                 <img
                                   src={img?.fetchUrl}
                                   alt='face_recognition_image'
@@ -79,7 +80,11 @@ function StudentVerificationS1() {
                         </div>
                       </div>
                       <div className='col-md-9'>
-                        <WebcamCapture
+                        {/* <WebcamCapture
+                          roomId={currentRoom?.id}
+                          studentId={user?.studentId}
+                        /> */}
+                        <RealtimeWebcam
                           roomId={currentRoom?.id}
                           studentId={user?.studentId}
                         />
@@ -91,7 +96,8 @@ function StudentVerificationS1() {
                         <div className='col-sm-12 col-xs-12'>
                           <div className='mb-30'>
                             <span className='text-center nonecase-font mb-20 block error-comment'>
-                              There is no reference face data. Please contact your proctor!
+                              There is no reference face data. Please contact
+                              your proctor!
                             </span>
                           </div>
                         </div>

@@ -9,6 +9,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@vladmandic/human": "^2.8.1",
     "@zoom/appssdk": "^0.16.0",
     "axios": "^0.24.0",
     "date-fns": "^2.25.0",
@@ -33,6 +34,7 @@
     "spinners-react": "^1.0.7",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.4.17",
+    "typescript": "^4.7.4",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

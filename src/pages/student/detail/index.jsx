@@ -148,7 +148,6 @@ function StudentDetail({ zoomSdk }) {
   const handleDeleteImage = (e) => {
     e.preventDefault()
     const id = e.currentTarget.id
-    console.log('id', id)
     dispatch(deleteImage(id))
   }
 
